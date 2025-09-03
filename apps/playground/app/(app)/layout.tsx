@@ -1,7 +1,8 @@
-import { AppSidebar } from "@/components/app-sidebar";
+import { PlaygroundSidebar } from "@/components/playground-sidebar";
 import { PageHeader } from "@/components/page-header";
 import { SectionCards } from "@/components/section-cards";
 import { SiteHeader } from "@/components/site-header";
+import { Button } from "@elevenlabs/ui/components/button";
 import {
   SidebarInset,
   SidebarProvider,
@@ -20,21 +21,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             } as React.CSSProperties
           }
         >
-          <AppSidebar variant="inset" />
-          <SidebarInset>
-            <PageHeader />
-            <div className="flex flex-1 flex-col overflow-hidden">
-              <div className="@container/main flex flex-1 flex-col gap-2 overflow-auto">
-                <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-                  <SectionCards />
-                  {/* <div className="px-4 lg:px-6">
-                    <ChartAreaInteractive />
-                  </div>
-                  <DataTable data={data} /> */}
-                </div>
-              </div>
-            </div>
-          </SidebarInset>
+          {children}
         </SidebarProvider>
       </main>
     </div>
