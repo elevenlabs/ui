@@ -1,118 +1,179 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { CommandMenu } from "@/components/command-menu";
+import { siteConfig } from "@/lib/config";
+import {
+  IconCamera,
+  IconChartBar,
+  IconDashboard,
+  IconDatabase,
+  IconFileAi,
+  IconFileDescription,
+  IconFileWord,
+  IconFolder,
+  IconHelp,
+  IconListDetails,
+  IconReport,
+  IconSearch,
+  IconSettings,
+  IconUsers,
+} from "@tabler/icons-react";
+import * as React from "react";
 
-import { showMcpDocs } from "@/lib/flags";
-import type { source } from "@/lib/source";
+import { NavSecondary } from "@/components/nav-secondary";
+import { NavUser } from "@/components/nav-user";
 import {
   Sidebar,
   SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
+  SidebarFooter,
+  SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@elevenlabs/ui/components/sidebar";
 
-const TOP_LEVEL_SECTIONS = [{ name: "Featured", href: "/projects" }];
-const EXCLUDED_SECTIONS = ["installation", "dark-mode"];
-const EXCLUDED_PAGES = ["/projects"];
+const data = {
+  user: {
+    name: "shadcn",
+    email: "m@example.com",
+    avatar: "/avatars/shadcn.jpg",
+  },
+  navMain: [
+    {
+      title: "Dashboard",
+      url: "#",
+      icon: IconDashboard,
+    },
+    {
+      title: "Lifecycle",
+      url: "#",
+      icon: IconListDetails,
+    },
+    {
+      title: "Analytics",
+      url: "#",
+      icon: IconChartBar,
+    },
+    {
+      title: "Projects",
+      url: "#",
+      icon: IconFolder,
+    },
+    {
+      title: "Team",
+      url: "#",
+      icon: IconUsers,
+    },
+  ],
+  navClouds: [
+    {
+      title: "Capture",
+      icon: IconCamera,
+      isActive: true,
+      url: "#",
+      items: [
+        {
+          title: "Active Proposals",
+          url: "#",
+        },
+        {
+          title: "Archived",
+          url: "#",
+        },
+      ],
+    },
+    {
+      title: "Proposal",
+      icon: IconFileDescription,
+      url: "#",
+      items: [
+        {
+          title: "Active Proposals",
+          url: "#",
+        },
+        {
+          title: "Archived",
+          url: "#",
+        },
+      ],
+    },
+    {
+      title: "Prompts",
+      icon: IconFileAi,
+      url: "#",
+      items: [
+        {
+          title: "Active Proposals",
+          url: "#",
+        },
+        {
+          title: "Archived",
+          url: "#",
+        },
+      ],
+    },
+  ],
+  navSecondary: [
+    {
+      title: "Settings",
+      url: "#",
+      icon: IconSettings,
+    },
+    {
+      title: "Get Help",
+      url: "#",
+      icon: IconHelp,
+    },
+    {
+      title: "Search",
+      url: "#",
+      icon: IconSearch,
+    },
+  ],
+  documents: [
+    {
+      name: "Data Library",
+      url: "#",
+      icon: IconDatabase,
+    },
+    {
+      name: "Reports",
+      url: "#",
+      icon: IconReport,
+    },
+    {
+      name: "Word Assistant",
+      url: "#",
+      icon: IconFileWord,
+    },
+  ],
+};
 
 export function DocsSidebar({
-  tree,
   ...props
-}: React.ComponentProps<typeof Sidebar> & { tree: typeof source.pageTree }) {
-  const pathname = usePathname();
-
+}: React.ComponentProps<typeof Sidebar>) {
   return (
-    <Sidebar
-      className="sticky top-[calc(var(--header-height)+1px)] z-30 hidden h-[calc(100svh-var(--footer-height)+2rem)] bg-transparent lg:flex"
-      collapsible="none"
-      {...props}
-    >
-      <SidebarContent className="no-scrollbar overflow-x-hidden px-2 pb-12">
-        <div className="h-(--top-spacing) shrink-0" />
-        <SidebarGroup>
-          <SidebarGroupLabel className="text-muted-foreground font-medium">
-            Explore
-          </SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {TOP_LEVEL_SECTIONS.map(({ name, href }) => {
-                if (!showMcpDocs && href.includes("/mcp")) {
-                  return null;
-                }
-                return (
-                  <SidebarMenuItem key={name}>
-                    <SidebarMenuButton
-                      asChild
-                      isActive={
-                        href === "/projects"
-                          ? pathname === href
-                          : pathname.startsWith(href)
-                      }
-                      className="data-[active=true]:bg-accent data-[active=true]:border-accent 3xl:fixed:w-full 3xl:fixed:max-w-48 relative h-[30px] w-fit overflow-visible border border-transparent text-[0.8rem] font-medium after:absolute after:inset-x-0 after:-inset-y-1 after:z-0 after:rounded-md"
-                    >
-                      <Link href={href}>
-                        <span className="absolute inset-0 flex w-(--sidebar-width) bg-transparent" />
-                        {name}
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                );
-              })}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-        {tree.children.map((item) => {
-          if (EXCLUDED_SECTIONS.includes(item.$id ?? "")) {
-            return null;
-          }
-
-          return (
-            <SidebarGroup key={item.$id}>
-              <SidebarGroupLabel className="text-muted-foreground font-medium">
-                {item.name}
-              </SidebarGroupLabel>
-              <SidebarGroupContent>
-                {item.type === "folder" && (
-                  <SidebarMenu className="gap-0.5">
-                    {item.children.map((item) => {
-                      if (
-                        !showMcpDocs &&
-                        item.type === "page" &&
-                        item.url?.includes("/mcp")
-                      ) {
-                        return null;
-                      }
-
-                      return (
-                        item.type === "page" &&
-                        !EXCLUDED_PAGES.includes(item.url) && (
-                          <SidebarMenuItem key={item.url}>
-                            <SidebarMenuButton
-                              asChild
-                              isActive={item.url === pathname}
-                              className="data-[active=true]:bg-accent data-[active=true]:border-accent 3xl:fixed:w-full 3xl:fixed:max-w-48 relative h-[30px] w-fit overflow-visible border border-transparent text-[0.8rem] font-medium after:absolute after:inset-x-0 after:-inset-y-1 after:z-0 after:rounded-md"
-                            >
-                              <Link href={item.url}>
-                                <span className="absolute inset-0 flex w-(--sidebar-width) bg-transparent" />
-                                {item.name}
-                              </Link>
-                            </SidebarMenuButton>
-                          </SidebarMenuItem>
-                        )
-                      );
-                    })}
-                  </SidebarMenu>
-                )}
-              </SidebarGroupContent>
-            </SidebarGroup>
-          );
-        })}
+    <Sidebar collapsible="offcanvas" {...props}>
+      <SidebarHeader>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              asChild
+              className="data-[slot=sidebar-menu-button]:!p-1.5 hover:bg-transparent focus:bg-transparent active:bg-transparent data-[state=open]:bg-transparent"
+            >
+              <div className="hidden w-full md:flex">
+                <CommandMenu navItems={siteConfig.navItems} />
+              </div>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarHeader>
+      <SidebarContent>
+        <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
+      <SidebarFooter>
+        <NavUser user={data.user} />
+      </SidebarFooter>
     </Sidebar>
   );
 }

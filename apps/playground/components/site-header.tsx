@@ -1,4 +1,3 @@
-import { CommandMenu } from "@/components/command-menu";
 import { GitHubLink } from "@/components/github-link";
 import { MainNav } from "@/components/main-nav";
 import { MobileNav } from "@/components/mobile-nav";
@@ -21,15 +20,9 @@ export async function SiteHeader() {
             className="flex lg:hidden"
           />
           <SiteHeaderLogo siteName={siteConfig.name} />
-          <MainNav items={siteConfig.navItems} className="hidden lg:flex" />
+
           <div className="ml-auto flex items-center gap-2 md:flex-1 md:justify-end">
-            <div className="hidden w-full flex-1 md:flex md:w-auto md:flex-none">
-              <CommandMenu navItems={siteConfig.navItems} />
-            </div>
-            <Separator
-              orientation="vertical"
-              className="ml-2 hidden lg:block"
-            />
+            <MainNav items={siteConfig.navItems} className="hidden lg:flex" />
             <GitHubLink />
             <Separator orientation="vertical" />
             <ModeSwitcher />

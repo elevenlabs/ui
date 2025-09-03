@@ -63,6 +63,33 @@ export const Icons = {
       <path d="M13.966 22.624l-1.69-4.281H8.122l3.892-9.144 5.662 13.425zM8.884 1.376H0v21.248zm15.116 0h-8.884L24 22.624Z" />
     </svg>
   ),
+  orb: (props: IconProps) => (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      color="currentColor"
+      {...props}
+    >
+      <circle
+        cx="12.3134"
+        cy="12.0004"
+        r="6.66029"
+        stroke="currentColor"
+        strokeWidth="1.5"
+      ></circle>
+      <path
+        d="M6.8291 15.5501C13.0136 15.5501 12.3132 9.52014 18.7072 9.97684"
+        stroke="currentColor"
+        strokeWidth="1.5"
+      ></path>
+      <path
+        d="M16.8194 16.9955C12.7091 17.4522 10.9433 11.8036 5.5179 11.8036"
+        stroke="currentColor"
+        strokeWidth="1.5"
+      ></path>
+    </svg>
+  ),
   npm: (props: IconProps) => (
     <svg viewBox="0 0 24 24" {...props}>
       <path

@@ -1,12 +1,5 @@
-import { PlaygroundSidebar } from "@/components/playground-sidebar";
-import { PageHeader } from "@/components/page-header";
-import { SectionCards } from "@/components/section-cards";
 import { SiteHeader } from "@/components/site-header";
-import { Button } from "@elevenlabs/ui/components/button";
-import {
-  SidebarInset,
-  SidebarProvider,
-} from "@elevenlabs/ui/components/sidebar";
+import { SidebarProvider } from "@elevenlabs/ui/components/sidebar";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (

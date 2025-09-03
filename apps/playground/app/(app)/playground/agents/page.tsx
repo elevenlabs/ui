@@ -36,13 +36,13 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function IndexPage() {
+export default async function PlaygroundPage() {
   return (
     <>
       <PlaygroundSidebar variant="inset" />
       <SidebarInset>
         <PageHeader>
-          <h1 className="text-base font-medium">Documents</h1>
+          <h1 className="text-base font-medium">Agents</h1>
           <div className="ml-auto flex items-center gap-2">
             <Button
               variant="ghost"

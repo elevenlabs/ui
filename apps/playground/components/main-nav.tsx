@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@elevenlabs/ui/components/button";
@@ -14,17 +15,20 @@ export function MainNav({
   items: { href: string; label: string }[];
 }) {
   const pathname = usePathname();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const isActive = (href: string) => {
-    // For /projects, check if pathname starts with /projects
-    if (href === "/projects") {
-      return pathname === "/projects" || pathname.startsWith("/projects/");
+    if (!mounted) return false;
+    if (href === "/playground") {
+      return pathname === "/playground" || pathname.startsWith("/playground/");
     }
-    // For /members, check if pathname starts with /members
-    if (href === "/members") {
-      return pathname === "/members" || pathname.startsWith("/members/");
+    if (href === "/docs") {
+      return pathname === "/docs" || pathname.startsWith("/docs/");
     }
-    // Default exact match
     return pathname === href;
   };
 
@@ -33,14 +37,21 @@ export function MainNav({
       {items.map((item) => {
         const active = isActive(item.href);
         return (
-          <Button key={item.href} variant="ghost" asChild size="sm">
+          <Button
+            key={item.href}
+            variant="link"
+            asChild
+            size="sm"
+            className={cn(
+              "transition-font-weight",
+              active ? "!font-medium" : "!font-normal"
+            )}
+          >
             <Link
               href={item.href}
               className={cn(
-                "transition-opacity",
-                active
-                  ? "opacity-100 font-medium"
-                  : "opacity-60 hover:opacity-100"
+                "transition-opacity ",
+                active ? "opacity-100" : "opacity-60 hover:opacity-100"
               )}
             >
               {item.label}

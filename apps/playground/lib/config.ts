@@ -9,12 +9,12 @@ export const siteConfig = {
   },
   navItems: [
     {
-      href: "/projects",
-      label: "Explore",
+      href: "/playground",
+      label: "Playground",
     },
     {
-      href: "/members",
-      label: "Members",
+      href: "/docs",
+      label: "Docs",
     },
   ],
 };

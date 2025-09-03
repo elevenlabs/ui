@@ -1,26 +1,17 @@
 "use client";
 
-import * as React from "react";
+import { Icons } from "@/components/icons";
 import {
   IconCamera,
-  IconChartBar,
-  IconDashboard,
-  IconDatabase,
   IconFileAi,
   IconFileDescription,
-  IconFileWord,
-  IconFolder,
   IconHelp,
-  IconInnerShadowTop,
-  IconListDetails,
-  IconReport,
   IconSearch,
   IconSettings,
-  IconUsers,
 } from "@tabler/icons-react";
+import * as React from "react";
 
-import { NavDocuments } from "@/components/nav-documents";
-import { NavMain } from "@/components/nav-main";
+import { NavPlayground } from "@/components/nav-playground";
 import { NavSecondary } from "@/components/nav-secondary";
 import { NavUser } from "@/components/nav-user";
 import {
@@ -28,9 +19,6 @@ import {
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
 } from "@elevenlabs/ui/components/sidebar";
 
 const data = {
@@ -41,29 +29,9 @@ const data = {
   },
   navMain: [
     {
-      title: "Dashboard",
-      url: "#",
-      icon: IconDashboard,
-    },
-    {
-      title: "Lifecycle",
-      url: "#",
-      icon: IconListDetails,
-    },
-    {
-      title: "Analytics",
-      url: "#",
-      icon: IconChartBar,
-    },
-    {
-      title: "Projects",
-      url: "#",
-      icon: IconFolder,
-    },
-    {
-      title: "Team",
-      url: "#",
-      icon: IconUsers,
+      title: "Agents",
+      url: "/playground/agents",
+      icon: <Icons.orb className="text-foreground" />,
     },
   ],
   navClouds: [
@@ -131,21 +99,11 @@ const data = {
       icon: IconSearch,
     },
   ],
-  documents: [
+  navPlayground: [
     {
-      name: "Data Library",
+      name: "Capture",
       url: "#",
-      icon: IconDatabase,
-    },
-    {
-      name: "Reports",
-      url: "#",
-      icon: IconReport,
-    },
-    {
-      name: "Word Assistant",
-      url: "#",
-      icon: IconFileWord,
+      icon: IconCamera,
     },
   ],
 };
@@ -155,24 +113,9 @@ export function PlaygroundSidebar({
 }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="offcanvas" {...props}>
-      <SidebarHeader>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              asChild
-              className="data-[slot=sidebar-menu-button]:!p-1.5"
-            >
-              <a href="#">
-                <IconInnerShadowTop className="!size-5" />
-                <span className="text-base font-semibold">Acfffme Inc.</span>
-              </a>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarHeader>
+      <SidebarHeader></SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
-        <NavDocuments items={data.documents} />
+        <NavPlayground items={data.navMain} />
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>

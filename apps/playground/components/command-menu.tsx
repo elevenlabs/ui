@@ -109,7 +109,7 @@ export function CommandMenu({
         <Button
           variant="secondary"
           className={cn(
-            "bg-surface text-surface-foreground/60 dark:bg-card relative h-8 w-full justify-start pl-2.5 font-normal shadow-none sm:pr-12 md:w-40 lg:w-56 xl:w-64"
+            "bg-surface text-surface-foreground/60 dark:bg-card relative h-8 w-full justify-start pl-2.5 font-normal shadow-none sm:pr-12"
           )}
           onClick={() => setOpen(true)}
           {...props}
