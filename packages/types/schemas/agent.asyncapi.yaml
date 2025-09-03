@@ -1,0 +1,723 @@
+asyncapi: "2.6.0"
+info:
+  title: ElevenLabs Agents Contract
+  version: "1.0.0"
+  description: |
+    Real-time Agents with voice synthesis and transcription.
+    This WebSocket API enables bidirectional audio streaming and text messaging
+    between clients and AI agents.
+
+    ## Event Flow
+    - Audio chunks are sent without type field for performance (detected by presence of user_audio_chunk)
+    - All other messages use explicit type field for routing
+    - Client events can be selectively enabled via conversation config
+  contact:
+    name: ElevenLabs API Support
+    url: https://elevenlabs.io/docs
+    email: support@elevenlabs.io
+
+servers:
+  production:
+    url: wss://api.elevenlabs.io
+    protocol: ws
+    description: Production WebSocket server
+
+channels:
+  AgentMessages:
+    description: Main WebSocket channel for conversational AI
+    subscribe:
+      summary: Message types
+      message:
+        oneOf:
+          # Server -> Client messages
+          - $ref: "#/components/messages/Audio"
+          - $ref: "#/components/messages/UserTranscript"
+          - $ref: "#/components/messages/TentativeUserTranscript"
+          - $ref: "#/components/messages/AgentResponse"
+          - $ref: "#/components/messages/AgentResponseCorrection"
+          - $ref: "#/components/messages/Interruption"
+          - $ref: "#/components/messages/ConversationMetadata"
+          - $ref: "#/components/messages/ClientToolCall"
+          - $ref: "#/components/messages/AgentToolResponse"
+          - $ref: "#/components/messages/MCPToolCall"
+          - $ref: "#/components/messages/MCPConnectionStatus"
+          - $ref: "#/components/messages/VADScore"
+          - $ref: "#/components/messages/Ping"
+          # Client -> Server messages
+          - $ref: "#/components/messages/UserAudio"
+          - $ref: "#/components/messages/Pong"
+          - $ref: "#/components/messages/UserMessage"
+          - $ref: "#/components/messages/UserActivity"
+          - $ref: "#/components/messages/UserFeedback"
+          - $ref: "#/components/messages/ClientToolResult"
+          - $ref: "#/components/messages/MCPToolApprovalResult"
+          - $ref: "#/components/messages/ContextualUpdate"
+          - $ref: "#/components/messages/ConversationInitiation"
+components:
+  messages:
+    # ===== CLIENT → SERVER MESSAGES =====
+
+    UserAudio:
+      name: UserAudio
+      title: User Audio Chunk
+      summary: Audio data from user (no type field for performance optimization)
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/UserAudioPayload"
+
+    Pong:
+      name: PongClientToOrchestratorEvent
+      title: Pong Response
+      summary: Response to server ping for latency measurement
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/PongPayload"
+
+    UserMessage:
+      name: UserMessageClientToOrchestratorEvent
+      title: User Text Message
+      summary: Text message from user
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/UserMessagePayload"
+
+    UserActivity:
+      name: UserActivityClientToOrchestratorEvent
+      title: User Activity Signal
+      summary: Signal that user is active (typing, etc.)
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/UserActivityPayload"
+
+    UserFeedback:
+      name: UserFeedbackClientToOrchestratorEvent
+      title: User Feedback
+      summary: User feedback on agent response
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/UserFeedbackPayload"
+
+    ClientToolResult:
+      name: ClientToolResultClientToOrchestratorEvent
+      title: Client Tool Result
+      summary: Result of client-side tool execution
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/ClientToolResultPayload"
+
+    MCPToolApprovalResult:
+      name: MCPToolApprovalResultClientToOrchestratorEvent
+      title: MCP Tool Approval Result
+      summary: User approval/rejection of MCP tool execution
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/MCPToolApprovalResultPayload"
+
+    ContextualUpdate:
+      name: ContextualUpdateClientToOrchestratorEvent
+      title: Contextual Update
+      summary: Non-interrupting context update
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/ContextualUpdatePayload"
+
+    ConversationInitiation:
+      name: ConversationInitiationClientToOrchestratorEvent
+      title: Conversation Initiation
+      summary: Initial configuration and overrides
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/ConversationInitiationPayload"
+
+    # ===== SERVER → CLIENT MESSAGES =====
+
+    Audio:
+      name: AudioClientEvent
+      title: Audio Output
+      summary: Synthesized audio from agent
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/AudioPayload"
+
+    UserTranscript:
+      name: UserTranscriptionClientEvent
+      title: User Transcript
+      summary: Final transcription of user speech
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/UserTranscriptPayload"
+
+    TentativeUserTranscript:
+      name: TentativeUserTranscriptionClientEvent
+      title: Tentative User Transcript
+      summary: In-progress transcription (may change)
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/TentativeUserTranscriptPayload"
+
+    AgentResponse:
+      name: AgentResponseClientEvent
+      title: Agent Response
+      summary: Agent's text response
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/AgentResponsePayload"
+
+    AgentResponseCorrection:
+      name: AgentResponseCorrectionClientEvent
+      title: Agent Response Correction
+      summary: Corrected response after interruption
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/AgentResponseCorrectionPayload"
+
+    Interruption:
+      name: InterruptionEvent
+      title: Interruption
+      summary: User interrupted agent speech
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/InterruptionPayload"
+
+    ConversationMetadata:
+      name: ConversationInitiationMetadataEvent
+      title: Conversation Metadata
+      summary: Initial connection metadata
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/ConversationMetadataPayload"
+
+    ClientToolCall:
+      name: ClientToolCallClientEvent
+      title: Client Tool Call
+      summary: Tool for client to execute
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/ClientToolCallPayload"
+
+    AgentToolResponse:
+      name: AgentToolResponseClientEvent
+      title: Agent Tool Response
+      summary: Result of agent tool execution
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/AgentToolResponsePayload"
+
+    MCPToolCall:
+      name: MCPToolCallClientEvent
+      title: MCP Tool Call
+      summary: Model Context Protocol tool call
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/MCPToolCallPayload"
+
+    MCPConnectionStatus:
+      name: MCPConnectionStatusClientEvent
+      title: MCP Connection Status
+      summary: Status of MCP service connections
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/MCPConnectionStatusPayload"
+
+    VADScore:
+      name: VADScoreClientEvent
+      title: VAD Score
+      summary: Voice Activity Detection score
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/VADScorePayload"
+
+    Ping:
+      name: PingEvent
+      title: Ping
+      summary: Keepalive ping from server
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/PingPayload"
+
+  schemas:
+    AudioFormat:
+      type: string
+      enum:
+        - pcm_8000
+        - pcm_16000
+        - pcm_22050
+        - pcm_24000
+        - pcm_44100
+        - pcm_48000
+        - ulaw_8000
+      description: Audio encoding format
+
+    MCPToolCallBase:
+      type: object
+      required: [service_id, tool_call_id, tool_name, parameters, timestamp]
+      additionalProperties: false
+      properties:
+        service_id:
+          type: string
+          description: ID of the MCP service
+        tool_call_id:
+          type: string
+          description: Unique identifier for this tool call
+        tool_name:
+          type: string
+          description: Name of the tool being called
+        tool_description:
+          type: string
+          nullable: true
+          description: Optional description of the tool
+        parameters:
+          type: object
+          description: Parameters passed to the tool
+        timestamp:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp of the tool call
+
+    MCPToolCallLoading:
+      allOf:
+        - $ref: "#/components/schemas/MCPToolCallBase"
+        - type: object
+          required: [state]
+          additionalProperties: false
+          properties:
+            state:
+              type: string
+              const: loading
+              description: Tool call is being executed
+
+    MCPToolCallAwaitingApproval:
+      allOf:
+        - $ref: "#/components/schemas/MCPToolCallBase"
+        - type: object
+          required: [state, approval_timeout_secs]
+          additionalProperties: false
+          properties:
+            state:
+              type: string
+              const: awaiting_approval
+              description: Tool call requires user approval
+            approval_timeout_secs:
+              type: integer
+              default: 300
+              description: Timeout in seconds for user approval
+
+    MCPToolCallSuccess:
+      allOf:
+        - $ref: "#/components/schemas/MCPToolCallBase"
+        - type: object
+          required: [state, result]
+          additionalProperties: false
+          properties:
+            state:
+              type: string
+              const: success
+              description: Tool call completed successfully
+            result:
+              type: array
+              description: Array of content blocks returned by the tool
+              items:
+                type: object
+                description: ContentBlock from MCP
+
+    MCPToolCallFailure:
+      allOf:
+        - $ref: "#/components/schemas/MCPToolCallBase"
+        - type: object
+          required: [state, error_message]
+          additionalProperties: false
+          properties:
+            state:
+              type: string
+              const: failure
+              description: Tool call failed
+            error_message:
+              type: string
+              description: Error message describing the failure
+
+    # ===== CLIENT MESSAGE PAYLOADS =====
+
+    UserAudioPayload:
+      type: object
+      required: [user_audio_chunk]
+      properties:
+        user_audio_chunk:
+          type: string
+          description: Base64 encoded PCM or μ-law audio chunk
+          format: base64
+
+    PongPayload:
+      type: object
+      required: [type, event_id]
+      properties:
+        type:
+          type: string
+          const: pong
+        event_id:
+          type: integer
+          description: Echo of ping event_id
+
+    UserMessagePayload:
+      type: object
+      required: [type]
+      properties:
+        type:
+          type: string
+          const: user_message
+        text:
+          type: string
+          nullable: true
+          description: User's text message (null for text-only mode signal)
+
+    UserActivityPayload:
+      type: object
+      required: [type]
+      properties:
+        type:
+          type: string
+          const: user_activity
+
+    UserFeedbackPayload:
+      type: object
+      required: [event_id, score]
+      properties:
+        type:
+          type: string
+          const: feedback
+        event_id:
+          type: integer
+          description: ID of the event being given feedback on
+        score:
+          type: string
+          enum: [like, dislike]
+          description: User's feedback score (like or dislike)
+
+    ClientToolResultPayload:
+      type: object
+      required: [type, tool_call_id, result, is_error]
+      properties:
+        type:
+          type: string
+          const: client_tool_result
+        tool_call_id:
+          type: string
+        result:
+          type: string
+        is_error:
+          type: boolean
+
+    MCPToolApprovalResultPayload:
+      type: object
+      required: [type, tool_call_id, is_approved]
+      properties:
+        type:
+          type: string
+          const: mcp_tool_approval_result
+        tool_call_id:
+          type: string
+        is_approved:
+          type: boolean
+
+    ContextualUpdatePayload:
+      type: object
+      required: [type, text]
+      properties:
+        type:
+          type: string
+          const: contextual_update
+        text:
+          type: string
+
+    ConversationInitiationPayload:
+      type: object
+      required: [type]
+      properties:
+        type:
+          type: string
+          const: conversation_initiation_client_data
+        conversation_config_override:
+          type: object
+        custom_llm_extra_body:
+          type: object
+          description: Additional parameters passed to the LLM provider
+        dynamic_variables:
+          type: object
+          description: Dynamic variables available in the conversation context
+
+    # ===== SERVER MESSAGE PAYLOADS =====
+
+    AudioPayload:
+      type: object
+      required: [audio_event, type]
+      properties:
+        type:
+          type: string
+          const: audio
+        audio_event:
+          $ref: "#/components/schemas/AudioEventData"
+
+    UserTranscriptPayload:
+      type: object
+      required: [user_transcription_event, type]
+      properties:
+        type:
+          type: string
+          const: user_transcript
+        user_transcription_event:
+          $ref: "#/components/schemas/UserTranscriptionData"
+
+    TentativeUserTranscriptPayload:
+      type: object
+      required: [tentative_user_transcription_event, type]
+      properties:
+        type:
+          type: string
+          const: tentative_user_transcript
+        tentative_user_transcription_event:
+          $ref: "#/components/schemas/TentativeTranscriptionData"
+
+    AgentResponsePayload:
+      type: object
+      required: [agent_response_event, type]
+      properties:
+        type:
+          type: string
+          const: agent_response
+        agent_response_event:
+          $ref: "#/components/schemas/AgentResponseData"
+
+    AgentResponseCorrectionPayload:
+      type: object
+      required: [agent_response_correction_event, type]
+      properties:
+        type:
+          type: string
+          const: agent_response_correction
+        agent_response_correction_event:
+          $ref: "#/components/schemas/AgentResponseCorrectionData"
+
+    InterruptionPayload:
+      type: object
+      required: [interruption_event, type]
+      properties:
+        type:
+          type: string
+          const: interruption
+        interruption_event:
+          $ref: "#/components/schemas/InterruptionData"
+
+    ConversationMetadataPayload:
+      type: object
+      required: [conversation_initiation_metadata_event, type]
+      properties:
+        type:
+          type: string
+          const: conversation_initiation_metadata
+        conversation_initiation_metadata_event:
+          $ref: "#/components/schemas/ConversationMetadataData"
+
+    ClientToolCallPayload:
+      type: object
+      required: [client_tool_call, type]
+      properties:
+        type:
+          type: string
+          const: client_tool_call
+        client_tool_call:
+          $ref: "#/components/schemas/ClientToolCallData"
+
+    AgentToolResponsePayload:
+      type: object
+      required: [agent_tool_response, type]
+      properties:
+        type:
+          type: string
+          const: agent_tool_response
+        agent_tool_response:
+          $ref: "#/components/schemas/AgentToolResponseData"
+
+    MCPToolCallPayload:
+      type: object
+      required: [mcp_tool_call, type]
+      properties:
+        type:
+          type: string
+          const: mcp_tool_call
+        mcp_tool_call:
+          type: object
+          description: MCP tool call data (polymorphic based on state)
+          oneOf:
+            - $ref: "#/components/schemas/MCPToolCallLoading"
+            - $ref: "#/components/schemas/MCPToolCallAwaitingApproval"
+            - $ref: "#/components/schemas/MCPToolCallSuccess"
+            - $ref: "#/components/schemas/MCPToolCallFailure"
+
+    MCPConnectionStatusPayload:
+      type: object
+      required: [mcp_connection_status, type]
+      properties:
+        type:
+          type: string
+          const: mcp_connection_status
+        mcp_connection_status:
+          $ref: "#/components/schemas/MCPConnectionStatusData"
+
+    VADScorePayload:
+      type: object
+      required: [vad_score_event, type]
+      properties:
+        type:
+          type: string
+          const: vad_score
+        vad_score_event:
+          $ref: "#/components/schemas/VADScoreData"
+
+    PingPayload:
+      type: object
+      required: [ping_event, type]
+      properties:
+        type:
+          type: string
+          const: ping
+        ping_event:
+          $ref: "#/components/schemas/PingData"
+
+    # ===== NAMED SCHEMAS FOR EVENT DATA =====
+
+    AudioEventData:
+      type: object
+      required: [audio_base_64, event_id]
+      properties:
+        audio_base_64:
+          type: string
+          format: base64
+        event_id:
+          type: integer
+
+    UserTranscriptionData:
+      type: object
+      required: [user_transcript]
+      properties:
+        user_transcript:
+          type: string
+
+    TentativeTranscriptionData:
+      type: object
+      required: [user_transcript, event_id]
+      properties:
+        user_transcript:
+          type: string
+        event_id:
+          type: integer
+
+    AgentResponseData:
+      type: object
+      required: [agent_response]
+      properties:
+        agent_response:
+          type: string
+
+    AgentResponseCorrectionData:
+      type: object
+      required: [original_agent_response, corrected_agent_response]
+      properties:
+        original_agent_response:
+          type: string
+        corrected_agent_response:
+          type: string
+
+    InterruptionData:
+      type: object
+      required: [event_id]
+      properties:
+        event_id:
+          type: integer
+
+    ConversationMetadataData:
+      type: object
+      required:
+        [conversation_id, agent_output_audio_format, user_input_audio_format]
+      properties:
+        conversation_id:
+          type: string
+        agent_output_audio_format:
+          $ref: "#/components/schemas/AudioFormat"
+        user_input_audio_format:
+          $ref: "#/components/schemas/AudioFormat"
+
+    ClientToolCallData:
+      type: object
+      required: [tool_name, tool_call_id, parameters]
+      properties:
+        tool_name:
+          type: string
+        tool_call_id:
+          type: string
+        parameters:
+          type: object
+
+    AgentToolResponseData:
+      type: object
+      required: [tool_name, tool_call_id, tool_type, is_error]
+      properties:
+        tool_name:
+          type: string
+          description: Name of the tool that was executed
+        tool_call_id:
+          type: string
+          description: Unique identifier for the tool call
+        tool_type:
+          type: string
+          description: Type of tool (client, system, or mcp)
+        is_error:
+          type: boolean
+          description: Whether the tool execution resulted in an error
+
+    MCPConnectionStatusData:
+      type: object
+      required: [integrations]
+      properties:
+        integrations:
+          type: array
+          description: List of MCP integration statuses
+          items:
+            $ref: "#/components/schemas/MCPIntegrationStatus"
+
+    MCPIntegrationStatus:
+      type: object
+      required: [integration_id, integration_type, is_connected, tool_count]
+      properties:
+        integration_id:
+          type: string
+          description: Unique identifier for the integration
+        integration_type:
+          type: string
+          enum: [mcp_server, mcp_integration]
+          description: Type of MCP integration
+        is_connected:
+          type: boolean
+          description: Whether the integration is currently connected
+        tool_count:
+          type: integer
+          default: 0
+          description: Number of tools available from this integration
+
+    VADScoreData:
+      type: object
+      required: [vad_score]
+      properties:
+        vad_score:
+          type: number
+          minimum: 0
+          maximum: 1
+
+    PingData:
+      type: object
+      required: [event_id]
+      properties:
+        event_id:
+          type: integer
+        ping_ms:
+          type: integer
+          nullable: true
+          description: Estimated round-trip time in milliseconds

@@ -1,7 +1,8 @@
 {
-  "name": "agents",
+  "name": "elevenlabs",
   "private": true,
   "scripts": {
+    "generate": "turbo run generate --filter=@elevenlabs/types",
     "build": "turbo run build",
     "dev": "turbo run dev",
     "lint": "turbo run lint",

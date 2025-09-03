@@ -16,6 +16,11 @@
     "dev": {
       "cache": false,
       "persistent": true
+    },
+    "generate": {
+      "inputs": ["schemas/**/*.yaml", "schemas/**/*.yml"],
+      "outputs": ["generated/**"],
+      "cache": true
     }
   }
 }

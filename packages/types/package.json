@@ -1,0 +1,39 @@
+{
+  "name": "@elevenlabs/types",
+  "version": "0.0.1",
+  "private": true,
+  "description": "AsyncAPI contracts and generated TypeScript types for ElevenLabs agent communication",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "generated"
+  ],
+  "scripts": {
+    "generate": "asyncapi generate models typescript ./schemas/agent.asyncapi.yaml -o ./generated/types --tsModelType interface && ls ./generated/types/*.ts | xargs -n1 basename | sed 's/.ts$//' | awk '{print \"export * from \\\"./\" $0 \"\\\";\"}' > ./generated/types/index.ts",
+    "build": "pnpm generate && tsc",
+    "dev": "pnpm generate",
+    "clean": "rm -rf dist generated/types",
+    "check-types": "tsc --noEmit",
+    "lint": "eslint . --max-warnings 0"
+  },
+  "devDependencies": {
+    "@asyncapi/cli": "^2.17.0",
+    "@asyncapi/modelina": "^4.4.3",
+    "@asyncapi/parser": "^3.4.0",
+    "@elevenlabs/eslint-config": "workspace:*",
+    "@elevenlabs/typescript-config": "workspace:*",
+    "eslint": "^9.20.0",
+    "typescript": "^5.9.2"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./types": {
+      "import": "./generated/types/index.js",
+      "types": "./generated/types/index.d.ts"
+    }
+  }
+}
