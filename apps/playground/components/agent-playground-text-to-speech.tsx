@@ -1,9 +1,16 @@
 "use client";
 
-import { ConversationBar } from "@/components/conversation-bar";
 import { EmptyState } from "@/components/empty-state";
 import { Icons } from "@/components/icons";
-import {   PromptInput,
+import { useChat } from '@elevenlabs/react';
+import {
+  Conversation,
+  ConversationContent,
+  ConversationScrollButton,
+} from '@elevenlabs/ui/components/ai-elements/conversation';
+import { Message, MessageContent } from '@elevenlabs/ui/components/ai-elements/message';
+import {
+  PromptInput,
   PromptInputButton,
   PromptInputModelSelect,
   PromptInputModelSelectContent,
@@ -12,22 +19,18 @@ import {   PromptInput,
   PromptInputModelSelectValue,
   PromptInputSubmit,
   PromptInputTextarea,
-  PromptInputTools,
-  PromptInputToolbar } from "@elevenlabs/ui/components/ai-elements/prompt-input";
-  import { GlobeIcon, MicIcon } from 'lucide-react';
-  import { useState } from 'react';
-  import { useChat } from '@elevenlabs/react';
-  import {
-    Conversation,
-    ConversationContent,
-    ConversationScrollButton,
-  } from '@elevenlabs/ui/components/ai-elements/conversation';
-  import { Message, MessageContent } from '@elevenlabs/ui/components/ai-elements/message';
-  import { Response } from '@elevenlabs/ui/components/ai-elements/response';
+  PromptInputToolbar,
+  PromptInputTools
+} from "@elevenlabs/ui/components/ai-elements/prompt-input";
+import { Response } from '@elevenlabs/ui/components/ai-elements/response';
+import { GlobeIcon, MicIcon } from 'lucide-react';
+import { useState } from 'react';
+
   const models = [
     { id: 'gpt-4o', name: 'GPT-4o' },
     { id: 'claude-opus-4-20250514', name: 'Claude 4 Opus' },
   ];
+
 export const AgentPlaygroundTextToSpeech = () => {
   const [text, setText] = useState<string>('');
   const [model, setModel] = useState<string>(models[0].id);
@@ -52,7 +55,7 @@ export const AgentPlaygroundTextToSpeech = () => {
         <div className="@container/main flex flex-1 flex-col gap-2 overflow-auto p-4">
           {messages.length === 0 ? (
             <EmptyState
-              message="Audio will be here"
+              message="Audio will appear here"
               icon={Icons.textToSpeech}
               className="flex-1"
             />
