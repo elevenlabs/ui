@@ -15,7 +15,7 @@ export function SiteHeaderLogo({ siteName }: SiteHeaderLogoProps) {
       <Link href="/" className="flex items-center gap-2 font-medium">
         <Icons.elevenlabs className="size-22" />
         <Separator orientation="vertical" className="h-4" />
-        <span>Agents</span>
+        <span>Agents SDK</span>
         <span className="sr-only">{siteName}</span>
       </Link>
     </div>

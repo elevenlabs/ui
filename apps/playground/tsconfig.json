@@ -3,16 +3,32 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"],
-      "@elevenlabs/ui/*": ["../../packages/ui/src/*"],
-      "@elevenlabs/typescript-config/*": ["../../packages/typescript-config/*"],
-      "react": ["./node_modules/@types/react"]
+      "@/*": [
+        "./*"
+      ],
+      "@elevenlabs/ui/*": [
+        "../../packages/ui/src/*"
+      ],
+      "@elevenlabs/typescript-config/*": [
+        "../../packages/typescript-config/*"
+      ],
+      "react": [
+        "./node_modules/@types/react"
+      ]
     },
     "plugins": [
       {
         "name": "next"
       }
-    ]
+    ],
+    "target": "ES2017",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "incremental": true,
+    "resolveJsonModule": true
   },
   "include": [
     "next-env.d.ts",
@@ -21,5 +37,7 @@
     "**/*.tsx",
     ".next/types/**/*.ts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules"
+  ]
 }

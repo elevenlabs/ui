@@ -22,6 +22,17 @@ const data = {
       url: "/playground/agents",
       icon: <Icons.orb className="text-foreground" />,
     },
+    {
+      title: "Text to Speech",
+      url: "/playground/text-to-speech",
+      icon: <Icons.textToSpeech className="text-foreground" />,
+    },
+    
+    {
+      title: "Speech to Text",
+      url: "/playground/speech-to-text",
+      icon: <Icons.speechToText className="text-foreground" />,
+    },
   ],
   navClouds: [
     {
