@@ -11,10 +11,7 @@ export const siteConfig = {
     {
       href: "/playground",
       label: "Playground",
-    },
-    {
-      href: "/docs",
-      label: "Docs",
+      includeSubPaths: true,
     },
   ],
 };

@@ -11,17 +11,13 @@ export function MainNav({
   className,
   ...props
 }: React.ComponentProps<"nav"> & {
-  items: { href: string; label: string }[];
+  items: { href: string; label: string; includeSubPaths?: boolean }[];
 }) {
   const pathname = usePathname();
 
-  const isActive = (href: string) => {
-    // Check pathname immediately for initial render
-    if (href === "/playground") {
-      return pathname === "/playground" || pathname.startsWith("/playground/");
-    }
-    if (href === "/docs") {
-      return pathname === "/docs" || pathname.startsWith("/docs/");
+  const isActive = (href: string, includeSubPaths?: boolean) => {
+    if (includeSubPaths) {
+      return pathname === href || pathname.startsWith(`${href}/`);
     }
     return pathname === href;
   };
@@ -29,7 +25,7 @@ export function MainNav({
   return (
     <nav className={cn("items-center gap-0.5", className)} {...props}>
       {items.map((item) => {
-        const active = isActive(item.href);
+        const active = isActive(item.href, item.includeSubPaths);
         return (
           <Button
             key={item.href}
