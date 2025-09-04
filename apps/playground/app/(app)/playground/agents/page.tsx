@@ -1,11 +1,10 @@
-import { Metadata } from "next";
-import { PlaygroundSidebar } from "@/components/playground-sidebar";
-import { SidebarInset } from "@elevenlabs/ui/components/sidebar";
+import { AgentPlaygroundConversation } from "@/components/agent-playground-conversation";
+import { AgentPlaygroundWrapper } from "@/components/agent-playground-wrapper";
 import { PageHeader } from "@/components/page-header";
-import { Button } from "@elevenlabs/ui/components/button";
-import { SectionCards } from "@/components/section-cards";
+import { ViewLogsButton } from "@/components/view-logs-button";
+import { Metadata } from "next";
 
-const title = "Explore";
+const title = "Agents";
 const description =
   "Explore a curated gallery of voice and audio experiences powered by ElevenLabs. Discover what developers and teams are shipping today.";
 
@@ -36,43 +35,20 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function PlaygroundPage() {
+export default function PlaygroundPage() {
   return (
-    <>
-      <PlaygroundSidebar variant="inset" />
-      <SidebarInset>
+    <div className="relative flex flex-col h-[calc(100vh-var(--header-height))]">
+      <div className="flex flex-col flex-1 bg-background md:rounded-xl md:overflow-hidden md:mb-2">
         <PageHeader>
           <h1 className="text-base font-medium">Agents</h1>
           <div className="ml-auto flex items-center gap-2">
-            <Button
-              variant="ghost"
-              asChild
-              size="sm"
-              className="hidden sm:flex"
-            >
-              <a
-                href="https://github.com/shadcn-ui/ui/tree/main/apps/v4/app/(examples)/dashboard"
-                rel="noopener noreferrer"
-                target="_blank"
-                className="dark:text-foreground"
-              >
-                GitHub
-              </a>
-            </Button>
+            <ViewLogsButton />
           </div>
         </PageHeader>
-        <div className="flex flex-1 flex-col overflow-hidden">
-          <div className="@container/main flex flex-1 flex-col gap-2 overflow-auto">
-            <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-              <SectionCards />
-              {/* <div className="px-4 lg:px-6">
-              <ChartAreaInteractive />
-            </div>
-            <DataTable data={data} /> */}
-            </div>
-          </div>
-        </div>
-      </SidebarInset>
-    </>
+        <AgentPlaygroundWrapper>
+          <AgentPlaygroundConversation />
+        </AgentPlaygroundWrapper>
+      </div>
+    </div>
   );
 }

@@ -5,7 +5,7 @@ import { Slot } from "@radix-ui/react-slot";
 import { cva, VariantProps } from "class-variance-authority";
 import { PanelLeftIcon } from "lucide-react";
 
-import { useIsMobile } from "@/hooks/use-mobile";
+import { useIsMobile } from "@elevenlabs/ui/hooks/use-mobile";
 import { cn } from "@elevenlabs/ui/lib/utils";
 import { Button } from "@elevenlabs/ui/components/button";
 import { Input } from "@elevenlabs/ui/components/input";
@@ -157,11 +157,13 @@ function Sidebar({
   collapsible = "offcanvas",
   className,
   children,
+  widthVar = "--sidebar-width",
   ...props
 }: React.ComponentProps<"div"> & {
   side?: "left" | "right";
   variant?: "sidebar" | "floating" | "inset";
   collapsible?: "offcanvas" | "icon" | "none";
+  widthVar?: string;
 }) {
   const { isMobile, state, openMobile, setOpenMobile } = useSidebar();
 
@@ -170,7 +172,7 @@ function Sidebar({
       <div
         data-slot="sidebar"
         className={cn(
-          "bg-sidebar text-sidebar-foreground flex h-full w-(--sidebar-width) flex-col",
+          `bg-sidebar text-sidebar-foreground flex h-full w-(${widthVar}) flex-col`,
           className
         )}
         {...props}

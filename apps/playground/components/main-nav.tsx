@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@elevenlabs/ui/components/button";
@@ -15,14 +14,9 @@ export function MainNav({
   items: { href: string; label: string }[];
 }) {
   const pathname = usePathname();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   const isActive = (href: string) => {
-    if (!mounted) return false;
+    // Check pathname immediately for initial render
     if (href === "/playground") {
       return pathname === "/playground" || pathname.startsWith("/playground/");
     }
