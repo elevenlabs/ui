@@ -13,11 +13,7 @@ import * as React from "react";
 
 import { NavPlayground } from "@/components/nav-playground";
 import { NavSecondary } from "@/components/nav-secondary";
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarHeader,
-} from "@elevenlabs/ui/components/sidebar";
+import { Sidebar, SidebarContent } from "@elevenlabs/ui/components/sidebar";
 
 const data = {
   navMain: [

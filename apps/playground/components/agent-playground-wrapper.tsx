@@ -1,6 +1,6 @@
 "use client";
 
-import { usePlaygroundSidebar } from "@/app/(app)/playground/layout";
+import { usePlaygroundSidebar } from "@/hooks/use-playground-sidebar";
 import { AgentPlaygroundSidebar } from "@/components/agent-playground-sidebar";
 import { cn } from "@elevenlabs/ui/lib/utils";
 import { useIsMobile } from "@elevenlabs/ui/hooks/use-mobile";

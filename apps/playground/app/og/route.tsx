@@ -45,9 +45,11 @@ export async function GET(request: Request) {
   return new ImageResponse(
     (
       <div
+        /* eslint-disable react/no-unknown-property */
         tw="flex h-full w-full bg-black text-white"
         style={{ fontFamily: "Geist Sans" }}
       >
+        {/* eslint-disable react/no-unknown-property */}
         <div tw="flex border absolute border-stone-700 border-dashed inset-y-0 left-16 w-[1px]" />
         <div tw="flex border absolute border-stone-700 border-dashed inset-y-0 right-16 w-[1px]" />
         <div tw="flex border absolute border-stone-700 inset-x-0 h-[1px] top-16" />
@@ -86,6 +88,7 @@ export async function GET(request: Request) {
             {description}
           </div>
         </div>
+        {/* eslint-enable react/no-unknown-property */}
       </div>
     ),
     {

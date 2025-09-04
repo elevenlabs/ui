@@ -1,21 +1,16 @@
 "use client";
 
-import * as React from "react";
-import { useRouter } from "next/navigation";
 import { type DialogProps } from "@elevenlabs/ui/components/dialog";
 import { IconArrowRight } from "@tabler/icons-react";
-import { CornerDownLeftIcon, GalleryVerticalEnd } from "lucide-react";
+import { CornerDownLeftIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
+import * as React from "react";
 
-import { cn } from "@/lib/utils";
+import { copyToClipboardWithMeta } from "@/components/copy-button";
 import { useConfig } from "@/hooks/use-config";
 import { useIsMac } from "@/hooks/use-is-mac";
 import { useMutationObserver } from "@/hooks/use-mutation-observer";
-import { copyToClipboardWithMeta } from "@/components/copy-button";
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@elevenlabs/ui/components/avatar";
+import { cn } from "@/lib/utils";
 import { Button } from "@elevenlabs/ui/components/button";
 import {
   Command,

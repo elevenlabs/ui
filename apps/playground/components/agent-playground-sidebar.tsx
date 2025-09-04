@@ -3,7 +3,6 @@
 import { Terminal } from "lucide-react";
 import * as React from "react";
 
-import { usePlaygroundSidebar } from "@/app/(app)/playground/layout";
 import { EmptyState } from "@/components/empty-state";
 import { cn } from "@/lib/utils";
 import {
@@ -36,8 +35,6 @@ const data: { logs: LogGroup[] } = {
 export function AgentPlaygroundSidebar({
   ...props
 }: React.ComponentProps<typeof Sidebar>) {
-  const { toggle } = usePlaygroundSidebar();
-
   return (
     <Sidebar
       collapsible="none"

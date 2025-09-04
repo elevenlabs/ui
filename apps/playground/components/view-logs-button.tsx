@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@elevenlabs/ui/components/button";
-import { usePlaygroundSidebar } from "@/app/(app)/playground/layout";
+import { usePlaygroundSidebar } from "@/hooks/use-playground-sidebar";
 import { IconLogs } from "@tabler/icons-react";
 export function ViewLogsButton() {
   const { toggle, isOpen } = usePlaygroundSidebar();
