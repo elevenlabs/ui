@@ -1,0 +1,46 @@
+/* Block styles for marketing website feel */
+.block-el {
+  content-visibility: auto;
+  contain-intrinsic-size: 10px 500px;
+}
+
+.block-el + .block-el {
+  @apply mt-20 md:mt-[100px] lg:mt-[140px];
+}
+
+/* Smooth reveal animation */
+.block-in-view {
+  animation: fade-in 0.6s ease-out;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Typography adjustments for marketing feel */
+.block-el-developer-toolkit h3 {
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+/* Border colors for light/dark mode */
+.border-default {
+  @apply border-[rgba(0,0,0,0.1)] dark:border-[rgba(255,255,255,0.1)];
+}
+
+/* Text colors for overlay effect */
+.text-overlay-darker {
+  @apply text-foreground/90;
+}
+
+.text-overlay-darker-plus-2 {
+  @apply text-foreground/60;
+}

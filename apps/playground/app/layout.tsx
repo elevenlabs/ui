@@ -11,6 +11,7 @@ import { ThemeProvider } from '@/components/theme-provider';
 import { Toaster } from '@elevenlabs/ui/components/sonner';
 
 import '@elevenlabs/ui/styles/globals.css';
+import '@/styles/blocks.css';
 
 export const metadata: Metadata = {
   title: {

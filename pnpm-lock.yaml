@@ -90,6 +90,9 @@ importers:
       '@hookform/resolvers':
         specifier: ^3.10.0
         version: 3.10.0(react-hook-form@7.62.0(react@19.1.1))
+      '@rive-app/react-canvas':
+        specifier: ^4.23.3
+        version: 4.23.3(react@19.1.1)
       '@tabler/icons-react':
         specifier: ^3.34.1
         version: 3.34.1(react@19.1.1)
@@ -3856,6 +3859,14 @@ packages:
     peerDependencies:
       react: '>=17'
       react-dom: '>=17'
+
+  '@rive-app/canvas@2.31.5':
+    resolution: {integrity: sha512-rVWN1RHM7nflvmJCOhrN/Q3d2Sasf8/J8EhArxB7/rFvby/96AREwkXlmKAMxgar8PzN9hyCKyanY5TmPAPd9A==}
+
+  '@rive-app/react-canvas@4.23.3':
+    resolution: {integrity: sha512-qvy896Joes4w1yTMo8BPdF2JfPKZ5rawGy0JEX2UXFM5VjMHc/NG46BIbdnBrk9ozX/HQ2uRWTp4hNkybJzgSQ==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0
 
   '@rollup/plugin-babel@5.3.1':
     resolution: {integrity: sha512-WFfdLWU/xVWKeRQnKmIAQULUI7Il0gZnBIH/ZFO069wYIfPu+8zrfp/KMW0atmELoRDq8FbiP3VCss9MhCut7Q==}
@@ -15672,6 +15683,13 @@ snapshots:
     transitivePeerDependencies:
       - '@types/react'
       - immer
+
+  '@rive-app/canvas@2.31.5': {}
+
+  '@rive-app/react-canvas@4.23.3(react@19.1.1)':
+    dependencies:
+      '@rive-app/canvas': 2.31.5
+      react: 19.1.1
 
   '@rollup/plugin-babel@5.3.1(@babel/core@7.12.9)(rollup@2.79.2)':
     dependencies:
