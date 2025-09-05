@@ -1,4 +1,3 @@
-
 interface TentativeTranscriptionData {
   userTranscript: string;
   eventId: number;

@@ -1,10 +1,10 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 @source "../../../apps/**/*.{ts,tsx}";
 @source "../../../components/**/*.{ts,tsx}";
 @source "../**/*.{ts,tsx}";
 @source "../node_modules/streamdown/dist/index.js";
 
-@import "tw-animate-css";
+@import 'tw-animate-css';
 @custom-variant dark (&:is(.dark *));
 
 @custom-variant fixed (&:is(.layout-fixed *));
@@ -57,6 +57,29 @@
   --color-code-number: var(--code-number);
   --color-selection: var(--selection);
   --color-selection-foreground: var(--selection-foreground);
+
+  /* Marquee animations */
+  --animate-marquee: marquee var(--duration) linear infinite;
+  --animate-marquee-vertical: marquee-vertical var(--duration) linear infinite;
+}
+
+/* Marquee keyframes */
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(calc(-100% - var(--gap)));
+  }
+}
+
+@keyframes marquee-vertical {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(calc(-100% - var(--gap)));
+  }
 }
 
 :root {
@@ -252,7 +275,7 @@
     position: relative;
     @apply -mx-1 md:-mx-1;
 
-    &:has([data-rehype-pretty-code-title]) [data-slot="copy-button"] {
+    &:has([data-rehype-pretty-code-title]) [data-slot='copy-button'] {
       top: calc(var(--spacing) * 1.5) !important;
     }
   }
@@ -326,7 +349,7 @@
       left: 0;
       width: 2px;
       height: 100%;
-      content: "";
+      content: '';
       background-color: color-mix(
         in oklab,
         var(--muted-foreground) 50%,
@@ -341,5 +364,42 @@
     padding-block: 0.1rem;
     font-family: var(--font-mono);
     font-size: 0.8rem;
+  }
+}
+
+/* app/globals.css */
+@layer utilities {
+  .mask-center-soft {
+    /* stronger blur in the center; fades out toward edges */
+    mask-image: radial-gradient(70% 55% at 50% 42%, #000 45%, transparent 100%);
+    -webkit-mask-image: radial-gradient(
+      70% 55% at 50% 42%,
+      #000 45%,
+      transparent 100%
+    );
+  }
+  .mask-edges-soft {
+    /* catches the extreme edges for a gentle vignette */
+    mask-image: radial-gradient(85% 75% at 50% 45%, transparent 60%, #000 100%);
+    -webkit-mask-image: radial-gradient(
+      85% 75% at 50% 45%,
+      transparent 60%,
+      #000 100%
+    );
+  }
+
+  @keyframes drift {
+    0% {
+      transform: translate3d(0, 0, 0) scale(1);
+    }
+    50% {
+      transform: translate3d(0, -2px, 0) scale(1.01);
+    }
+    100% {
+      transform: translate3d(0, 0, 0) scale(1);
+    }
+  }
+  .animate-drift {
+    animation: drift 10s ease-in-out infinite;
   }
 }

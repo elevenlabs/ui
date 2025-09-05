@@ -1,4 +1,3 @@
-
 interface ContextualUpdatePayload {
   reservedType: 'contextual_update';
   reservedText: string;

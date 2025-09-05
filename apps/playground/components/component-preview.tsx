@@ -1,38 +1,38 @@
-import Image from "next/image"
+import Image from 'next/image';
 
-import { ComponentPreviewTabs } from "@/components/component-preview-tabs"
-import { ComponentSource } from "@/components/component-source"
-import { Index } from "@/registry/__index__"
+import { ComponentPreviewTabs } from '@/components/component-preview-tabs';
+import { ComponentSource } from '@/components/component-source';
+import { Index } from '@/registry/__index__';
 
 export function ComponentPreview({
   name,
   type,
   className,
-  align = "center",
+  align = 'center',
   hideCode = false,
   ...props
-}: React.ComponentProps<"div"> & {
-  name: string
-  align?: "center" | "start" | "end"
-  description?: string
-  hideCode?: boolean
-  type?: "block" | "component" | "example"
+}: React.ComponentProps<'div'> & {
+  name: string;
+  align?: 'center' | 'start' | 'end';
+  description?: string;
+  hideCode?: boolean;
+  type?: 'block' | 'component' | 'example';
 }) {
-  const Component = Index[name]?.component
+  const Component = Index[name]?.component;
 
   if (!Component) {
     return (
       <p className="text-muted-foreground text-sm">
-        Component{" "}
+        Component{' '}
         <code className="bg-muted relative rounded px-[0.3rem] py-[0.2rem] font-mono text-sm">
           {name}
-        </code>{" "}
+        </code>{' '}
         not found in registry.
       </p>
-    )
+    );
   }
 
-  if (type === "block") {
+  if (type === 'block') {
     return (
       <div className="relative aspect-[4/2.5] w-full overflow-hidden rounded-md border md:-mx-1">
         <Image
@@ -53,7 +53,7 @@ export function ComponentPreview({
           <iframe src={`/view/${name}`} className="size-full" />
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -65,5 +65,5 @@ export function ComponentPreview({
       source={<ComponentSource name={name} collapsible={false} />}
       {...props}
     />
-  )
+  );
 }

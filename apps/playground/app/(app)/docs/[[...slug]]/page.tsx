@@ -1,43 +1,43 @@
-import Link from "next/link"
-import { notFound } from "next/navigation"
-import { mdxComponents } from "@/mdx-components"
+import Link from 'next/link';
+import { notFound } from 'next/navigation';
+import { mdxComponents } from '@/mdx-components';
 import {
   IconArrowLeft,
   IconArrowRight,
   IconArrowUpRight,
-} from "@tabler/icons-react"
-import { findNeighbour } from "fumadocs-core/server"
+} from '@tabler/icons-react';
+import { findNeighbour } from 'fumadocs-core/server';
 
-import { source } from "@/lib/source"
-import { absoluteUrl } from "@/lib/utils"
-import { DocsCopyPage } from "@/components/docs-copy-page"
-import { DocsTableOfContents } from "@/components/docs-toc"
-import { OpenInV0Cta } from "@/components/open-in-v0-cta"
-import { Badge } from "@elevenlabs/ui/components/badge"
-import { Button } from "@elevenlabs/ui/components/button"
+import { source } from '@/lib/source';
+import { absoluteUrl } from '@/lib/utils';
+import { DocsCopyPage } from '@/components/docs-copy-page';
+import { DocsTableOfContents } from '@/components/docs-toc';
+import { OpenInV0Cta } from '@/components/open-in-v0-cta';
+import { Badge } from '@elevenlabs/ui/components/badge';
+import { Button } from '@elevenlabs/ui/components/button';
 
-export const revalidate = false
-export const dynamic = "force-static"
-export const dynamicParams = false
+export const revalidate = false;
+export const dynamic = 'force-static';
+export const dynamicParams = false;
 
 export function generateStaticParams() {
-  return source.generateParams()
+  return source.generateParams();
 }
 
 export async function generateMetadata(props: {
-  params: Promise<{ slug?: string[] }>
+  params: Promise<{ slug?: string[] }>;
 }) {
-  const params = await props.params
-  const page = source.getPage(params.slug)
+  const params = await props.params;
+  const page = source.getPage(params.slug);
 
   if (!page) {
-    notFound()
+    notFound();
   }
 
-  const doc = page.data
+  const doc = page.data;
 
   if (!doc.title || !doc.description) {
-    notFound()
+    notFound();
   }
 
   return {
@@ -46,48 +46,48 @@ export async function generateMetadata(props: {
     openGraph: {
       title: doc.title,
       description: doc.description,
-      type: "article",
+      type: 'article',
       url: absoluteUrl(page.url),
       images: [
         {
           url: `/og?title=${encodeURIComponent(
-            doc.title
+            doc.title,
           )}&description=${encodeURIComponent(doc.description)}`,
         },
       ],
     },
     twitter: {
-      card: "summary_large_image",
+      card: 'summary_large_image',
       title: doc.title,
       description: doc.description,
       images: [
         {
           url: `/og?title=${encodeURIComponent(
-            doc.title
+            doc.title,
           )}&description=${encodeURIComponent(doc.description)}`,
         },
       ],
-      creator: "@shadcn",
+      creator: '@shadcn',
     },
-  }
+  };
 }
 
 export default async function Page(props: {
-  params: Promise<{ slug?: string[] }>
+  params: Promise<{ slug?: string[] }>;
 }) {
-  const params = await props.params
-  const page = source.getPage(params.slug)
+  const params = await props.params;
+  const page = source.getPage(params.slug);
   if (!page) {
-    notFound()
+    notFound();
   }
 
-  const doc = page.data
+  const doc = page.data;
   // @ts-expect-error - revisit fumadocs types.
-  const MDX = doc.body
-  const neighbours = await findNeighbour(source.pageTree, page.url)
+  const MDX = doc.body;
+  const neighbours = await findNeighbour(source.pageTree, page.url);
 
   // @ts-expect-error - revisit fumadocs types.
-  const links = doc.links
+  const links = doc.links;
 
   return (
     <div
@@ -208,5 +208,5 @@ export default async function Page(props: {
         </div>
       </div>
     </div>
-  )
+  );
 }

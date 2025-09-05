@@ -1,21 +1,21 @@
-"use client"
+'use client';
 
-import Link from "next/link"
-import { usePathname } from "next/navigation"
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
-import { getColors } from "@/lib/colors"
-import { cn } from "@/lib/utils"
-import { ScrollArea, ScrollBar } from "@elevenlabs/ui/components/scroll-area"
+import { getColors } from '@/lib/colors';
+import { cn } from '@/lib/utils';
+import { ScrollArea, ScrollBar } from '@elevenlabs/ui/components/scroll-area';
 
 export function ColorsNav({
   className,
   ...props
-}: React.ComponentProps<"div">) {
-  const pathname = usePathname()
-  const colors = getColors()
+}: React.ComponentProps<'div'>) {
+  const pathname = usePathname();
+  const colors = getColors();
 
   return (
-    <div className={cn("flex items-center", className)} {...props}>
+    <div className={cn('flex items-center', className)} {...props}>
       <ScrollArea className="max-w-full">
         <div className="flex items-center">
           {colors.map((colorPalette, index) => (
@@ -24,10 +24,10 @@ export function ColorsNav({
               key={colorPalette.name}
               data-active={
                 pathname?.startsWith(colorPalette.name) ||
-                (index === 0 && pathname === "/colors")
+                (index === 0 && pathname === '/colors')
               }
               className={cn(
-                "text-muted-foreground hover:text-primary data-[active=true]:text-primary flex h-7 items-center justify-center px-4 text-center text-base font-medium capitalize transition-colors"
+                'text-muted-foreground hover:text-primary data-[active=true]:text-primary flex h-7 items-center justify-center px-4 text-center text-base font-medium capitalize transition-colors',
               )}
             >
               {colorPalette.name}
@@ -37,5 +37,5 @@ export function ColorsNav({
         <ScrollBar orientation="horizontal" className="invisible" />
       </ScrollArea>
     </div>
-  )
+  );
 }

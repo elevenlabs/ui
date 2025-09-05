@@ -1,6 +1,6 @@
-import { type ColorPalette } from "@/lib/colors"
-import { Color } from "@/components/color"
-import { ColorFormatSelector } from "@/components/color-format-selector"
+import { type ColorPalette } from '@/lib/colors';
+import { Color } from '@/components/color';
+import { ColorFormatSelector } from '@/components/color-format-selector';
 
 export function ColorPalette({ colorPalette }: { colorPalette: ColorPalette }) {
   return (
@@ -15,10 +15,10 @@ export function ColorPalette({ colorPalette }: { colorPalette: ColorPalette }) {
         />
       </div>
       <div className="flex flex-col gap-4 py-4 sm:flex-row sm:gap-2">
-        {colorPalette.colors.map((color) => (
+        {colorPalette.colors.map(color => (
           <Color key={color.hex} color={color} />
         ))}
       </div>
     </div>
-  )
+  );
 }

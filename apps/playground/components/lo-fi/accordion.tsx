@@ -1,6 +1,6 @@
-import { ChevronDownIcon, ChevronUpIcon } from "lucide-react"
+import { ChevronDownIcon, ChevronUpIcon } from 'lucide-react';
 
-import { Atom } from "@/components/lo-fi/atom"
+import { Atom } from '@/components/lo-fi/atom';
 
 export function AccordionLoFi() {
   return (
@@ -28,5 +28,5 @@ export function AccordionLoFi() {
         </div>
       </div>
     </div>
-  )
+  );
 }

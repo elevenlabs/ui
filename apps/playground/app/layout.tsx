@@ -17,7 +17,9 @@ export const metadata: Metadata = {
     default: siteConfig.name,
     template: `%s | ${siteConfig.name}`,
   },
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'),
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
+  ),
   description: siteConfig.description,
   keywords: [
     'ElevenLabs',
@@ -56,7 +58,9 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: siteConfig.name,
     description: siteConfig.description,
-    images: [`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/opengraph-image.png`],
+    images: [
+      `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/opengraph-image.png`,
+    ],
     creator: '@elevenlabs',
   },
   icons: {

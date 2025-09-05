@@ -1,6 +1,6 @@
-import { CircleAlertIcon } from "lucide-react"
+import { CircleAlertIcon } from 'lucide-react';
 
-import { Atom } from "@/components/lo-fi/atom"
+import { Atom } from '@/components/lo-fi/atom';
 
 export function AlertLoFi() {
   return (
@@ -14,5 +14,5 @@ export function AlertLoFi() {
         <Atom shade="200" className="h-2 w-full" />
       </div>
     </Atom>
-  )
+  );
 }

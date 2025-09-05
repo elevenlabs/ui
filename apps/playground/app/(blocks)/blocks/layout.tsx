@@ -1,20 +1,20 @@
-import { Metadata } from "next"
-import Link from "next/link"
+import { Metadata } from 'next';
+import Link from 'next/link';
 
-import { Announcement } from "@/components/announcement"
-import { BlocksNav } from "@/components/blocks-nav"
+import { Announcement } from '@/components/announcement';
+import { BlocksNav } from '@/components/blocks-nav';
 import {
   PageActions,
   PageHeader,
   PageHeaderDescription,
   PageHeaderHeading,
-} from "@/components/page-actions"
-import { PageNav } from "@/components/page-nav"
-import { Button } from "@elevenlabs/ui/components/button"
+} from '@/components/page-actions';
+import { PageNav } from '@/components/page-nav';
+import { Button } from '@elevenlabs/ui/components/button';
 
-const title = "Building Blocks for Audio"
+const title = 'Building Blocks for Audio';
 const description =
-  "Clean, modern building blocks. Copy and paste into your apps. Works with all React frameworks. Open Source. Free forever."
+  'Clean, modern building blocks. Copy and paste into your apps. Works with all React frameworks. Open Source. Free forever.';
 
 export const metadata: Metadata = {
   title,
@@ -23,27 +23,27 @@ export const metadata: Metadata = {
     images: [
       {
         url: `/og?title=${encodeURIComponent(
-          title
+          title,
         )}&description=${encodeURIComponent(description)}`,
       },
     ],
   },
   twitter: {
-    card: "summary_large_image",
+    card: 'summary_large_image',
     images: [
       {
         url: `/og?title=${encodeURIComponent(
-          title
+          title,
         )}&description=${encodeURIComponent(description)}`,
       },
     ],
   },
-}
+};
 
 export default function BlocksLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
     <>
@@ -75,5 +75,5 @@ export default function BlocksLayout({
         <div className="container">{children}</div>
       </div>
     </>
-  )
+  );
 }

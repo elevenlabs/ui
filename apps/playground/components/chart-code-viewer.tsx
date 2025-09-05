@@ -1,12 +1,12 @@
-import * as React from "react"
+import * as React from 'react';
 
-import { cn } from "@/lib/utils"
-import { useMediaQuery } from "@/hooks/use-media-query"
-import { ChartCopyButton } from "@/components/chart-copy-button"
-import { Chart } from "@/components/chart-display"
-import { getIconForLanguageExtension } from "@/components/icons"
-import { OpenInV0Button } from "@/components/open-in-v0-button"
-import { Button } from "@elevenlabs/ui/components/button"
+import { cn } from '@/lib/utils';
+import { useMediaQuery } from '@/hooks/use-media-query';
+import { ChartCopyButton } from '@/components/chart-copy-button';
+import { Chart } from '@/components/chart-display';
+import { getIconForLanguageExtension } from '@/components/icons';
+import { OpenInV0Button } from '@/components/open-in-v0-button';
+import { Button } from '@elevenlabs/ui/components/button';
 import {
   Drawer,
   DrawerContent,
@@ -14,7 +14,7 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
-} from "@elevenlabs/ui/components/drawer"
+} from '@elevenlabs/ui/components/drawer';
 import {
   Sheet,
   SheetContent,
@@ -22,16 +22,16 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@elevenlabs/ui/components/sheet"
+} from '@elevenlabs/ui/components/sheet';
 
 export function ChartCodeViewer({
   chart,
   className,
   children,
 }: {
-  chart: Chart
-} & React.ComponentProps<"div">) {
-  const isDesktop = useMediaQuery("(min-width: 768px)")
+  chart: Chart;
+} & React.ComponentProps<'div'>) {
+  const isDesktop = useMediaQuery('(min-width: 768px)');
 
   const button = (
     <Button
@@ -41,7 +41,7 @@ export function ChartCodeViewer({
     >
       View Code
     </Button>
-  )
+  );
 
   const content = (
     <div className="flex min-h-0 flex-1 flex-col gap-0">
@@ -57,13 +57,13 @@ export function ChartCodeViewer({
             className="text-foreground [&>svg]:text-foreground flex h-12 shrink-0 items-center gap-2 border-b py-2 pr-2 pl-4 [&>svg]:size-4 [&>svg]:opacity-70"
             data-language="tsx"
           >
-            {getIconForLanguageExtension("tsx")}
+            {getIconForLanguageExtension('tsx')}
             {chart.name}
             <div className="ml-auto flex items-center gap-2">
               <ChartCopyButton
                 event="copy_chart_code"
                 name={chart.name}
-                code={chart.files?.[0]?.content ?? ""}
+                code={chart.files?.[0]?.content ?? ''}
               />
               <OpenInV0Button name={chart.name} className="rounded-sm" />
             </div>
@@ -77,7 +77,7 @@ export function ChartCodeViewer({
         </figure>
       </div>
     </div>
-  )
+  );
 
   if (!isDesktop) {
     return (
@@ -85,8 +85,8 @@ export function ChartCodeViewer({
         <DrawerTrigger asChild>{button}</DrawerTrigger>
         <DrawerContent
           className={cn(
-            "flex max-h-[80vh] flex-col sm:max-h-[90vh] [&>div.bg-muted]:shrink-0",
-            className
+            'flex max-h-[80vh] flex-col sm:max-h-[90vh] [&>div.bg-muted]:shrink-0',
+            className,
           )}
         >
           <DrawerHeader className="sr-only">
@@ -96,7 +96,7 @@ export function ChartCodeViewer({
           <div className="flex h-full flex-col overflow-auto">{content}</div>
         </DrawerContent>
       </Drawer>
-    )
+    );
   }
 
   return (
@@ -105,8 +105,8 @@ export function ChartCodeViewer({
       <SheetContent
         side="right"
         className={cn(
-          "flex flex-col gap-0 border-l-0 p-0 sm:max-w-sm md:w-[700px] md:max-w-[700px] dark:border-l",
-          className
+          'flex flex-col gap-0 border-l-0 p-0 sm:max-w-sm md:w-[700px] md:max-w-[700px] dark:border-l',
+          className,
         )}
       >
         <SheetHeader className="sr-only">
@@ -116,5 +116,5 @@ export function ChartCodeViewer({
         {content}
       </SheetContent>
     </Sheet>
-  )
+  );
 }

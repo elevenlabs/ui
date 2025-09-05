@@ -1,4 +1,3 @@
-
 interface VadScoreData {
   vadScore: number;
   additionalProperties?: Map<string, any>;

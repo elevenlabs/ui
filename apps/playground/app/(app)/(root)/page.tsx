@@ -1,5 +1,4 @@
 import { Metadata } from 'next';
-import Image from 'next/image';
 import Link from 'next/link';
 
 import { ExamplesNav } from '@/components/examples-nav';
@@ -10,7 +9,6 @@ import {
   PageHeaderHeading,
 } from '@/components/page-actions';
 import { PageNav } from '@/components/page-nav';
-import { ThemeSelector } from '@/components/theme-selector';
 import { Button } from '@elevenlabs/ui/components/button';
 import { SkiperMarquee } from '@elevenlabs/ui/components/ui/skiper-marquee';
 
@@ -56,7 +54,9 @@ export default function IndexPage() {
         </div>
 
         <PageHeader>
-          <PageHeaderHeading className="max-w-4xl">{title}</PageHeaderHeading>
+          <PageHeaderHeading className="max-w-4xl opacity-90">
+            {title}
+          </PageHeaderHeading>
           <PageHeaderDescription>{description}</PageHeaderDescription>
           <PageActions>
             <Button asChild size="sm">
@@ -70,28 +70,13 @@ export default function IndexPage() {
       </div>
       <PageNav className="hidden md:flex">
         <ExamplesNav className="[&>a:first-child]:text-primary flex-1 overflow-hidden" />
-        <ThemeSelector className="mr-4 hidden md:flex" />
       </PageNav>
+
       <div className="container-wrapper section-soft flex-1 pb-6">
+        <div className="container"></div>
+
         <div className="container overflow-hidden">
-          <section className="border-border/50 -mx-4 w-[160vw] overflow-hidden rounded-lg border md:hidden md:w-[150vw]">
-            <Image
-              src="/r/styles/new-york-v4/dashboard-01-light.png"
-              width={1400}
-              height={875}
-              alt="Dashboard"
-              className="block dark:hidden"
-              priority
-            />
-            <Image
-              src="/r/styles/new-york-v4/dashboard-01-dark.png"
-              width={1400}
-              height={875}
-              alt="Dashboard"
-              className="hidden dark:block"
-              priority
-            />
-          </section>
+          <section className="border-border/50 -mx-4 w-[160vw] overflow-hidden rounded-lg border md:hidden md:w-[150vw]"></section>
         </div>
       </div>
     </div>

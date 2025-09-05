@@ -1,35 +1,35 @@
-import * as React from "react"
-import { registryItemSchema } from "shadcn/schema"
-import { z } from "zod"
+import * as React from 'react';
+import { registryItemSchema } from 'shadcn/schema';
+import { z } from 'zod';
 
-import { highlightCode } from "@/lib/highlight-code"
-import { getRegistryItem } from "@/lib/registry"
-import { cn } from "@/lib/utils"
-import { ChartToolbar } from "@/components/chart-toolbar"
+import { highlightCode } from '@/lib/highlight-code';
+import { getRegistryItem } from '@/lib/registry';
+import { cn } from '@/lib/utils';
+import { ChartToolbar } from '@/components/chart-toolbar';
 
 export type Chart = z.infer<typeof registryItemSchema> & {
-  highlightedCode: string
-}
+  highlightedCode: string;
+};
 
 export async function ChartDisplay({
   name,
   children,
   className,
-}: { name: string } & React.ComponentProps<"div">) {
-  const chart = await getCachedRegistryItem(name)
+}: { name: string } & React.ComponentProps<'div'>) {
+  const chart = await getCachedRegistryItem(name);
   const highlightedCode = await getChartHighlightedCode(
-    chart?.files?.[0]?.content ?? ""
-  )
+    chart?.files?.[0]?.content ?? '',
+  );
 
   if (!chart || !highlightedCode) {
-    return null
+    return null;
   }
 
   return (
     <div
       className={cn(
-        "themes-wrapper group relative flex flex-col overflow-hidden rounded-xl border transition-all duration-200 ease-in-out hover:z-30",
-        className
+        'themes-wrapper group relative flex flex-col overflow-hidden rounded-xl border transition-all duration-200 ease-in-out hover:z-30',
+        className,
       )}
     >
       <ChartToolbar
@@ -42,13 +42,13 @@ export async function ChartDisplay({
         {children}
       </div>
     </div>
-  )
+  );
 }
 
 const getCachedRegistryItem = React.cache(async (name: string) => {
-  return await getRegistryItem(name)
-})
+  return await getRegistryItem(name);
+});
 
 const getChartHighlightedCode = React.cache(async (content: string) => {
-  return await highlightCode(content)
-})
+  return await highlightCode(content);
+});

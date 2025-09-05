@@ -1,12 +1,12 @@
-import { cn } from "@/lib/utils"
-import { Button } from "@elevenlabs/ui/components/button"
+import { cn } from '@/lib/utils';
+import { Button } from '@elevenlabs/ui/components/button';
 
-export function OpenInV0Cta({ className }: React.ComponentProps<"div">) {
+export function OpenInV0Cta({ className }: React.ComponentProps<'div'>) {
   return (
     <div
       className={cn(
-        "group bg-surface text-surface-foreground relative flex flex-col gap-2 rounded-lg p-6 text-sm",
-        className
+        'group bg-surface text-surface-foreground relative flex flex-col gap-2 rounded-lg p-6 text-sm',
+        className,
       )}
     >
       <div className="text-base leading-tight font-semibold text-balance group-hover:underline">
@@ -31,5 +31,5 @@ export function OpenInV0Cta({ className }: React.ComponentProps<"div">) {
         <span className="sr-only">Deploy to Vercel</span>
       </a>
     </div>
-  )
+  );
 }

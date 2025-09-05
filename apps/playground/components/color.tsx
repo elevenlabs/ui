@@ -1,16 +1,16 @@
-"use client"
+'use client';
 
-import { Check, Clipboard } from "lucide-react"
-import { toast } from "sonner"
+import { Check, Clipboard } from 'lucide-react';
+import { toast } from 'sonner';
 
-import { type Color } from "@/lib/colors"
-import { trackEvent } from "@/lib/events"
-import { useColors } from "@/hooks/use-colors"
-import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard"
+import { type Color } from '@/lib/colors';
+import { trackEvent } from '@/lib/events';
+import { useColors } from '@/hooks/use-colors';
+import { useCopyToClipboard } from '@/hooks/use-copy-to-clipboard';
 
 export function Color({ color }: { color: Color }) {
-  const { format, setLastCopied, lastCopied } = useColors()
-  const { isCopied, copyToClipboard } = useCopyToClipboard({ timeout: 0 })
+  const { format, setLastCopied, lastCopied } = useColors();
+  const { isCopied, copyToClipboard } = useCopyToClipboard({ timeout: 0 });
 
   return (
     <button
@@ -19,22 +19,22 @@ export function Color({ color }: { color: Color }) {
       data-last-copied={lastCopied === color[format]}
       style={
         {
-          "--bg": `${color.oklch}`,
-          "--text": color.foreground,
+          '--bg': `${color.oklch}`,
+          '--text': color.foreground,
         } as React.CSSProperties
       }
       onClick={() => {
-        copyToClipboard(color[format])
+        copyToClipboard(color[format]);
         trackEvent({
-          name: "copy_color",
+          name: 'copy_color',
           properties: {
             color: color.id,
             value: color[format],
             format,
           },
-        })
-        setLastCopied(color[format])
-        toast.success(`Copied ${color[format]} to clipboard.`)
+        });
+        setLastCopied(color[format]);
+        toast.success(`Copied ${color[format]} to clipboard.`);
       }}
     >
       {isCopied ? (
@@ -52,5 +52,5 @@ export function Color({ color }: { color: Color }) {
         </span>
       </div>
     </button>
-  )
+  );
 }

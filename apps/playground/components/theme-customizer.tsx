@@ -1,14 +1,14 @@
-"use client"
+'use client';
 
-import * as React from "react"
-import template from "lodash/template"
-import { CheckIcon, ClipboardIcon } from "lucide-react"
+import * as React from 'react';
+import template from 'lodash/template';
+import { CheckIcon, ClipboardIcon } from 'lucide-react';
 
-import { cn } from "@/lib/utils"
-import { useThemeConfig } from "@/components/active-theme"
-import { copyToClipboardWithMeta } from "@/components/copy-button"
-import { Icons } from "@/components/icons"
-import { Button } from "@elevenlabs/ui/components/button"
+import { cn } from '@/lib/utils';
+import { useThemeConfig } from '@/components/active-theme';
+import { copyToClipboardWithMeta } from '@/components/copy-button';
+import { Icons } from '@/components/icons';
+import { Button } from '@elevenlabs/ui/components/button';
 import {
   Dialog,
   DialogContent,
@@ -16,7 +16,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@elevenlabs/ui/components/dialog"
+} from '@elevenlabs/ui/components/dialog';
 import {
   Drawer,
   DrawerContent,
@@ -24,9 +24,9 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
-} from "@elevenlabs/ui/components/drawer"
-import { Label } from "@elevenlabs/ui/components/label"
-import { ScrollArea, ScrollBar } from "@elevenlabs/ui/components/scroll-area"
+} from '@elevenlabs/ui/components/drawer';
+import { Label } from '@elevenlabs/ui/components/label';
+import { ScrollArea, ScrollBar } from '@elevenlabs/ui/components/scroll-area';
 import {
   Select,
   SelectContent,
@@ -34,36 +34,36 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@elevenlabs/ui/components/select"
+} from '@elevenlabs/ui/components/select';
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "@elevenlabs/ui/components/tabs"
+} from '@elevenlabs/ui/components/tabs';
 import {
   BaseColor,
   baseColors,
   baseColorsOKLCH,
-} from "@/registry/registry-base-colors"
+} from '@/registry/registry-base-colors';
 
 interface BaseColorOKLCH {
-  light: Record<string, string>
-  dark: Record<string, string>
+  light: Record<string, string>;
+  dark: Record<string, string>;
 }
 
 const THEMES = baseColors.filter(
-  (theme) => !["slate", "stone", "gray", "zinc"].includes(theme.name)
-)
+  theme => !['slate', 'stone', 'gray', 'zinc'].includes(theme.name),
+);
 
-export function ThemeCustomizer({ className }: React.ComponentProps<"div">) {
-  const { activeTheme = "neutral", setActiveTheme } = useThemeConfig()
+export function ThemeCustomizer({ className }: React.ComponentProps<'div'>) {
+  const { activeTheme = 'neutral', setActiveTheme } = useThemeConfig();
 
   return (
-    <div className={cn("flex w-full items-center gap-2", className)}>
+    <div className={cn('flex w-full items-center gap-2', className)}>
       <ScrollArea className="hidden max-w-[96%] md:max-w-[600px] lg:flex lg:max-w-none">
         <div className="flex items-center">
-          {THEMES.map((theme) => (
+          {THEMES.map(theme => (
             <Button
               key={theme.name}
               variant="link"
@@ -72,7 +72,7 @@ export function ThemeCustomizer({ className }: React.ComponentProps<"div">) {
               className="text-muted-foreground hover:text-primary data-[active=true]:text-primary flex h-7 cursor-pointer items-center justify-center px-4 text-center text-base font-medium capitalize transition-colors hover:no-underline"
               onClick={() => setActiveTheme(theme.name)}
             >
-              {theme.name === "neutral" ? "Default" : theme.name}
+              {theme.name === 'neutral' ? 'Default' : theme.name}
             </Button>
           ))}
         </div>
@@ -83,7 +83,7 @@ export function ThemeCustomizer({ className }: React.ComponentProps<"div">) {
           Theme
         </Label>
         <Select
-          value={activeTheme === "default" ? "neutral" : activeTheme}
+          value={activeTheme === 'default' ? 'neutral' : activeTheme}
           onValueChange={setActiveTheme}
         >
           <SelectTrigger
@@ -96,7 +96,7 @@ export function ThemeCustomizer({ className }: React.ComponentProps<"div">) {
           </SelectTrigger>
           <SelectContent align="end">
             <SelectGroup>
-              {THEMES.map((theme) => (
+              {THEMES.map(theme => (
                 <SelectItem
                   key={theme.name}
                   value={theme.name}
@@ -111,28 +111,28 @@ export function ThemeCustomizer({ className }: React.ComponentProps<"div">) {
       </div>
       <CopyCodeButton variant="secondary" size="sm" className="ml-auto" />
     </div>
-  )
+  );
 }
 
 export function CopyCodeButton({
   className,
   ...props
 }: React.ComponentProps<typeof Button>) {
-  let { activeTheme: activeThemeName = "neutral" } = useThemeConfig()
-  activeThemeName = activeThemeName === "default" ? "neutral" : activeThemeName
+  let { activeTheme: activeThemeName = 'neutral' } = useThemeConfig();
+  activeThemeName = activeThemeName === 'default' ? 'neutral' : activeThemeName;
 
   return (
     <>
       <Drawer>
         <DrawerTrigger asChild>
-          <Button className={cn("sm:hidden", className)} {...props}>
+          <Button className={cn('sm:hidden', className)} {...props}>
             Copy Code
           </Button>
         </DrawerTrigger>
         <DrawerContent className="h-auto">
           <DrawerHeader>
             <DrawerTitle className="capitalize">
-              {activeThemeName === "neutral" ? "Default" : activeThemeName}
+              {activeThemeName === 'neutral' ? 'Default' : activeThemeName}
             </DrawerTitle>
             <DrawerDescription>
               Copy and paste the following code into your CSS file.
@@ -143,14 +143,14 @@ export function CopyCodeButton({
       </Drawer>
       <Dialog>
         <DialogTrigger asChild>
-          <Button className={cn("hidden sm:flex", className)} {...props}>
+          <Button className={cn('hidden sm:flex', className)} {...props}>
             Copy Code
           </Button>
         </DialogTrigger>
         <DialogContent className="outline-none md:max-w-3xl">
           <DialogHeader>
             <DialogTitle className="capitalize">
-              {activeThemeName === "neutral" ? "Default" : activeThemeName}
+              {activeThemeName === 'neutral' ? 'Default' : activeThemeName}
             </DialogTitle>
             <DialogDescription>
               Copy and paste the following code into your CSS file.
@@ -160,28 +160,28 @@ export function CopyCodeButton({
         </DialogContent>
       </Dialog>
     </>
-  )
+  );
 }
 
 function CustomizerCode({ themeName }: { themeName: string }) {
-  const [hasCopied, setHasCopied] = React.useState(false)
-  const [tailwindVersion, setTailwindVersion] = React.useState("v4")
+  const [hasCopied, setHasCopied] = React.useState(false);
+  const [tailwindVersion, setTailwindVersion] = React.useState('v4');
   const activeTheme = React.useMemo(
-    () => baseColors.find((theme) => theme.name === themeName),
-    [themeName]
-  )
+    () => baseColors.find(theme => theme.name === themeName),
+    [themeName],
+  );
   const activeThemeOKLCH = React.useMemo(
     () => baseColorsOKLCH[themeName as keyof typeof baseColorsOKLCH],
-    [themeName]
-  )
+    [themeName],
+  );
 
   React.useEffect(() => {
     if (hasCopied) {
       setTimeout(() => {
-        setHasCopied(false)
-      }, 2000)
+        setHasCopied(false);
+      }, 2000);
     }
-  }, [hasCopied])
+  }, [hasCopied]);
 
   return (
     <>
@@ -216,18 +216,18 @@ function CustomizerCode({ themeName }: { themeName: string }) {
                 className="bg-code text-code-foreground absolute top-3 right-2 z-10 size-7 shadow-none hover:opacity-100 focus-visible:opacity-100"
                 onClick={() => {
                   copyToClipboardWithMeta(
-                    tailwindVersion === "v3"
+                    tailwindVersion === 'v3'
                       ? getThemeCode(activeTheme, 0.65)
                       : getThemeCodeOKLCH(activeThemeOKLCH, 0.65),
                     {
-                      name: "copy_theme_code",
+                      name: 'copy_theme_code',
                       properties: {
                         theme: themeName,
                         radius: 0.5,
                       },
-                    }
-                  )
-                  setHasCopied(true)
+                    },
+                  );
+                  setHasCopied(true);
                 }}
               >
                 <span className="sr-only">Copy</span>
@@ -296,18 +296,18 @@ function CustomizerCode({ themeName }: { themeName: string }) {
                 className="bg-code text-code-foreground absolute top-3 right-2 z-10 size-7 shadow-none hover:opacity-100 focus-visible:opacity-100"
                 onClick={() => {
                   copyToClipboardWithMeta(
-                    tailwindVersion === "v3"
+                    tailwindVersion === 'v3'
                       ? getThemeCode(activeTheme, 0.65)
                       : getThemeCodeOKLCH(activeThemeOKLCH, 0.65),
                     {
-                      name: "copy_theme_code",
+                      name: 'copy_theme_code',
                       properties: {
                         theme: themeName,
                         radius: 0.5,
                       },
-                    }
-                  )
-                  setHasCopied(true)
+                    },
+                  );
+                  setHasCopied(true);
                 }}
               >
                 <span className="sr-only">Copy</span>
@@ -321,25 +321,25 @@ function CustomizerCode({ themeName }: { themeName: string }) {
                   &nbsp;&nbsp;:root &#123;
                 </span>
                 <span data-line className="line">
-                  &nbsp;&nbsp;&nbsp;&nbsp;--background:{" "}
-                  {activeTheme?.cssVars.light["background"]};
+                  &nbsp;&nbsp;&nbsp;&nbsp;--background:{' '}
+                  {activeTheme?.cssVars.light['background']};
                 </span>
                 <span data-line className="line">
-                  &nbsp;&nbsp;&nbsp;&nbsp;--foreground:{" "}
-                  {activeTheme?.cssVars.light["foreground"]};
+                  &nbsp;&nbsp;&nbsp;&nbsp;--foreground:{' '}
+                  {activeTheme?.cssVars.light['foreground']};
                 </span>
                 {[
-                  "card",
-                  "popover",
-                  "primary",
-                  "secondary",
-                  "muted",
-                  "accent",
-                  "destructive",
-                ].map((prefix) => (
+                  'card',
+                  'popover',
+                  'primary',
+                  'secondary',
+                  'muted',
+                  'accent',
+                  'destructive',
+                ].map(prefix => (
                   <React.Fragment key={prefix}>
                     <span data-line className="line">
-                      &nbsp;&nbsp;&nbsp;&nbsp;--{prefix}:{" "}
+                      &nbsp;&nbsp;&nbsp;&nbsp;--{prefix}:{' '}
                       {
                         activeTheme?.cssVars.light[
                           prefix as keyof typeof activeTheme.cssVars.light
@@ -348,7 +348,7 @@ function CustomizerCode({ themeName }: { themeName: string }) {
                       ;
                     </span>
                     <span data-line className="line">
-                      &nbsp;&nbsp;&nbsp;&nbsp;--{prefix}-foreground:{" "}
+                      &nbsp;&nbsp;&nbsp;&nbsp;--{prefix}-foreground:{' '}
                       {
                         activeTheme?.cssVars.light[
                           `${prefix}-foreground` as keyof typeof activeTheme.cssVars.light
@@ -359,25 +359,25 @@ function CustomizerCode({ themeName }: { themeName: string }) {
                   </React.Fragment>
                 ))}
                 <span data-line className="line">
-                  &nbsp;&nbsp;&nbsp;&nbsp;--border:{" "}
-                  {activeTheme?.cssVars.light["border"]};
+                  &nbsp;&nbsp;&nbsp;&nbsp;--border:{' '}
+                  {activeTheme?.cssVars.light['border']};
                 </span>
                 <span data-line className="line">
-                  &nbsp;&nbsp;&nbsp;&nbsp;--input:{" "}
-                  {activeTheme?.cssVars.light["input"]};
+                  &nbsp;&nbsp;&nbsp;&nbsp;--input:{' '}
+                  {activeTheme?.cssVars.light['input']};
                 </span>
                 <span data-line className="line">
-                  &nbsp;&nbsp;&nbsp;&nbsp;--ring:{" "}
-                  {activeTheme?.cssVars.light["ring"]};
+                  &nbsp;&nbsp;&nbsp;&nbsp;--ring:{' '}
+                  {activeTheme?.cssVars.light['ring']};
                 </span>
                 <span data-line className="line">
                   &nbsp;&nbsp;&nbsp;&nbsp;--radius: 0.5rem;
                 </span>
-                {["chart-1", "chart-2", "chart-3", "chart-4", "chart-5"].map(
-                  (prefix) => (
+                {['chart-1', 'chart-2', 'chart-3', 'chart-4', 'chart-5'].map(
+                  prefix => (
                     <React.Fragment key={prefix}>
                       <span data-line className="line">
-                        &nbsp;&nbsp;&nbsp;&nbsp;--{prefix}:{" "}
+                        &nbsp;&nbsp;&nbsp;&nbsp;--{prefix}:{' '}
                         {
                           activeTheme?.cssVars.light[
                             prefix as keyof typeof activeTheme.cssVars.light
@@ -386,7 +386,7 @@ function CustomizerCode({ themeName }: { themeName: string }) {
                         ;
                       </span>
                     </React.Fragment>
-                  )
+                  ),
                 )}
                 <span data-line className="line">
                   &nbsp;&nbsp;&#125;
@@ -398,25 +398,25 @@ function CustomizerCode({ themeName }: { themeName: string }) {
                   &nbsp;&nbsp;.dark &#123;
                 </span>
                 <span data-line className="line">
-                  &nbsp;&nbsp;&nbsp;&nbsp;--background:{" "}
-                  {activeTheme?.cssVars.dark["background"]};
+                  &nbsp;&nbsp;&nbsp;&nbsp;--background:{' '}
+                  {activeTheme?.cssVars.dark['background']};
                 </span>
                 <span data-line className="line">
-                  &nbsp;&nbsp;&nbsp;&nbsp;--foreground:{" "}
-                  {activeTheme?.cssVars.dark["foreground"]};
+                  &nbsp;&nbsp;&nbsp;&nbsp;--foreground:{' '}
+                  {activeTheme?.cssVars.dark['foreground']};
                 </span>
                 {[
-                  "card",
-                  "popover",
-                  "primary",
-                  "secondary",
-                  "muted",
-                  "accent",
-                  "destructive",
-                ].map((prefix) => (
+                  'card',
+                  'popover',
+                  'primary',
+                  'secondary',
+                  'muted',
+                  'accent',
+                  'destructive',
+                ].map(prefix => (
                   <React.Fragment key={prefix}>
                     <span data-line className="line">
-                      &nbsp;&nbsp;&nbsp;&nbsp;--{prefix}:{" "}
+                      &nbsp;&nbsp;&nbsp;&nbsp;--{prefix}:{' '}
                       {
                         activeTheme?.cssVars.dark[
                           prefix as keyof typeof activeTheme.cssVars.dark
@@ -425,7 +425,7 @@ function CustomizerCode({ themeName }: { themeName: string }) {
                       ;
                     </span>
                     <span data-line className="line">
-                      &nbsp;&nbsp;&nbsp;&nbsp;--{prefix}-foreground:{" "}
+                      &nbsp;&nbsp;&nbsp;&nbsp;--{prefix}-foreground:{' '}
                       {
                         activeTheme?.cssVars.dark[
                           `${prefix}-foreground` as keyof typeof activeTheme.cssVars.dark
@@ -436,22 +436,22 @@ function CustomizerCode({ themeName }: { themeName: string }) {
                   </React.Fragment>
                 ))}
                 <span data-line className="line">
-                  &nbsp;&nbsp;&nbsp;&nbsp;--border:{" "}
-                  {activeTheme?.cssVars.dark["border"]};
+                  &nbsp;&nbsp;&nbsp;&nbsp;--border:{' '}
+                  {activeTheme?.cssVars.dark['border']};
                 </span>
                 <span data-line className="line">
-                  &nbsp;&nbsp;&nbsp;&nbsp;--input:{" "}
-                  {activeTheme?.cssVars.dark["input"]};
+                  &nbsp;&nbsp;&nbsp;&nbsp;--input:{' '}
+                  {activeTheme?.cssVars.dark['input']};
                 </span>
                 <span data-line className="line">
-                  &nbsp;&nbsp;&nbsp;&nbsp;--ring:{" "}
-                  {activeTheme?.cssVars.dark["ring"]};
+                  &nbsp;&nbsp;&nbsp;&nbsp;--ring:{' '}
+                  {activeTheme?.cssVars.dark['ring']};
                 </span>
-                {["chart-1", "chart-2", "chart-3", "chart-4", "chart-5"].map(
-                  (prefix) => (
+                {['chart-1', 'chart-2', 'chart-3', 'chart-4', 'chart-5'].map(
+                  prefix => (
                     <React.Fragment key={prefix}>
                       <span data-line className="line">
-                        &nbsp;&nbsp;&nbsp;&nbsp;--{prefix}:{" "}
+                        &nbsp;&nbsp;&nbsp;&nbsp;--{prefix}:{' '}
                         {
                           activeTheme?.cssVars.dark[
                             prefix as keyof typeof activeTheme.cssVars.dark
@@ -460,7 +460,7 @@ function CustomizerCode({ themeName }: { themeName: string }) {
                         ;
                       </span>
                     </React.Fragment>
-                  )
+                  ),
                 )}
                 <span data-line className="line">
                   &nbsp;&nbsp;&#125;
@@ -474,39 +474,39 @@ function CustomizerCode({ themeName }: { themeName: string }) {
         </TabsContent>
       </Tabs>
     </>
-  )
+  );
 }
 
 function getThemeCodeOKLCH(theme: BaseColorOKLCH | undefined, radius: number) {
   if (!theme) {
-    return ""
+    return '';
   }
 
   const rootSection =
-    ":root {\n  --radius: " +
+    ':root {\n  --radius: ' +
     radius +
-    "rem;\n" +
+    'rem;\n' +
     Object.entries(theme.light)
-      .map((entry) => "  --" + entry[0] + ": " + entry[1] + ";")
-      .join("\n") +
-    "\n}\n\n.dark {\n" +
+      .map(entry => '  --' + entry[0] + ': ' + entry[1] + ';')
+      .join('\n') +
+    '\n}\n\n.dark {\n' +
     Object.entries(theme.dark)
-      .map((entry) => "  --" + entry[0] + ": " + entry[1] + ";")
-      .join("\n") +
-    "\n}\n"
+      .map(entry => '  --' + entry[0] + ': ' + entry[1] + ';')
+      .join('\n') +
+    '\n}\n';
 
-  return rootSection
+  return rootSection;
 }
 
 function getThemeCode(theme: BaseColor | undefined, radius: number) {
   if (!theme) {
-    return ""
+    return '';
   }
 
   return template(BASE_STYLES_WITH_VARIABLES)({
     colors: theme.cssVars,
     radius: radius.toString(),
-  })
+  });
 }
 
 const BASE_STYLES_WITH_VARIABLES = `
@@ -566,4 +566,4 @@ const BASE_STYLES_WITH_VARIABLES = `
     --chart-5: <%- colors.dark["chart-5"] %>;
   }
 }
-`
+`;

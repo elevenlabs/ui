@@ -1,4 +1,3 @@
-
 interface PingData {
   eventId: number;
   pingMs?: number;
