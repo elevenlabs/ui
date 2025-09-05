@@ -20,27 +20,5 @@ import ClientToolResultPayload from './ClientToolResultPayload';
 import McpToolApprovalResultPayload from './McpToolApprovalResultPayload';
 import ContextualUpdatePayload from './ContextualUpdatePayload';
 import ConversationInitiationPayload from './ConversationInitiationPayload';
-type AgentMessages =
-  | AudioPayload
-  | UserTranscriptPayload
-  | TentativeUserTranscriptPayload
-  | AgentResponsePayload
-  | AgentResponseCorrectionPayload
-  | InterruptionPayload
-  | ConversationMetadataPayload
-  | ClientToolCallPayload
-  | AgentToolResponsePayload
-  | McpToolCallPayload
-  | McpConnectionStatusPayload
-  | VadScorePayload
-  | PingPayload
-  | UserAudioPayload
-  | PongPayload
-  | UserMessagePayload
-  | UserActivityPayload
-  | UserFeedbackPayload
-  | ClientToolResultPayload
-  | McpToolApprovalResultPayload
-  | ContextualUpdatePayload
-  | ConversationInitiationPayload;
+type AgentMessages = AudioPayload | UserTranscriptPayload | TentativeUserTranscriptPayload | AgentResponsePayload | AgentResponseCorrectionPayload | InterruptionPayload | ConversationMetadataPayload | ClientToolCallPayload | AgentToolResponsePayload | McpToolCallPayload | McpConnectionStatusPayload | VadScorePayload | PingPayload | UserAudioPayload | PongPayload | UserMessagePayload | UserActivityPayload | UserFeedbackPayload | ClientToolResultPayload | McpToolApprovalResultPayload | ContextualUpdatePayload | ConversationInitiationPayload;
 export default AgentMessages;

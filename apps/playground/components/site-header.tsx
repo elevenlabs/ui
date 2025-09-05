@@ -1,9 +1,8 @@
-import { GitHubLink } from '@/components/github-link';
+import { ApiKeyManager } from '@/components/api-key-manager';
 import { MainNav } from '@/components/main-nav';
 import { MobileNav } from '@/components/mobile-nav';
 import { ModeSwitcher } from '@/components/mode-switcher';
 import { SiteHeaderLogo } from '@/components/site-header-logo';
-import { ApiKeyManager } from '@/components/api-key-manager';
 import { siteConfig } from '@/lib/config';
 import { source } from '@/lib/source';
 import { Separator } from '@elevenlabs/ui/components/separator';
@@ -23,8 +22,7 @@ export async function SiteHeader() {
           <SiteHeaderLogo siteName={siteConfig.name} />
 
           <div className="ml-auto flex items-center gap-2 md:flex-1 md:justify-end">
-            <MainNav items={siteConfig.navItems} className="hidden lg:flex" />
-            <GitHubLink />
+            <MainNav items={siteConfig.navItems} className="hidden md:flex" />
             <Separator orientation="vertical" />
             <ApiKeyManager />
             <ModeSwitcher />

@@ -1,3 +1,4 @@
+
 interface UserTranscriptionData {
   userTranscript: string;
   additionalProperties?: Map<string, any>;

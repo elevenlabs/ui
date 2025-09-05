@@ -1,3 +1,4 @@
+
 interface ConversationInitiationPayload {
   reservedType: 'conversation_initiation_client_data';
   conversationConfigOverride?: Map<string, any>;

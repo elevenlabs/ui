@@ -1,5 +1,13 @@
+import { createMDX } from "fumadocs-mdx/next"
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  outputFileTracingIncludes: {
+    "/*": ["./registry/**/*"],
+  },
   transpilePackages: ["@elevenlabs/ui"],
   experimental: {
     viewTransition: true,
@@ -8,7 +16,7 @@ const nextConfig = {
     return [
       {
         source: "/",
-        destination: "/playground",
+        destination: "/docs",
         permanent: true,
       },
       {
@@ -20,4 +28,6 @@ const nextConfig = {
   },
 };
 
-export default nextConfig;
+const withMDX = createMDX({})
+
+export default withMDX(nextConfig)

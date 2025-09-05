@@ -1,179 +1,122 @@
-'use client';
+"use client"
 
-import { CommandMenu } from '@/components/command-menu';
-import { siteConfig } from '@/lib/config';
-import {
-  IconCamera,
-  IconChartBar,
-  IconDashboard,
-  IconDatabase,
-  IconFileAi,
-  IconFileDescription,
-  IconFileWord,
-  IconFolder,
-  IconHelp,
-  IconListDetails,
-  IconReport,
-  IconSearch,
-  IconSettings,
-  IconUsers,
-} from '@tabler/icons-react';
-import * as React from 'react';
+import Link from "next/link"
+import { usePathname } from "next/navigation"
 
-import { NavSecondary } from '@/components/nav-secondary';
-import { NavUser } from '@/components/nav-user';
+import { showMcpDocs } from "@/lib/flags"
+import type { source } from "@/lib/source"
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
-  SidebarHeader,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from '@elevenlabs/ui/components/sidebar';
+} from "@elevenlabs/ui/components/sidebar"
 
-const data = {
-  user: {
-    name: 'shadcn',
-    email: 'm@example.com',
-    avatar: '/avatars/shadcn.jpg',
+const TOP_LEVEL_SECTIONS = [
+  { name: "Get Started", href: "/docs" },
+  {
+    name: "Components",
+    href: "/docs/components",
   },
-  navMain: [
-    {
-      title: 'Dashboard',
-      url: '#',
-      icon: IconDashboard,
-    },
-    {
-      title: 'Lifecycle',
-      url: '#',
-      icon: IconListDetails,
-    },
-    {
-      title: 'Analytics',
-      url: '#',
-      icon: IconChartBar,
-    },
-    {
-      title: 'Projects',
-      url: '#',
-      icon: IconFolder,
-    },
-    {
-      title: 'Team',
-      url: '#',
-      icon: IconUsers,
-    },
-  ],
-  navClouds: [
-    {
-      title: 'Capture',
-      icon: IconCamera,
-      isActive: true,
-      url: '#',
-      items: [
-        {
-          title: 'Active Proposals',
-          url: '#',
-        },
-        {
-          title: 'Archived',
-          url: '#',
-        },
-      ],
-    },
-    {
-      title: 'Proposal',
-      icon: IconFileDescription,
-      url: '#',
-      items: [
-        {
-          title: 'Active Proposals',
-          url: '#',
-        },
-        {
-          title: 'Archived',
-          url: '#',
-        },
-      ],
-    },
-    {
-      title: 'Prompts',
-      icon: IconFileAi,
-      url: '#',
-      items: [
-        {
-          title: 'Active Proposals',
-          url: '#',
-        },
-        {
-          title: 'Archived',
-          url: '#',
-        },
-      ],
-    },
-  ],
-  navSecondary: [
-    {
-      title: 'Settings',
-      url: '#',
-      icon: IconSettings,
-    },
-    {
-      title: 'Get Help',
-      url: '#',
-      icon: IconHelp,
-    },
-    {
-      title: 'Search',
-      url: '#',
-      icon: IconSearch,
-    },
-  ],
-  documents: [
-    {
-      name: 'Data Library',
-      url: '#',
-      icon: IconDatabase,
-    },
-    {
-      name: 'Reports',
-      url: '#',
-      icon: IconReport,
-    },
-    {
-      name: 'Word Assistant',
-      url: '#',
-      icon: IconFileWord,
-    },
-  ],
-};
+  {
+    name: "Registry",
+    href: "/docs/registry",
+  },
+  {
+    name: "MCP Server",
+    href: "/docs/mcp",
+  },
+]
+const EXCLUDED_SECTIONS = ["installation", "dark-mode"]
+const EXCLUDED_PAGES = ["/docs"]
 
 export function DocsSidebar({
+  tree,
   ...props
-}: React.ComponentProps<typeof Sidebar>) {
+}: React.ComponentProps<typeof Sidebar> & { tree: typeof source.pageTree }) {
+  const pathname = usePathname()
+
   return (
     <Sidebar collapsible="offcanvas" {...props}>
-      <SidebarHeader>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              asChild
-              className="data-[slot=sidebar-menu-button]:!p-1.5 hover:bg-transparent focus:bg-transparent active:bg-transparent data-[state=open]:bg-transparent"
-            >
-              <div className="hidden w-full md:flex">
-                <CommandMenu navItems={siteConfig.navItems} />
-              </div>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarHeader>
-      <SidebarContent>
-        <NavSecondary items={data.navSecondary} className="mt-auto" />
+      <SidebarContent className="overflow-y-auto">
+        <SidebarGroup>
+          <SidebarGroupLabel>Sections</SidebarGroupLabel>
+          <SidebarGroupContent className="flex flex-col gap-2">
+            <SidebarMenu>
+              {TOP_LEVEL_SECTIONS.map(({ name, href }) => {
+                if (!showMcpDocs && href.includes("/mcp")) {
+                  return null
+                }
+                const isActive =
+                  href === "/docs"
+                    ? pathname === href
+                    : pathname.startsWith(href)
+                
+                return (
+                  <SidebarMenuItem key={name}>
+                    <SidebarMenuButton
+                      tooltip={name}
+                      isActive={isActive}
+                      asChild
+                    >
+                      <Link href={href}>
+                        <span>{name}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                )
+              })}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+        {tree.children.map((item) => {
+          if (EXCLUDED_SECTIONS.includes(item.$id ?? "")) {
+            return null
+          }
+
+          return (
+            <SidebarGroup key={item.$id}>
+              <SidebarGroupLabel>{item.name}</SidebarGroupLabel>
+              <SidebarGroupContent className="flex flex-col gap-2">
+                {item.type === "folder" && (
+                  <SidebarMenu>
+                    {item.children.map((item) => {
+                      if (
+                        !showMcpDocs &&
+                        item.type === "page" &&
+                        item.url?.includes("/mcp")
+                      ) {
+                        return null
+                      }
+
+                      return (
+                        item.type === "page" &&
+                        !EXCLUDED_PAGES.includes(item.url) && (
+                          <SidebarMenuItem key={item.url}>
+                            <SidebarMenuButton
+                              tooltip={typeof item.name === 'string' ? item.name : undefined}
+                              isActive={item.url === pathname}
+                              asChild
+                            >
+                              <Link href={item.url}>
+                                <span>{item.name}</span>
+                              </Link>
+                            </SidebarMenuButton>
+                          </SidebarMenuItem>
+                        )
+                      )
+                    })}
+                  </SidebarMenu>
+                )}
+              </SidebarGroupContent>
+            </SidebarGroup>
+          )
+        })}
       </SidebarContent>
-      <SidebarFooter>
-        <NavUser user={data.user} />
-      </SidebarFooter>
     </Sidebar>
-  );
+  )
 }

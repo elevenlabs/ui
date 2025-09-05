@@ -1,3 +1,4 @@
+
 interface McpToolApprovalResultPayload {
   reservedType: 'mcp_tool_approval_result';
   toolCallId: string;
