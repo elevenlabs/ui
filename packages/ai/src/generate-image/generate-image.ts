@@ -1,4 +1,7 @@
-import { ImageModelV2, ImageModelV2ProviderMetadata } from '@elevenlabs/provider';
+import {
+  ImageModelV2,
+  ImageModelV2ProviderMetadata,
+} from '@elevenlabs/provider';
 import { ProviderOptions } from '@elevenlabs/provider-utils';
 import { NoImageGeneratedError } from '../error/no-image-generated-error';
 import {

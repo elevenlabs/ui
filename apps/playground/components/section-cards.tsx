@@ -1,6 +1,6 @@
-import { IconTrendingDown, IconTrendingUp } from "@tabler/icons-react"
+import { IconTrendingDown, IconTrendingUp } from '@tabler/icons-react';
 
-import { Badge } from "@elevenlabs/ui/components/badge"
+import { Badge } from '@elevenlabs/ui/components/badge';
 import {
   Card,
   CardAction,
@@ -8,7 +8,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@elevenlabs/ui/components/card"
+} from '@elevenlabs/ui/components/card';
 
 export function SectionCards() {
   return (
@@ -98,5 +98,5 @@ export function SectionCards() {
         </CardFooter>
       </Card>
     </div>
-  )
+  );
 }

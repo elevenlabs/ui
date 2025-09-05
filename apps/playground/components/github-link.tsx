@@ -1,8 +1,8 @@
-import Link from "next/link";
+import Link from 'next/link';
 
-import { siteConfig } from "@/lib/config";
-import { Icons } from "@/components/icons";
-import { Button } from "@elevenlabs/ui/components/button";
+import { siteConfig } from '@/lib/config';
+import { Icons } from '@/components/icons';
+import { Button } from '@elevenlabs/ui/components/button';
 
 export function GitHubLink() {
   return (

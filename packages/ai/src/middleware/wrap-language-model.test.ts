@@ -1,4 +1,7 @@
-import { LanguageModelV2, LanguageModelV2CallOptions } from '@elevenlabs/provider';
+import {
+  LanguageModelV2,
+  LanguageModelV2CallOptions,
+} from '@elevenlabs/provider';
 import { wrapLanguageModel } from '../middleware/wrap-language-model';
 import { MockLanguageModelV2 } from '../test/mock-language-model-v2';
 import { describe, it, expect, vi } from 'vitest';

@@ -6,6 +6,6 @@ export function combineHeaders(
       ...combinedHeaders,
       ...(currentHeaders ?? {}),
     }),
-    {}
+    {},
   ) as Record<string, string | undefined>;
 }

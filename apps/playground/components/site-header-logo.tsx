@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import Link from "next/link";
+import Link from 'next/link';
 
-import { Icons } from "@/components/icons";
-import { Separator } from "@elevenlabs/ui/components/separator";
+import { Icons } from '@/components/icons';
+import { Separator } from '@elevenlabs/ui/components/separator';
 
 interface SiteHeaderLogoProps {
   siteName: string;

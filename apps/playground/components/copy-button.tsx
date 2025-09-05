@@ -1,16 +1,16 @@
-"use client";
+'use client';
 
-import * as React from "react";
-import { CheckIcon, ClipboardIcon } from "lucide-react";
+import * as React from 'react';
+import { CheckIcon, ClipboardIcon } from 'lucide-react';
 
-import { Event, trackEvent } from "@/lib/events";
-import { cn } from "@/lib/utils";
-import { Button } from "@elevenlabs/ui/components/button";
+import { Event, trackEvent } from '@/lib/events';
+import { cn } from '@/lib/utils';
+import { Button } from '@elevenlabs/ui/components/button';
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@elevenlabs/ui/components/tooltip";
+} from '@elevenlabs/ui/components/tooltip';
 
 export function copyToClipboardWithMeta(value: string, event?: Event) {
   navigator.clipboard.writeText(value);
@@ -22,13 +22,13 @@ export function copyToClipboardWithMeta(value: string, event?: Event) {
 export function CopyButton({
   value,
   className,
-  variant = "ghost",
+  variant = 'ghost',
   event,
   ...props
 }: React.ComponentProps<typeof Button> & {
   value: string;
   src?: string;
-  event?: Event["name"];
+  event?: Event['name'];
 }) {
   const [hasCopied, setHasCopied] = React.useState(false);
 
@@ -46,8 +46,8 @@ export function CopyButton({
           size="icon"
           variant={variant}
           className={cn(
-            "bg-code absolute top-3 right-2 z-10 size-7 hover:opacity-100 focus-visible:opacity-100",
-            className
+            'bg-code absolute top-3 right-2 z-10 size-7 hover:opacity-100 focus-visible:opacity-100',
+            className,
           )}
           onClick={() => {
             copyToClipboardWithMeta(
@@ -59,7 +59,7 @@ export function CopyButton({
                       code: value,
                     },
                   }
-                : undefined
+                : undefined,
             );
             setHasCopied(true);
           }}
@@ -70,7 +70,7 @@ export function CopyButton({
         </Button>
       </TooltipTrigger>
       <TooltipContent>
-        {hasCopied ? "Copied" : "Copy to Clipboard"}
+        {hasCopied ? 'Copied' : 'Copy to Clipboard'}
       </TooltipContent>
     </Tooltip>
   );

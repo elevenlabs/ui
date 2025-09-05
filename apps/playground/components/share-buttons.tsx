@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import { IconBrandLinkedin, IconBrandX } from "@tabler/icons-react";
+import { IconBrandLinkedin, IconBrandX } from '@tabler/icons-react';
 
-import { Button } from "@elevenlabs/ui/components/button";
+import { Button } from '@elevenlabs/ui/components/button';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@elevenlabs/ui/components/tooltip";
+} from '@elevenlabs/ui/components/tooltip';
 
 interface ShareButtonsProps {
   url: string;
@@ -19,19 +19,19 @@ interface ShareButtonsProps {
 export function ShareButtons({ url, title, description }: ShareButtonsProps) {
   const handleShareX = () => {
     const text = `Check out ${title}${
-      description ? ` - ${description}` : ""
+      description ? ` - ${description}` : ''
     } ${url}`;
     const twitterUrl = `https://x.com/intent/tweet?text=${encodeURIComponent(
-      text
+      text,
     )}`;
-    window.open(twitterUrl, "_blank");
+    window.open(twitterUrl, '_blank');
   };
 
   const handleShareLinkedIn = () => {
     const linkedinUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(
-      url
+      url,
     )}`;
-    window.open(linkedinUrl, "_blank");
+    window.open(linkedinUrl, '_blank');
   };
 
   return (

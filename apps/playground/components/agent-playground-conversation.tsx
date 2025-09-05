@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { ConversationBar } from "@/components/conversation-bar";
-import { EmptyState } from "@/components/empty-state";
-import { Icons } from "@/components/icons";
+import { ConversationBar } from '@/components/conversation-bar';
+import { EmptyState } from '@/components/empty-state';
+import { Icons } from '@/components/icons';
 
 export const AgentPlaygroundConversation = () => {
   return (

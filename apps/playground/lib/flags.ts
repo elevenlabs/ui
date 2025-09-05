@@ -1,1 +1,1 @@
-export const showMcpDocs = true
+export const showMcpDocs = true;

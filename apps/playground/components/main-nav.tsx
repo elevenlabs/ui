@@ -1,16 +1,16 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
-import { cn } from "@/lib/utils";
-import { Button } from "@elevenlabs/ui/components/button";
+import { cn } from '@/lib/utils';
+import { Button } from '@elevenlabs/ui/components/button';
 
 export function MainNav({
   items,
   className,
   ...props
-}: React.ComponentProps<"nav"> & {
+}: React.ComponentProps<'nav'> & {
   items: { href: string; label: string; includeSubPaths?: boolean }[];
 }) {
   const pathname = usePathname();
@@ -23,8 +23,8 @@ export function MainNav({
   };
 
   return (
-    <nav className={cn("items-center gap-0.5", className)} {...props}>
-      {items.map((item) => {
+    <nav className={cn('items-center gap-0.5', className)} {...props}>
+      {items.map(item => {
         const active = isActive(item.href, item.includeSubPaths);
         return (
           <Button
@@ -33,15 +33,15 @@ export function MainNav({
             asChild
             size="sm"
             className={cn(
-              "transition-font-weight",
-              active ? "!font-medium" : "!font-normal"
+              'transition-font-weight',
+              active ? '!font-medium' : '!font-normal',
             )}
           >
             <Link
               href={item.href}
               className={cn(
-                "transition-opacity ",
-                active ? "opacity-100" : "opacity-60 hover:opacity-100"
+                'transition-opacity ',
+                active ? 'opacity-100' : 'opacity-60 hover:opacity-100',
               )}
             >
               {item.label}

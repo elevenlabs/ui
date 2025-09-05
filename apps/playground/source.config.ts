@@ -2,15 +2,15 @@ import {
   defineConfig,
   defineDocs,
   frontmatterSchema,
-} from "fumadocs-mdx/config";
-import rehypePrettyCode from "rehype-pretty-code";
-import { z } from "zod";
+} from 'fumadocs-mdx/config';
+import rehypePrettyCode from 'rehype-pretty-code';
+import { z } from 'zod';
 
-import { transformers } from "@/lib/highlight-code";
+import { transformers } from '@/lib/highlight-code';
 
 export default defineConfig({
   mdxOptions: {
-    rehypePlugins: (plugins) => {
+    rehypePlugins: plugins => {
       plugins.shift();
       plugins.push([
         // TODO: fix the type.
@@ -18,8 +18,8 @@ export default defineConfig({
         rehypePrettyCode as any,
         {
           theme: {
-            dark: "github-dark",
-            light: "github-light-default",
+            dark: 'github-dark',
+            light: 'github-light-default',
           },
           transformers,
         },
@@ -31,7 +31,7 @@ export default defineConfig({
 });
 
 export const docs = defineDocs({
-  dir: "./content",
+  dir: './content',
   docs: {
     schema: frontmatterSchema.extend({
       links: z

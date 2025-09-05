@@ -1,28 +1,28 @@
-"use client";
+'use client';
 
-import { IconCheck, IconChevronDown, IconCopy } from "@tabler/icons-react";
+import { IconCheck, IconChevronDown, IconCopy } from '@tabler/icons-react';
 
-import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard";
-import { Button } from "@elevenlabs/ui/components/button";
+import { useCopyToClipboard } from '@/hooks/use-copy-to-clipboard';
+import { Button } from '@elevenlabs/ui/components/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@elevenlabs/ui/components/dropdown-menu";
+} from '@elevenlabs/ui/components/dropdown-menu';
 import {
   Popover,
   PopoverAnchor,
   PopoverContent,
   PopoverTrigger,
-} from "@elevenlabs/ui/components/popover";
-import { Separator } from "@elevenlabs/ui/components/separator";
+} from '@elevenlabs/ui/components/popover';
+import { Separator } from '@elevenlabs/ui/components/separator';
 
 function getPromptUrl(baseURL: string, url: string) {
   return `${baseURL}?q=${encodeURIComponent(
     `I’m looking at an ElevenLabs project: ${url}.
 Help me understand how it works & how I would recreate it using the ElevenLabs API.
-  `
+  `,
   )}`;
 }
 
@@ -42,7 +42,7 @@ const menuItems = {
   ),
   claude: (url: string) => (
     <a
-      href={getPromptUrl("https://claude.ai/new", url)}
+      href={getPromptUrl('https://claude.ai/new', url)}
       target="_blank"
       rel="noopener noreferrer"
     >

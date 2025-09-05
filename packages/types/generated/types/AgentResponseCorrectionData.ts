@@ -1,4 +1,3 @@
-
 interface AgentResponseCorrectionData {
   originalAgentResponse: string;
   correctedAgentResponse: string;

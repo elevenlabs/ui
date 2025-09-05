@@ -1,4 +1,3 @@
-
 interface UserAudioPayload {
   userAudioChunk: string;
   additionalProperties?: Map<string, any>;

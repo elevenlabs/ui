@@ -1,37 +1,37 @@
-"use client";
+'use client';
 
-import { Icons } from "@/components/icons";
-import { useAudioDevices } from "@/hooks/use-audio-devices";
-import { useMicrophone } from "@/hooks/use-microphone";
-import { Button } from "@elevenlabs/ui/components/button";
-import { Card } from "@elevenlabs/ui/components/card";
+import { Icons } from '@/components/icons';
+import { useAudioDevices } from '@/hooks/use-audio-devices';
+import { useMicrophone } from '@/hooks/use-microphone';
+import { Button } from '@elevenlabs/ui/components/button';
+import { Card } from '@elevenlabs/ui/components/card';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@elevenlabs/ui/components/dropdown-menu";
-import { Check, ChevronsUpDown, Mic, MicOff } from "lucide-react";
-import { useState } from "react";
+} from '@elevenlabs/ui/components/dropdown-menu';
+import { Check, ChevronsUpDown, Mic, MicOff } from 'lucide-react';
+import { useState } from 'react';
 
 export function ConversationBar() {
   const { devices, loading, error } = useAudioDevices();
   const { isActive, startMicrophone, stopMicrophone, switchDevice, setMuted } =
     useMicrophone();
-  const [selectedDevice, setSelectedDevice] = useState<string>("");
+  const [selectedDevice, setSelectedDevice] = useState<string>('');
   const [isMuted, setIsMuted] = useState(false);
 
   // Set the default selected device to the first one when devices load
-  const defaultDeviceId = devices[0]?.deviceId || "";
+  const defaultDeviceId = devices[0]?.deviceId || '';
   if (!selectedDevice && defaultDeviceId) {
     setSelectedDevice(defaultDeviceId);
   }
 
   const currentDevice = loading
-    ? { label: "Loading...", deviceId: "" }
-    : devices.find((d) => d.deviceId === selectedDevice) ||
-      devices[0] || { label: "No microphone", deviceId: "" };
+    ? { label: 'Loading...', deviceId: '' }
+    : devices.find(d => d.deviceId === selectedDevice) ||
+      devices[0] || { label: 'No microphone', deviceId: '' };
 
   const handleDeviceSelect = async (deviceId: string) => {
     setSelectedDevice(deviceId);
@@ -94,7 +94,7 @@ export function ConversationBar() {
               ) : error ? (
                 <DropdownMenuItem disabled>Error: {error}</DropdownMenuItem>
               ) : (
-                devices.map((device) => (
+                devices.map(device => (
                   <DropdownMenuItem
                     key={device.deviceId}
                     onClick={() => handleDeviceSelect(device.deviceId)}
@@ -111,7 +111,7 @@ export function ConversationBar() {
                 <>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
-                    onClick={(e) => {
+                    onClick={e => {
                       e.preventDefault();
                       toggleMute();
                     }}
@@ -122,7 +122,7 @@ export function ConversationBar() {
                     ) : (
                       <Mic className="h-4 w-4" />
                     )}
-                    <span>{isMuted ? "Off" : "On"}</span>
+                    <span>{isMuted ? 'Off' : 'On'}</span>
                   </DropdownMenuItem>
                 </>
               )}

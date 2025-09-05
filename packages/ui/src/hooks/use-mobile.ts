@@ -1,8 +1,8 @@
-import * as React from "react";
+import * as React from 'react';
 
 export function useIsMobile(mobileBreakpoint = 768) {
   const [isMobile, setIsMobile] = React.useState<boolean | undefined>(
-    undefined
+    undefined,
   );
 
   React.useEffect(() => {
@@ -10,9 +10,9 @@ export function useIsMobile(mobileBreakpoint = 768) {
     const onChange = () => {
       setIsMobile(window.innerWidth < mobileBreakpoint);
     };
-    mql.addEventListener("change", onChange);
+    mql.addEventListener('change', onChange);
     setIsMobile(window.innerWidth < mobileBreakpoint);
-    return () => mql.removeEventListener("change", onChange);
+    return () => mql.removeEventListener('change', onChange);
   }, []);
 
   return !!isMobile;

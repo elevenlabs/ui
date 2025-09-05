@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
 export interface AudioDevice {
   deviceId: string;
@@ -22,18 +22,18 @@ export function useAudioDevices() {
         const tempStream = await navigator.mediaDevices.getUserMedia({
           audio: true,
         });
-        tempStream.getTracks().forEach((track) => track.stop());
+        tempStream.getTracks().forEach(track => track.stop());
 
         const deviceList = await navigator.mediaDevices.enumerateDevices();
 
         const audioInputs = deviceList
-          .filter((device) => device.kind === "audioinput")
-          .map((device) => {
+          .filter(device => device.kind === 'audioinput')
+          .map(device => {
             let cleanLabel =
               device.label || `Microphone ${device.deviceId.slice(0, 8)}`;
 
             // Remove anything in parentheses
-            cleanLabel = cleanLabel.replace(/\s*\([^)]*\)/g, "").trim();
+            cleanLabel = cleanLabel.replace(/\s*\([^)]*\)/g, '').trim();
 
             return {
               deviceId: device.deviceId,
@@ -45,9 +45,9 @@ export function useAudioDevices() {
         setDevices(audioInputs);
       } catch (err) {
         setError(
-          err instanceof Error ? err.message : "Failed to get audio devices"
+          err instanceof Error ? err.message : 'Failed to get audio devices',
         );
-        console.error("Error getting audio devices:", err);
+        console.error('Error getting audio devices:', err);
       } finally {
         setLoading(false);
       }
@@ -59,12 +59,12 @@ export function useAudioDevices() {
       getAudioDevices();
     };
 
-    navigator.mediaDevices.addEventListener("devicechange", handleDeviceChange);
+    navigator.mediaDevices.addEventListener('devicechange', handleDeviceChange);
 
     return () => {
       navigator.mediaDevices.removeEventListener(
-        "devicechange",
-        handleDeviceChange
+        'devicechange',
+        handleDeviceChange,
       );
     };
   }, []);

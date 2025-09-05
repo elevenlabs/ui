@@ -1,14 +1,14 @@
-import { AgentPlaygroundConversation } from "@/components/agent-playground-conversation";
-import { AgentPlaygroundWrapper } from "@/components/agent-playground-wrapper";
-import { PageHeader } from "@/components/page-header";
-import { ViewLogsButton } from "@/components/view-logs-button";
-import { Metadata } from "next";
+import { AgentPlaygroundConversation } from '@/components/agent-playground-conversation';
+import { AgentPlaygroundWrapper } from '@/components/agent-playground-wrapper';
+import { PageHeader } from '@/components/page-header';
+import { ViewLogsButton } from '@/components/view-logs-button';
+import { Metadata } from 'next';
 
-const title = "Agents";
+const title = 'Agents';
 const description =
-  "Explore a curated gallery of voice and audio experiences powered by ElevenLabs. Discover what developers and teams are shipping today.";
+  'Explore a curated gallery of voice and audio experiences powered by ElevenLabs. Discover what developers and teams are shipping today.';
 
-export const dynamic = "force-static";
+export const dynamic = 'force-static';
 export const revalidate = false;
 
 export const metadata: Metadata = {
@@ -18,17 +18,17 @@ export const metadata: Metadata = {
     images: [
       {
         url: `/og?title=${encodeURIComponent(
-          title
+          title,
         )}&description=${encodeURIComponent(description)}`,
       },
     ],
   },
   twitter: {
-    card: "summary_large_image",
+    card: 'summary_large_image',
     images: [
       {
         url: `/og?title=${encodeURIComponent(
-          title
+          title,
         )}&description=${encodeURIComponent(description)}`,
       },
     ],

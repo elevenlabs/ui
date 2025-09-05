@@ -1,5 +1,9 @@
 import { APICallError } from '@elevenlabs/provider';
-import { delay, getErrorMessage, isAbortError } from '@elevenlabs/provider-utils';
+import {
+  delay,
+  getErrorMessage,
+  isAbortError,
+} from '@elevenlabs/provider-utils';
 import { RetryError } from './retry-error';
 
 export type RetryFunction = <OUTPUT>(

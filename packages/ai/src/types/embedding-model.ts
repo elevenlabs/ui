@@ -1,4 +1,7 @@
-import { EmbeddingModelV2, EmbeddingModelV2Embedding } from '@elevenlabs/provider';
+import {
+  EmbeddingModelV2,
+  EmbeddingModelV2Embedding,
+} from '@elevenlabs/provider';
 
 /**
 Embedding model that is used by the AI SDK Core functions.

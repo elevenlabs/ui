@@ -1,4 +1,3 @@
-
 interface InterruptionData {
   eventId: number;
   additionalProperties?: Map<string, any>;

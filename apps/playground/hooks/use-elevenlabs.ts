@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useCallback, useState } from "react";
-import { toast } from "sonner";
+import { useCallback, useState } from 'react';
+import { toast } from 'sonner';
 
 interface ElevenLabsUser {
   subscription: {
@@ -20,30 +20,35 @@ export function useElevenLabs() {
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState<ElevenLabsUser | null>(null);
 
-  const makeRequest = useCallback(async (path: string, options?: RequestInit) => {
-    const response = await fetch(`/api/elevenlabs/${path}`, {
-      ...options,
-      headers: {
-        ...options?.headers,
-      },
-    });
+  const makeRequest = useCallback(
+    async (path: string, options?: RequestInit) => {
+      const response = await fetch(`/api/elevenlabs/${path}`, {
+        ...options,
+        headers: {
+          ...options?.headers,
+        },
+      });
 
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.error || "API request failed");
-    }
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'API request failed');
+      }
 
-    return response.json();
-  }, []);
+      return response.json();
+    },
+    [],
+  );
 
   const fetchUser = useCallback(async () => {
     setLoading(true);
     try {
-      const userData = await makeRequest("v1/user");
+      const userData = await makeRequest('v1/user');
       setUser(userData);
       return userData;
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to fetch user");
+      toast.error(
+        error instanceof Error ? error.message : 'Failed to fetch user',
+      );
       throw error;
     } finally {
       setLoading(false);
@@ -52,11 +57,11 @@ export function useElevenLabs() {
 
   const checkApiKey = useCallback(async (): Promise<boolean> => {
     try {
-      const response = await fetch("/api/elevenlabs/auth");
+      const response = await fetch('/api/elevenlabs/auth');
       const data = await response.json();
       return data.hasApiKey;
     } catch (error) {
-      console.error("Failed to check API key:", error);
+      console.error('Failed to check API key:', error);
       return false;
     }
   }, []);

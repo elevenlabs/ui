@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { Key, Check, Loader2, User, LogOut, BarChart3 } from "lucide-react";
-import { Button } from "@elevenlabs/ui/components/button";
+import { useState, useEffect } from 'react';
+import { Key, Check, Loader2, User, LogOut, BarChart3 } from 'lucide-react';
+import { Button } from '@elevenlabs/ui/components/button';
 import {
   Dialog,
   DialogContent,
@@ -10,7 +10,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@elevenlabs/ui/components/dialog";
+} from '@elevenlabs/ui/components/dialog';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,11 +18,11 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@elevenlabs/ui/components/dropdown-menu";
-import { Avatar, AvatarFallback } from "@elevenlabs/ui/components/avatar";
-import { Input } from "@elevenlabs/ui/components/input";
-import { Label } from "@elevenlabs/ui/components/label";
-import { toast } from "sonner";
+} from '@elevenlabs/ui/components/dropdown-menu';
+import { Avatar, AvatarFallback } from '@elevenlabs/ui/components/avatar';
+import { Input } from '@elevenlabs/ui/components/input';
+import { Label } from '@elevenlabs/ui/components/label';
+import { toast } from 'sonner';
 
 interface UserData {
   user_id: string;
@@ -36,7 +36,7 @@ interface UserData {
 
 export function ApiKeyManager() {
   const [open, setOpen] = useState(false);
-  const [apiKey, setApiKey] = useState("");
+  const [apiKey, setApiKey] = useState('');
   const [hasStoredKey, setHasStoredKey] = useState(false);
   const [loading, setLoading] = useState(false);
   const [checkingStatus, setCheckingStatus] = useState(true);
@@ -50,16 +50,16 @@ export function ApiKeyManager() {
 
   const checkApiKeyStatus = async () => {
     try {
-      const res = await fetch("/api/elevenlabs/auth");
+      const res = await fetch('/api/elevenlabs/auth');
       const data = await res.json();
       setHasStoredKey(data.hasApiKey);
-      
+
       if (data.hasApiKey) {
         // Fetch user data if API key exists
         await fetchUserData();
       }
     } catch (error) {
-      console.error("Failed to check API key status:", error);
+      console.error('Failed to check API key status:', error);
     } finally {
       setCheckingStatus(false);
     }
@@ -68,13 +68,13 @@ export function ApiKeyManager() {
   const fetchUserData = async () => {
     setFetchingUser(true);
     try {
-      const res = await fetch("/api/elevenlabs/user");
+      const res = await fetch('/api/elevenlabs/user');
       if (res.ok) {
         const userData = await res.json();
         setUser(userData);
       }
     } catch (error) {
-      console.error("Failed to fetch user data:", error);
+      console.error('Failed to fetch user data:', error);
     } finally {
       setFetchingUser(false);
     }
@@ -82,34 +82,36 @@ export function ApiKeyManager() {
 
   const handleSave = async () => {
     if (!apiKey) {
-      toast.error("Please enter your API key");
+      toast.error('Please enter your API key');
       return;
     }
 
     setLoading(true);
     try {
-      const res = await fetch("/api/elevenlabs/auth", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const res = await fetch('/api/elevenlabs/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ apiKey }),
       });
 
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.error || "Failed to save API key");
+        throw new Error(data.error || 'Failed to save API key');
       }
 
-      toast.success("API key saved securely");
+      toast.success('API key saved securely');
 
       setHasStoredKey(true);
       setOpen(false);
-      setApiKey("");
-      
+      setApiKey('');
+
       // Fetch user data after saving key
       await fetchUserData();
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to save API key");
+      toast.error(
+        error instanceof Error ? error.message : 'Failed to save API key',
+      );
     } finally {
       setLoading(false);
     }
@@ -118,32 +120,35 @@ export function ApiKeyManager() {
   const handleClear = async () => {
     setLoading(true);
     try {
-      await fetch("/api/elevenlabs/auth", {
-        method: "DELETE",
+      await fetch('/api/elevenlabs/auth', {
+        method: 'DELETE',
       });
 
-      toast.success("API key removed");
+      toast.success('API key removed');
 
       setHasStoredKey(false);
       setUser(null);
     } catch (error) {
-      toast.error("Failed to remove API key");
+      toast.error('Failed to remove API key');
     } finally {
       setLoading(false);
     }
   };
 
   const getUserInitials = () => {
-    if (!user) return "U";
+    if (!user) return 'U';
     if (user.first_name) {
       return user.first_name.slice(0, 2).toUpperCase();
     }
-    return "U";
+    return 'U';
   };
 
   const getUsagePercentage = () => {
     if (!user) return 0;
-    return Math.round((user.subscription.character_count / user.subscription.character_limit) * 100);
+    return Math.round(
+      (user.subscription.character_count / user.subscription.character_limit) *
+        100,
+    );
   };
 
   if (checkingStatus || fetchingUser) {
@@ -171,7 +176,7 @@ export function ApiKeyManager() {
           <DropdownMenuLabel>
             <div className="flex flex-col space-y-1">
               <p className="text-sm font-medium leading-none">
-                {user.first_name || "ElevenLabs User"}
+                {user.first_name || 'ElevenLabs User'}
               </p>
               <p className="text-xs leading-none text-muted-foreground capitalize">
                 {user.subscription.tier} tier
@@ -179,8 +184,15 @@ export function ApiKeyManager() {
             </div>
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem asChild className="flex items-center justify-between">
-            <a href="https://elevenlabs.io/app/developers/usage" target="_blank" rel="noopener noreferrer">
+          <DropdownMenuItem
+            asChild
+            className="flex items-center justify-between"
+          >
+            <a
+              href="https://elevenlabs.io/app/developers/usage"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <div className="flex items-center gap-2">
                 <BarChart3 className="h-4 w-4" />
                 <span className="text-sm">Usage</span>
@@ -191,11 +203,17 @@ export function ApiKeyManager() {
             </a>
           </DropdownMenuItem>
           <DropdownMenuItem disabled className="text-xs text-muted-foreground">
-            {user.subscription.character_count.toLocaleString()} / {user.subscription.character_limit.toLocaleString()} characters
+            {user.subscription.character_count.toLocaleString()} /{' '}
+            {user.subscription.character_limit.toLocaleString()} characters
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem asChild>
-            <a href="https://elevenlabs.io/app/developers/api-keys" target="_blank" rel="noopener noreferrer" className="flex items-center">
+            <a
+              href="https://elevenlabs.io/app/developers/api-keys"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center"
+            >
               <Key className="mr-2 h-4 w-4" />
               Manage API Key
             </a>
@@ -214,11 +232,7 @@ export function ApiKeyManager() {
     <>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
-          <Button 
-            variant="ghost" 
-            size="icon"
-            className="relative"
-          >
+          <Button variant="ghost" size="icon" className="relative">
             <Key className="h-4 w-4" />
             {hasStoredKey && (
               <span className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-green-500" />
@@ -229,10 +243,9 @@ export function ApiKeyManager() {
           <DialogHeader>
             <DialogTitle>ElevenLabs API Key</DialogTitle>
             <DialogDescription>
-              {hasStoredKey 
-                ? "Your API key is securely stored. You can update or remove it below."
-                : "Add your ElevenLabs API key to enable voice features. Your key will be encrypted and stored securely."
-              }
+              {hasStoredKey
+                ? 'Your API key is securely stored. You can update or remove it below.'
+                : 'Add your ElevenLabs API key to enable voice features. Your key will be encrypted and stored securely.'}
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
@@ -245,11 +258,12 @@ export function ApiKeyManager() {
                     type="password"
                     placeholder="sk_..."
                     value={apiKey}
-                    onChange={(e) => setApiKey(e.target.value)}
+                    onChange={e => setApiKey(e.target.value)}
                   />
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  Your API key will be encrypted and stored securely. You can remove it at any time.
+                  Your API key will be encrypted and stored securely. You can
+                  remove it at any time.
                 </p>
               </>
             ) : (
@@ -270,7 +284,7 @@ export function ApiKeyManager() {
                   {loading ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
                   ) : (
-                    "Remove Key"
+                    'Remove Key'
                   )}
                 </Button>
                 <Button
@@ -288,7 +302,7 @@ export function ApiKeyManager() {
                   variant="outline"
                   onClick={() => {
                     setOpen(false);
-                    setApiKey("");
+                    setApiKey('');
                   }}
                 >
                   Cancel
@@ -297,7 +311,7 @@ export function ApiKeyManager() {
                   {loading ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
                   ) : (
-                    "Save Key"
+                    'Save Key'
                   )}
                 </Button>
               </>

@@ -1,4 +1,7 @@
-import { LanguageModelV2, LanguageModelV2CallOptions } from '@elevenlabs/provider';
+import {
+  LanguageModelV2,
+  LanguageModelV2CallOptions,
+} from '@elevenlabs/provider';
 import { LanguageModelMiddleware } from '../types';
 import { asArray } from '../util/as-array';
 

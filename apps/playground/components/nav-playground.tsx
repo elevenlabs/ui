@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { type Icon } from "@tabler/icons-react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import React from "react";
+import { type Icon } from '@tabler/icons-react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import React from 'react';
 
 import {
   SidebarGroup,
@@ -12,7 +12,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@elevenlabs/ui/components/sidebar";
+} from '@elevenlabs/ui/components/sidebar';
 
 export function NavPlayground({
   items,
@@ -24,26 +24,30 @@ export function NavPlayground({
   }[];
 }) {
   const pathname = usePathname();
-  
+
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Playground</SidebarGroupLabel>
       <SidebarGroupContent className="flex flex-col gap-2">
         <SidebarMenu>
-          {items.map((item) => {
-            const isActive = pathname === item.url || pathname.startsWith(item.url + '/');
-            
+          {items.map(item => {
+            const isActive =
+              pathname === item.url || pathname.startsWith(item.url + '/');
+
             return (
               <SidebarMenuItem key={item.title}>
-                <SidebarMenuButton 
+                <SidebarMenuButton
                   tooltip={item.title}
                   isActive={isActive}
                   asChild
                 >
                   <Link href={item.url}>
-                    {item.icon && (
-                      React.isValidElement(item.icon) ? item.icon : <item.icon />
-                    )}
+                    {item.icon &&
+                      (React.isValidElement(item.icon) ? (
+                        item.icon
+                      ) : (
+                        <item.icon />
+                      ))}
                     <span>{item.title}</span>
                   </Link>
                 </SidebarMenuButton>

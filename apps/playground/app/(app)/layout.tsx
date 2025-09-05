@@ -1,5 +1,5 @@
-import { SiteHeader } from "@/components/site-header";
-import { SidebarProvider } from "@elevenlabs/ui/components/sidebar";
+import { SiteHeader } from '@/components/site-header';
+import { SidebarProvider } from '@elevenlabs/ui/components/sidebar';
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -9,9 +9,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         <SidebarProvider
           style={
             {
-              "--sidebar-width": "calc(var(--spacing) * 55)",
-              "--sidebar-secondary-width": "calc(var(--spacing) * 150)",
-              "--header-height": "calc(var(--spacing) * 12)",
+              '--sidebar-width': 'calc(var(--spacing) * 55)',
+              '--sidebar-secondary-width': 'calc(var(--spacing) * 150)',
+              '--header-height': 'calc(var(--spacing) * 12)',
             } as React.CSSProperties
           }
         >

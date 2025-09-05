@@ -1,14 +1,17 @@
-"use client";
+'use client';
 
-import { EmptyState } from "@/components/empty-state";
-import { Icons } from "@/components/icons";
-import { toast } from "sonner";
+import { EmptyState } from '@/components/empty-state';
+import { Icons } from '@/components/icons';
+import { toast } from 'sonner';
 import {
   Conversation,
   ConversationContent,
   ConversationScrollButton,
 } from '@elevenlabs/ui/components/ai-elements/conversation';
-import { Message, MessageContent } from '@elevenlabs/ui/components/ai-elements/message';
+import {
+  Message,
+  MessageContent,
+} from '@elevenlabs/ui/components/ai-elements/message';
 import {
   PromptInput,
   PromptInputButton,
@@ -20,8 +23,8 @@ import {
   PromptInputSubmit,
   PromptInputTextarea,
   PromptInputToolbar,
-  PromptInputTools
-} from "@elevenlabs/ui/components/ai-elements/prompt-input";
+  PromptInputTools,
+} from '@elevenlabs/ui/components/ai-elements/prompt-input';
 import { GlobeIcon, MicIcon, PauseIcon, PlayIcon } from 'lucide-react';
 import { useState, useRef } from 'react';
 
@@ -33,9 +36,7 @@ const models = [
   { id: 'eleven_multilingual_v2', name: 'Eleven Multilingual v2' },
 ];
 
-const voices = [
-  { id: 'EOII7HhWy1WAdGI3CeWK', name: 'Rachel' }
-];
+const voices = [{ id: 'EOII7HhWy1WAdGI3CeWK', name: 'Rachel' }];
 
 interface AudioMessage {
   id: string;
@@ -81,25 +82,34 @@ export const AgentPlaygroundTextToSpeech = () => {
       if (!response.ok) {
         console.log('Response status:', response.status);
         console.log('Response status text:', response.statusText);
-        
-        const errorData = await response.json().catch(() => ({ error: 'Failed to generate speech' }));
+
+        const errorData = await response
+          .json()
+          .catch(() => ({ error: 'Failed to generate speech' }));
         console.log('Error data:', errorData);
-        
+
         if (response.status === 429 || errorData.isRetryable) {
-          toast.error('Service temporarily unavailable. Please try again in a moment.', {
-            action: {
-              label: 'Retry',
-              onClick: () => handleSubmit(e)
-            }
-          });
+          toast.error(
+            'Service temporarily unavailable. Please try again in a moment.',
+            {
+              action: {
+                label: 'Retry',
+                onClick: () => handleSubmit(e),
+              },
+            },
+          );
         } else if (response.status === 401) {
-          toast.error('API key invalid or missing. Please check your settings.');
+          toast.error(
+            'API key invalid or missing. Please check your settings.',
+          );
         } else if (response.status === 400) {
-          toast.error(`Invalid request: ${errorData.error || 'Please check your input'}`);
+          toast.error(
+            `Invalid request: ${errorData.error || 'Please check your input'}`,
+          );
         } else {
           toast.error(errorData.error || `Error: ${response.statusText}`);
         }
-        
+
         // Add early return to prevent further execution
         setStatus('idle');
         return;
@@ -120,7 +130,7 @@ export const AgentPlaygroundTextToSpeech = () => {
       toast.success('Speech generated successfully!');
     } catch (error) {
       console.error('Error generating speech:', error);
-      
+
       // Add error message to conversation for context
       const errorMessage: AudioMessage = {
         id: (Date.now() + 1).toString(),
@@ -135,7 +145,11 @@ export const AgentPlaygroundTextToSpeech = () => {
   };
 
   const togglePlayAudio = (audioUrl: string, messageId: string) => {
-    if (playingId === messageId && audioRef.current && !audioRef.current.paused) {
+    if (
+      playingId === messageId &&
+      audioRef.current &&
+      !audioRef.current.paused
+    ) {
       audioRef.current.pause();
       setPlayingId(null);
     } else {
@@ -145,7 +159,7 @@ export const AgentPlaygroundTextToSpeech = () => {
       audioRef.current = new Audio(audioUrl);
       audioRef.current.play();
       setPlayingId(messageId);
-      
+
       audioRef.current.addEventListener('ended', () => {
         setPlayingId(null);
       });
@@ -165,14 +179,16 @@ export const AgentPlaygroundTextToSpeech = () => {
           ) : (
             <Conversation className="flex-1">
               <ConversationContent>
-                {messages.map((message) => (
+                {messages.map(message => (
                   <Message from={message.role} key={message.id}>
                     <MessageContent>
                       <div className="flex flex-col gap-2">
                         <div>{message.text}</div>
                         {message.audioUrl && (
                           <button
-                            onClick={() => togglePlayAudio(message.audioUrl!, message.id)}
+                            onClick={() =>
+                              togglePlayAudio(message.audioUrl!, message.id)
+                            }
                             className="flex items-center gap-2 px-3 py-1.5 bg-primary/10 hover:bg-primary/20 rounded-md transition-colors w-fit"
                           >
                             {playingId === message.id ? (
@@ -201,7 +217,7 @@ export const AgentPlaygroundTextToSpeech = () => {
         <div className="relative p-4 pt-0">
           <PromptInput onSubmit={handleSubmit}>
             <PromptInputTextarea
-              onChange={(e) => setText(e.target.value)}
+              onChange={e => setText(e.target.value)}
               value={text}
               placeholder="Enter text to convert to speech..."
             />
@@ -215,14 +231,14 @@ export const AgentPlaygroundTextToSpeech = () => {
                   <span>Search</span>
                 </PromptInputButton>
                 <PromptInputModelSelect
-                  onValueChange={(value) => setVoice(value)}
+                  onValueChange={value => setVoice(value)}
                   value={voice}
                 >
                   <PromptInputModelSelectTrigger>
                     <PromptInputModelSelectValue placeholder="Select voice" />
                   </PromptInputModelSelectTrigger>
                   <PromptInputModelSelectContent>
-                    {voices.map((v) => (
+                    {voices.map(v => (
                       <PromptInputModelSelectItem key={v.id} value={v.id}>
                         {v.name}
                       </PromptInputModelSelectItem>
@@ -230,22 +246,28 @@ export const AgentPlaygroundTextToSpeech = () => {
                   </PromptInputModelSelectContent>
                 </PromptInputModelSelect>
                 <PromptInputModelSelect
-                  onValueChange={(value) => setModel(value)}
+                  onValueChange={value => setModel(value)}
                   value={model}
                 >
                   <PromptInputModelSelectTrigger>
                     <PromptInputModelSelectValue placeholder="Select model" />
                   </PromptInputModelSelectTrigger>
                   <PromptInputModelSelectContent>
-                    {models.map((model) => (
-                      <PromptInputModelSelectItem key={model.id} value={model.id}>
+                    {models.map(model => (
+                      <PromptInputModelSelectItem
+                        key={model.id}
+                        value={model.id}
+                      >
                         {model.name}
                       </PromptInputModelSelectItem>
                     ))}
                   </PromptInputModelSelectContent>
                 </PromptInputModelSelect>
               </PromptInputTools>
-              <PromptInputSubmit disabled={!text} status={status === 'in_progress' ? 'submitted' : 'ready'} />
+              <PromptInputSubmit
+                disabled={!text}
+                status={status === 'in_progress' ? 'submitted' : 'ready'}
+              />
             </PromptInputToolbar>
           </PromptInput>
         </div>

@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { Icons } from "@/components/icons";
+import { Icons } from '@/components/icons';
 import {
   IconCamera,
   IconFileAi,
@@ -8,101 +8,101 @@ import {
   IconHelp,
   IconSearch,
   IconSettings,
-} from "@tabler/icons-react";
-import * as React from "react";
+} from '@tabler/icons-react';
+import * as React from 'react';
 
-import { NavPlayground } from "@/components/nav-playground";
-import { NavSecondary } from "@/components/nav-secondary";
-import { Sidebar, SidebarContent } from "@elevenlabs/ui/components/sidebar";
+import { NavPlayground } from '@/components/nav-playground';
+import { NavSecondary } from '@/components/nav-secondary';
+import { Sidebar, SidebarContent } from '@elevenlabs/ui/components/sidebar';
 
 const data = {
   navMain: [
     {
-      title: "Agents",
-      url: "/playground/agents",
+      title: 'Agents',
+      url: '/playground/agents',
       icon: <Icons.orb className="text-foreground" />,
     },
     {
-      title: "Text to Speech",
-      url: "/playground/text-to-speech",
+      title: 'Text to Speech',
+      url: '/playground/text-to-speech',
       icon: <Icons.textToSpeech className="text-foreground" />,
     },
-    
+
     {
-      title: "Speech to Text",
-      url: "/playground/speech-to-text",
+      title: 'Speech to Text',
+      url: '/playground/speech-to-text',
       icon: <Icons.speechToText className="text-foreground" />,
     },
   ],
   navClouds: [
     {
-      title: "Capture",
+      title: 'Capture',
       icon: IconCamera,
       isActive: true,
-      url: "#",
+      url: '#',
       items: [
         {
-          title: "Active Proposals",
-          url: "#",
+          title: 'Active Proposals',
+          url: '#',
         },
         {
-          title: "Archived",
-          url: "#",
+          title: 'Archived',
+          url: '#',
         },
       ],
     },
     {
-      title: "Proposal",
+      title: 'Proposal',
       icon: IconFileDescription,
-      url: "#",
+      url: '#',
       items: [
         {
-          title: "Active Proposals",
-          url: "#",
+          title: 'Active Proposals',
+          url: '#',
         },
         {
-          title: "Archived",
-          url: "#",
+          title: 'Archived',
+          url: '#',
         },
       ],
     },
     {
-      title: "Prompts",
+      title: 'Prompts',
       icon: IconFileAi,
-      url: "#",
+      url: '#',
       items: [
         {
-          title: "Active Proposals",
-          url: "#",
+          title: 'Active Proposals',
+          url: '#',
         },
         {
-          title: "Archived",
-          url: "#",
+          title: 'Archived',
+          url: '#',
         },
       ],
     },
   ],
   navSecondary: [
     {
-      title: "Settings",
-      url: "#",
+      title: 'Settings',
+      url: '#',
       icon: IconSettings,
     },
     {
-      title: "Get Help",
-      url: "#",
+      title: 'Get Help',
+      url: '#',
       icon: IconHelp,
     },
     {
-      title: "Search",
-      url: "#",
+      title: 'Search',
+      url: '#',
       icon: IconSearch,
     },
   ],
   navPlayground: [
     {
-      name: "Capture",
-      url: "#",
+      name: 'Capture',
+      url: '#',
       icon: IconCamera,
     },
   ],

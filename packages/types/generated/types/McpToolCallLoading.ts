@@ -1,4 +1,3 @@
-
 interface McpToolCallLoading {
   serviceId: string;
   toolCallId: string;

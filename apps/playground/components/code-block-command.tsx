@@ -1,29 +1,29 @@
-"use client";
+'use client';
 
-import * as React from "react";
-import { CheckIcon, ClipboardIcon, TerminalIcon } from "lucide-react";
+import * as React from 'react';
+import { CheckIcon, ClipboardIcon, TerminalIcon } from 'lucide-react';
 
-import { useConfig } from "@/hooks/use-config";
-import { copyToClipboardWithMeta } from "@/components/copy-button";
-import { Button } from "@elevenlabs/ui/components/button";
+import { useConfig } from '@/hooks/use-config';
+import { copyToClipboardWithMeta } from '@/components/copy-button';
+import { Button } from '@elevenlabs/ui/components/button';
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "@elevenlabs/ui/components/tabs";
+} from '@elevenlabs/ui/components/tabs';
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@elevenlabs/ui/components/tooltip";
+} from '@elevenlabs/ui/components/tooltip';
 
 export function CodeBlockCommand({
   __npm__,
   __yarn__,
   __pnpm__,
   __bun__,
-}: React.ComponentProps<"pre"> & {
+}: React.ComponentProps<'pre'> & {
   __npm__?: string;
   __yarn__?: string;
   __pnpm__?: string;
@@ -39,7 +39,7 @@ export function CodeBlockCommand({
     }
   }, [hasCopied]);
 
-  const packageManager = config.packageManager || "pnpm";
+  const packageManager = config.packageManager || 'pnpm';
   const tabs = React.useMemo(() => {
     return {
       pnpm: __pnpm__,
@@ -57,7 +57,7 @@ export function CodeBlockCommand({
     }
 
     copyToClipboardWithMeta(command, {
-      name: "copy_npm_command",
+      name: 'copy_npm_command',
       properties: {
         command,
         pm: packageManager,
@@ -71,10 +71,10 @@ export function CodeBlockCommand({
       <Tabs
         value={packageManager}
         className="gap-0"
-        onValueChange={(value) => {
+        onValueChange={value => {
           setConfig({
             ...config,
-            packageManager: value as "pnpm" | "npm" | "yarn" | "bun",
+            packageManager: value as 'pnpm' | 'npm' | 'yarn' | 'bun',
           });
         }}
       >
@@ -127,7 +127,7 @@ export function CodeBlockCommand({
           </Button>
         </TooltipTrigger>
         <TooltipContent>
-          {hasCopied ? "Copied" : "Copy to Clipboard"}
+          {hasCopied ? 'Copied' : 'Copy to Clipboard'}
         </TooltipContent>
       </Tooltip>
     </div>

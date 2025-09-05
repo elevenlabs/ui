@@ -43,5 +43,5 @@ export default defineConfig([
     // Allow BigInt in tests
     target: 'es2020',
     platform: 'node',
-  }
+  },
 ]);

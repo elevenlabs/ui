@@ -1,5 +1,5 @@
-import { Separator } from "@elevenlabs/ui/components/separator";
-import { SidebarTrigger } from "@elevenlabs/ui/components/sidebar";
+import { Separator } from '@elevenlabs/ui/components/separator';
+import { SidebarTrigger } from '@elevenlabs/ui/components/sidebar';
 
 export function PageHeader({ children }: { children: React.ReactNode }) {
   return (

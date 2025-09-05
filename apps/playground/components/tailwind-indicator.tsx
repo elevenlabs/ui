@@ -2,7 +2,7 @@ const SHOW = false;
 
 export function TailwindIndicator() {
   // eslint-disable-next-line turbo/no-undeclared-env-vars
-  if (process.env.NODE_ENV === "production" || !SHOW) {
+  if (process.env.NODE_ENV === 'production' || !SHOW) {
     return null;
   }
 

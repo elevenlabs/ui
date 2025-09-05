@@ -1,17 +1,17 @@
-"use client";
+'use client';
 
-import { type DialogProps } from "@elevenlabs/ui/components/dialog";
-import { IconArrowRight } from "@tabler/icons-react";
-import { CornerDownLeftIcon } from "lucide-react";
-import { useRouter } from "next/navigation";
-import * as React from "react";
+import { type DialogProps } from '@elevenlabs/ui/components/dialog';
+import { IconArrowRight } from '@tabler/icons-react';
+import { CornerDownLeftIcon } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import * as React from 'react';
 
-import { copyToClipboardWithMeta } from "@/components/copy-button";
-import { useConfig } from "@/hooks/use-config";
-import { useIsMac } from "@/hooks/use-is-mac";
-import { useMutationObserver } from "@/hooks/use-mutation-observer";
-import { cn } from "@/lib/utils";
-import { Button } from "@elevenlabs/ui/components/button";
+import { copyToClipboardWithMeta } from '@/components/copy-button';
+import { useConfig } from '@/hooks/use-config';
+import { useIsMac } from '@/hooks/use-is-mac';
+import { useMutationObserver } from '@/hooks/use-mutation-observer';
+import { cn } from '@/lib/utils';
+import { Button } from '@elevenlabs/ui/components/button';
 import {
   Command,
   CommandEmpty,
@@ -19,7 +19,7 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "@elevenlabs/ui/components/command";
+} from '@elevenlabs/ui/components/command';
 import {
   Dialog,
   DialogContent,
@@ -27,8 +27,8 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@elevenlabs/ui/components/dialog";
-import { Separator } from "@elevenlabs/ui/components/separator";
+} from '@elevenlabs/ui/components/dialog';
+import { Separator } from '@elevenlabs/ui/components/separator';
 
 export function CommandMenu({
   navItems,
@@ -42,10 +42,10 @@ export function CommandMenu({
   const [config] = useConfig();
   const [open, setOpen] = React.useState(false);
   const [selectedType, setSelectedType] = React.useState<
-    "color" | "page" | "component" | "block" | null
+    'color' | 'page' | 'component' | 'block' | null
   >(null);
-  const [copyPayload, setCopyPayload] = React.useState("");
-  const packageManager = config.packageManager || "pnpm";
+  const [copyPayload, setCopyPayload] = React.useState('');
+  const packageManager = config.packageManager || 'pnpm';
 
   const runCommand = React.useCallback((command: () => unknown) => {
     setOpen(false);
@@ -54,7 +54,7 @@ export function CommandMenu({
 
   React.useEffect(() => {
     const down = (e: KeyboardEvent) => {
-      if ((e.key === "k" && (e.metaKey || e.ctrlKey)) || e.key === "/") {
+      if ((e.key === 'k' && (e.metaKey || e.ctrlKey)) || e.key === '/') {
         if (
           (e.target instanceof HTMLElement && e.target.isContentEditable) ||
           e.target instanceof HTMLInputElement ||
@@ -65,28 +65,28 @@ export function CommandMenu({
         }
 
         e.preventDefault();
-        setOpen((open) => !open);
+        setOpen(open => !open);
       }
 
-      if (e.key === "c" && (e.metaKey || e.ctrlKey)) {
+      if (e.key === 'c' && (e.metaKey || e.ctrlKey)) {
         runCommand(() => {
-          if (selectedType === "color") {
+          if (selectedType === 'color') {
             copyToClipboardWithMeta(copyPayload, {
-              name: "copy_color",
+              name: 'copy_color',
               properties: { color: copyPayload },
             });
           }
 
-          if (selectedType === "block") {
+          if (selectedType === 'block') {
             copyToClipboardWithMeta(copyPayload, {
-              name: "copy_npm_command",
+              name: 'copy_npm_command',
               properties: { command: copyPayload, pm: packageManager },
             });
           }
 
-          if (selectedType === "page" || selectedType === "component") {
+          if (selectedType === 'page' || selectedType === 'component') {
             copyToClipboardWithMeta(copyPayload, {
-              name: "copy_npm_command",
+              name: 'copy_npm_command',
               properties: { command: copyPayload, pm: packageManager },
             });
           }
@@ -94,8 +94,8 @@ export function CommandMenu({
       }
     };
 
-    document.addEventListener("keydown", down);
-    return () => document.removeEventListener("keydown", down);
+    document.addEventListener('keydown', down);
+    return () => document.removeEventListener('keydown', down);
   }, [copyPayload, runCommand, selectedType, packageManager]);
 
   return (
@@ -104,7 +104,7 @@ export function CommandMenu({
         <Button
           variant="secondary"
           className={cn(
-            "bg-surface text-surface-foreground/60 dark:bg-card relative h-8 w-full justify-start pl-2.5 font-normal shadow-none sm:pr-12"
+            'bg-surface text-surface-foreground/60 dark:bg-card relative h-8 w-full justify-start pl-2.5 font-normal shadow-none sm:pr-12',
           )}
           onClick={() => setOpen(true)}
           {...props}
@@ -112,7 +112,7 @@ export function CommandMenu({
           <span className="hidden lg:inline-flex">Search...</span>
           <span className="inline-flex lg:hidden">Search...</span>
           <div className="absolute top-1.5 right-1.5 hidden gap-1 sm:flex">
-            <CommandMenuKbd>{isMac ? "⌘" : "Ctrl"}</CommandMenuKbd>
+            <CommandMenuKbd>{isMac ? '⌘' : 'Ctrl'}</CommandMenuKbd>
             <CommandMenuKbd className="aspect-square">K</CommandMenuKbd>
           </div>
         </Button>
@@ -128,7 +128,7 @@ export function CommandMenu({
         <Command
           className="**:data-[slot=command-input-wrapper]:bg-input/50 **:data-[slot=command-input-wrapper]:border-input rounded-none bg-transparent **:data-[slot=command-input]:!h-9 **:data-[slot=command-input]:py-0 **:data-[slot=command-input-wrapper]:mb-0 **:data-[slot=command-input-wrapper]:!h-9 **:data-[slot=command-input-wrapper]:rounded-md **:data-[slot=command-input-wrapper]:border"
           filter={(value, search, keywords) => {
-            const extendValue = value + " " + (keywords?.join(" ") || "");
+            const extendValue = value + ' ' + (keywords?.join(' ') || '');
             if (extendValue.toLowerCase().includes(search.toLowerCase())) {
               return 1;
             }
@@ -145,14 +145,14 @@ export function CommandMenu({
                 heading="Pages"
                 className="!p-0 [&_[cmdk-group-heading]]:scroll-mt-16 [&_[cmdk-group-heading]]:!p-3 [&_[cmdk-group-heading]]:!pb-1"
               >
-                {navItems.map((item) => (
+                {navItems.map(item => (
                   <CommandMenuItem
                     key={item.href}
                     value={`Navigation ${item.label}`}
-                    keywords={["nav", "navigation", item.label.toLowerCase()]}
+                    keywords={['nav', 'navigation', item.label.toLowerCase()]}
                     onHighlight={() => {
-                      setSelectedType("page");
-                      setCopyPayload("");
+                      setSelectedType('page');
+                      setCopyPayload('');
                     }}
                     onSelect={() => {
                       runCommand(() => router.push(item.href));
@@ -170,17 +170,17 @@ export function CommandMenu({
           <div className="flex items-center gap-2">
             <CommandMenuKbd>
               <CornerDownLeftIcon />
-            </CommandMenuKbd>{" "}
-            {selectedType === "page" || selectedType === "component"
-              ? "Go to Page"
+            </CommandMenuKbd>{' '}
+            {selectedType === 'page' || selectedType === 'component'
+              ? 'Go to Page'
               : null}
-            {selectedType === "color" ? "Copy OKLCH" : null}
+            {selectedType === 'color' ? 'Copy OKLCH' : null}
           </div>
           {copyPayload && (
             <>
               <Separator orientation="vertical" className="!h-4" />
               <div className="flex items-center gap-1">
-                <CommandMenuKbd>{isMac ? "⌘" : "Ctrl"}</CommandMenuKbd>
+                <CommandMenuKbd>{isMac ? '⌘' : 'Ctrl'}</CommandMenuKbd>
                 <CommandMenuKbd>C</CommandMenuKbd>
                 {copyPayload}
               </div>
@@ -199,17 +199,17 @@ function CommandMenuItem({
   ...props
 }: React.ComponentProps<typeof CommandItem> & {
   onHighlight?: () => void;
-  "data-selected"?: string;
-  "aria-selected"?: string;
+  'data-selected'?: string;
+  'aria-selected'?: string;
 }) {
   const ref = React.useRef<HTMLDivElement>(null);
 
-  useMutationObserver(ref, (mutations) => {
-    mutations.forEach((mutation) => {
+  useMutationObserver(ref, mutations => {
+    mutations.forEach(mutation => {
       if (
-        mutation.type === "attributes" &&
-        mutation.attributeName === "aria-selected" &&
-        ref.current?.getAttribute("aria-selected") === "true"
+        mutation.type === 'attributes' &&
+        mutation.attributeName === 'aria-selected' &&
+        ref.current?.getAttribute('aria-selected') === 'true'
       ) {
         onHighlight?.();
       }
@@ -220,8 +220,8 @@ function CommandMenuItem({
     <CommandItem
       ref={ref}
       className={cn(
-        "data-[selected=true]:border-input data-[selected=true]:bg-input/50 h-9 rounded-md border border-transparent !px-3 font-medium",
-        className
+        'data-[selected=true]:border-input data-[selected=true]:bg-input/50 h-9 rounded-md border border-transparent !px-3 font-medium',
+        className,
       )}
       {...props}
     >
@@ -230,12 +230,12 @@ function CommandMenuItem({
   );
 }
 
-function CommandMenuKbd({ className, ...props }: React.ComponentProps<"kbd">) {
+function CommandMenuKbd({ className, ...props }: React.ComponentProps<'kbd'>) {
   return (
     <kbd
       className={cn(
         "bg-background text-muted-foreground pointer-events-none flex h-5 items-center justify-center gap-1 rounded border px-1 font-sans text-[0.7rem] font-medium select-none [&_svg:not([class*='size-'])]:size-3",
-        className
+        className,
       )}
       {...props}
     />

@@ -1,8 +1,8 @@
-import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
-import { decryptApiKey } from "@/lib/crypto";
+import { NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
+import { decryptApiKey } from '@/lib/crypto';
 
-const COOKIE_NAME = "el_session";
+const COOKIE_NAME = 'el_session';
 
 /**
  * GET /api/elevenlabs/user
@@ -16,8 +16,8 @@ export async function GET() {
 
     if (!encryptedKey) {
       return NextResponse.json(
-        { error: "No API key configured" },
-        { status: 401 }
+        { error: 'No API key configured' },
+        { status: 401 },
       );
     }
 
@@ -26,24 +26,24 @@ export async function GET() {
     try {
       apiKey = await decryptApiKey(encryptedKey);
     } catch (error) {
-      console.error("Failed to decrypt API key:", error);
+      console.error('Failed to decrypt API key:', error);
       return NextResponse.json(
-        { error: "Failed to decrypt API key" },
-        { status: 500 }
+        { error: 'Failed to decrypt API key' },
+        { status: 500 },
       );
     }
 
     // Fetch user data from ElevenLabs
-    const response = await fetch("https://api.elevenlabs.io/v1/user", {
+    const response = await fetch('https://api.elevenlabs.io/v1/user', {
       headers: {
-        "xi-api-key": apiKey,
+        'xi-api-key': apiKey,
       },
     });
 
     if (!response.ok) {
       return NextResponse.json(
-        { error: "Failed to fetch user data" },
-        { status: response.status }
+        { error: 'Failed to fetch user data' },
+        { status: response.status },
       );
     }
 
@@ -61,10 +61,10 @@ export async function GET() {
       is_onboarding_completed: userData.is_onboarding_completed,
     });
   } catch (error) {
-    console.error("Error fetching user:", error);
+    console.error('Error fetching user:', error);
     return NextResponse.json(
-      { error: "Failed to fetch user information" },
-      { status: 500 }
+      { error: 'Failed to fetch user information' },
+      { status: 500 },
     );
   }
 }

@@ -1,12 +1,12 @@
-import { GitHubLink } from "@/components/github-link";
-import { MainNav } from "@/components/main-nav";
-import { MobileNav } from "@/components/mobile-nav";
-import { ModeSwitcher } from "@/components/mode-switcher";
-import { SiteHeaderLogo } from "@/components/site-header-logo";
-import { ApiKeyManager } from "@/components/api-key-manager";
-import { siteConfig } from "@/lib/config";
-import { source } from "@/lib/source";
-import { Separator } from "@elevenlabs/ui/components/separator";
+import { GitHubLink } from '@/components/github-link';
+import { MainNav } from '@/components/main-nav';
+import { MobileNav } from '@/components/mobile-nav';
+import { ModeSwitcher } from '@/components/mode-switcher';
+import { SiteHeaderLogo } from '@/components/site-header-logo';
+import { ApiKeyManager } from '@/components/api-key-manager';
+import { siteConfig } from '@/lib/config';
+import { source } from '@/lib/source';
+import { Separator } from '@elevenlabs/ui/components/separator';
 
 export async function SiteHeader() {
   const pageTree = source.pageTree;

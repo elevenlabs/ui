@@ -1,4 +1,3 @@
-
 interface ClientToolResultPayload {
   reservedType: 'client_tool_result';
   toolCallId: string;

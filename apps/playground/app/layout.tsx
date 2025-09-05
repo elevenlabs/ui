@@ -1,16 +1,16 @@
-import type { Metadata } from "next";
+import type { Metadata } from 'next';
 
-import { META_THEME_COLORS, siteConfig } from "@/lib/config";
-import { fontVariables } from "@/lib/fonts";
-import { cn } from "@/lib/utils";
-import { LayoutProvider } from "@/hooks/use-layout";
-import { ActiveThemeProvider } from "@/components/active-theme";
-import { Analytics } from "@/components/analytics";
-import { TailwindIndicator } from "@/components/tailwind-indicator";
-import { ThemeProvider } from "@/components/theme-provider";
-import { Toaster } from "@elevenlabs/ui/components/sonner";
+import { META_THEME_COLORS, siteConfig } from '@/lib/config';
+import { fontVariables } from '@/lib/fonts';
+import { cn } from '@/lib/utils';
+import { LayoutProvider } from '@/hooks/use-layout';
+import { ActiveThemeProvider } from '@/components/active-theme';
+import { Analytics } from '@/components/analytics';
+import { TailwindIndicator } from '@/components/tailwind-indicator';
+import { ThemeProvider } from '@/components/theme-provider';
+import { Toaster } from '@elevenlabs/ui/components/sonner';
 
-import "@elevenlabs/ui/styles/globals.css";
+import '@elevenlabs/ui/styles/globals.css';
 
 export const metadata: Metadata = {
   title: {
@@ -20,25 +20,25 @@ export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL!),
   description: siteConfig.description,
   keywords: [
-    "ElevenLabs",
-    "Showcase",
-    "AI",
-    "Voice",
-    "Text to Speech",
-    "Speech to Text",
-    "Music",
-    "Agents",
+    'ElevenLabs',
+    'Showcase',
+    'AI',
+    'Voice',
+    'Text to Speech',
+    'Speech to Text',
+    'Music',
+    'Agents',
   ],
   authors: [
     {
-      name: "ElevenLabs",
-      url: "https://elevenlabs.io",
+      name: 'ElevenLabs',
+      url: 'https://elevenlabs.io',
     },
   ],
-  creator: "ElevenLabs",
+  creator: 'ElevenLabs',
   openGraph: {
-    type: "website",
-    locale: "en_US",
+    type: 'website',
+    locale: 'en_US',
     url: process.env.NEXT_PUBLIC_APP_URL!,
     title: siteConfig.name,
     description: siteConfig.description,
@@ -53,16 +53,16 @@ export const metadata: Metadata = {
     ],
   },
   twitter: {
-    card: "summary_large_image",
+    card: 'summary_large_image',
     title: siteConfig.name,
     description: siteConfig.description,
     images: [`${process.env.NEXT_PUBLIC_APP_URL}/opengraph-image.png`],
-    creator: "@elevenlabs",
+    creator: '@elevenlabs',
   },
   icons: {
-    icon: "/favicon.ico",
-    shortcut: "/favicon-16x16.png",
-    apple: "/apple-touch-icon.png",
+    icon: '/favicon.ico',
+    shortcut: '/favicon-16x16.png',
+    apple: '/apple-touch-icon.png',
   },
   manifest: `${siteConfig.url}/site.webmanifest`,
 };
@@ -93,8 +93,8 @@ export default function RootLayout({
       </head>
       <body
         className={cn(
-          "text-foreground group/body overscroll-none font-sans antialiased [--footer-height:calc(var(--spacing)*14)] [--header-height:calc(var(--spacing)*14)] xl:[--footer-height:calc(var(--spacing)*24)]",
-          fontVariables
+          'text-foreground group/body overscroll-none font-sans antialiased [--footer-height:calc(var(--spacing)*14)] [--header-height:calc(var(--spacing)*14)] xl:[--footer-height:calc(var(--spacing)*24)]',
+          fontVariables,
         )}
       >
         <ThemeProvider>

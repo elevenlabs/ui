@@ -1,18 +1,18 @@
-import Image from "next/image";
+import Image from 'next/image';
 
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
 
 export function BlockImage({
   name,
   width = 1440,
   height = 900,
   className,
-}: Omit<React.ComponentProps<typeof Image>, "src" | "alt"> & { name: string }) {
+}: Omit<React.ComponentProps<typeof Image>, 'src' | 'alt'> & { name: string }) {
   return (
     <div
       className={cn(
-        "relative aspect-[1440/900] w-full overflow-hidden rounded-lg",
-        className
+        'relative aspect-[1440/900] w-full overflow-hidden rounded-lg',
+        className,
       )}
     >
       <Image

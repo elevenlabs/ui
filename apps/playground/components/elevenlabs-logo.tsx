@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { cn } from "@/lib/utils";
-import { Separator } from "@elevenlabs/ui/components/separator";
+import { cn } from '@/lib/utils';
+import { Separator } from '@elevenlabs/ui/components/separator';
 
 export function ElevenLabsLogo({
   size = 64,
@@ -16,9 +16,9 @@ export function ElevenLabsLogo({
     <div
       aria-hidden
       className={cn(
-        "group relative flex items-center gap-4 rounded-2xl px-0 py-2",
+        'group relative flex items-center gap-4 rounded-2xl px-0 py-2',
 
-        className
+        className,
       )}
     >
       {/* Logo */}
@@ -30,8 +30,8 @@ export function ElevenLabsLogo({
           className="absolute inset-0 -z-10 rounded-2xl"
           style={{
             background:
-              "radial-gradient(75% 75% at 50% 50%, hsl(var(--primary) / 0.35) 0%, hsl(var(--primary) / 0.18) 35%, hsl(var(--primary) / 0.06) 65%, transparent 75%)",
-            filter: "blur(10px)",
+              'radial-gradient(75% 75% at 50% 50%, hsl(var(--primary) / 0.35) 0%, hsl(var(--primary) / 0.18) 35%, hsl(var(--primary) / 0.06) 65%, transparent 75%)',
+            filter: 'blur(10px)',
           }}
         />
         <svg

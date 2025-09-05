@@ -1,4 +1,3 @@
-
 interface PongPayload {
   reservedType: 'pong';
   eventId: number;

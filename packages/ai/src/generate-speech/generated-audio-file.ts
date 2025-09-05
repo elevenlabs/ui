@@ -1,7 +1,7 @@
 import {
   GeneratedFile,
   DefaultGeneratedFile,
-} from "../generate-text/generated-file";
+} from '../generate-text/generated-file';
 
 /**
  * A generated audio file.
@@ -27,15 +27,15 @@ export class DefaultGeneratedAudioFile
     mediaType: string;
   }) {
     super({ data, mediaType });
-    let format = "mp3";
+    let format = 'mp3';
 
     // If format is not provided, try to determine it from the media type
     if (mediaType) {
-      const mediaTypeParts = mediaType.split("/");
+      const mediaTypeParts = mediaType.split('/');
 
       if (mediaTypeParts.length === 2) {
         // Handle special cases for audio formats
-        if (mediaType !== "audio/mpeg") {
+        if (mediaType !== 'audio/mpeg') {
           format = mediaTypeParts[1];
         }
       }
@@ -44,7 +44,7 @@ export class DefaultGeneratedAudioFile
     if (!format) {
       // TODO this should be an AI SDK error
       throw new Error(
-        "Audio format must be provided or determinable from media type"
+        'Audio format must be provided or determinable from media type',
       );
     }
 
@@ -53,7 +53,7 @@ export class DefaultGeneratedAudioFile
 }
 
 export class DefaultGeneratedAudioFileWithType extends DefaultGeneratedAudioFile {
-  readonly type = "audio";
+  readonly type = 'audio';
 
   constructor(options: {
     data: string | Uint8Array;

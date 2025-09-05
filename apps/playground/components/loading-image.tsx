@@ -1,21 +1,21 @@
-"use client"
+'use client';
 
-import * as React from "react"
-import { useState } from "react"
-import Image from "next/image"
-import { Image as ImageIcon } from "lucide-react"
+import * as React from 'react';
+import { useState } from 'react';
+import Image from 'next/image';
+import { Image as ImageIcon } from 'lucide-react';
 
-import { cn } from "@/lib/utils"
+import { cn } from '@/lib/utils';
 
 interface LoadingImageProps {
-  src: string
-  alt: string
-  className?: string
-  containerClassName?: string
-  priority?: boolean
-  quality?: number
-  sizes?: string
-  aspectRatio?: string
+  src: string;
+  alt: string;
+  className?: string;
+  containerClassName?: string;
+  priority?: boolean;
+  quality?: number;
+  sizes?: string;
+  aspectRatio?: string;
 }
 
 export function LoadingImage({
@@ -25,11 +25,11 @@ export function LoadingImage({
   containerClassName,
   priority = false,
   quality = 75,
-  sizes = "(max-width: 768px) 100vw, 768px",
-  aspectRatio = "16/9",
+  sizes = '(max-width: 768px) 100vw, 768px',
+  aspectRatio = '16/9',
 }: LoadingImageProps) {
-  const [imageLoaded, setImageLoaded] = useState(priority)
-  const [hasError, setHasError] = useState(false)
+  const [imageLoaded, setImageLoaded] = useState(priority);
+  const [hasError, setHasError] = useState(false);
 
   // Create shimmer placeholder
   const shimmer = (w: number, h: number) => `
@@ -43,20 +43,20 @@ export function LoadingImage({
       </defs>
       <rect width="${w}" height="${h}" fill="#e5e7eb" />
       <rect id="r" width="${w}" height="${h}" fill="url(#g)" />
-    </svg>`
+    </svg>`;
 
   const toBase64 = (str: string) =>
-    typeof window === "undefined"
-      ? Buffer.from(str).toString("base64")
-      : btoa(str)
+    typeof window === 'undefined'
+      ? Buffer.from(str).toString('base64')
+      : btoa(str);
 
-  const dataUrl = `data:image/svg+xml;base64,${toBase64(shimmer(1920, 1080))}`
+  const dataUrl = `data:image/svg+xml;base64,${toBase64(shimmer(1920, 1080))}`;
 
   return (
     <div
       className={cn(
-        "bg-muted relative w-full overflow-hidden rounded-xl",
-        containerClassName
+        'bg-muted relative w-full overflow-hidden rounded-xl',
+        containerClassName,
       )}
       style={{ aspectRatio }}
     >
@@ -67,9 +67,9 @@ export function LoadingImage({
           fill
           sizes={sizes}
           className={cn(
-            "object-cover transition-all duration-300 ease-out",
-            imageLoaded ? "opacity-100" : "opacity-0",
-            className
+            'object-cover transition-all duration-300 ease-out',
+            imageLoaded ? 'opacity-100' : 'opacity-0',
+            className,
           )}
           placeholder="blur"
           blurDataURL={dataUrl}
@@ -77,7 +77,7 @@ export function LoadingImage({
           quality={quality}
           onLoad={() => setImageLoaded(true)}
           onError={() => {
-            setHasError(true)
+            setHasError(true);
           }}
         />
       )}
@@ -87,5 +87,5 @@ export function LoadingImage({
         </div>
       )}
     </div>
-  )
+  );
 }

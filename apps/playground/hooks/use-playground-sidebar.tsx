@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import * as React from "react";
+import * as React from 'react';
 
 type RightSidebarContextProps = {
   isOpen: boolean;
@@ -15,7 +15,7 @@ export function usePlaygroundSidebar() {
   const context = React.useContext(RightSidebarContext);
   if (!context) {
     throw new Error(
-      "usePlaygroundSidebar must be used within a RightSidebarProvider."
+      'usePlaygroundSidebar must be used within a RightSidebarProvider.',
     );
   }
   return context;
@@ -29,7 +29,7 @@ export function RightSidebarProvider({
   const [isOpen, setIsOpen] = React.useState(false);
 
   const toggle = React.useCallback(() => {
-    setIsOpen((prev) => !prev);
+    setIsOpen(prev => !prev);
   }, []);
 
   const contextValue = React.useMemo(
@@ -38,7 +38,7 @@ export function RightSidebarProvider({
       setIsOpen,
       toggle,
     }),
-    [isOpen, setIsOpen, toggle]
+    [isOpen, setIsOpen, toggle],
   );
 
   return (

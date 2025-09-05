@@ -1,4 +1,3 @@
-
 interface ClientToolCallData {
   toolName: string;
   toolCallId: string;

@@ -1,16 +1,16 @@
-"use client";
+'use client';
 
-import * as React from "react";
-import { CheckIcon, ClipboardIcon } from "lucide-react";
+import * as React from 'react';
+import { CheckIcon, ClipboardIcon } from 'lucide-react';
 
-import { Event, trackEvent } from "@/lib/events";
-import { cn } from "@/lib/utils";
-import { Button } from "@elevenlabs/ui/components/button";
+import { Event, trackEvent } from '@/lib/events';
+import { cn } from '@/lib/utils';
+import { Button } from '@elevenlabs/ui/components/button';
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@elevenlabs/ui/components/tooltip";
+} from '@elevenlabs/ui/components/tooltip';
 
 export function ChartCopyButton({
   event,
@@ -19,7 +19,7 @@ export function ChartCopyButton({
   className,
   ...props
 }: {
-  event: Event["name"];
+  event: Event['name'];
   name: string;
   code: string;
 } & React.ComponentProps<typeof Button>) {
@@ -38,8 +38,8 @@ export function ChartCopyButton({
           size="icon"
           variant="ghost"
           className={cn(
-            "[&_svg]-h-3.5 h-7 w-7 rounded-[6px] [&_svg]:w-3.5",
-            className
+            '[&_svg]-h-3.5 h-7 w-7 rounded-[6px] [&_svg]:w-3.5',
+            className,
           )}
           onClick={() => {
             navigator.clipboard.writeText(code);

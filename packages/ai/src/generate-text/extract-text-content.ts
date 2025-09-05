@@ -1,4 +1,7 @@
-import { LanguageModelV2Content, LanguageModelV2Text } from '@elevenlabs/provider';
+import {
+  LanguageModelV2Content,
+  LanguageModelV2Text,
+} from '@elevenlabs/provider';
 
 export function extractTextContent(
   content: LanguageModelV2Content[],

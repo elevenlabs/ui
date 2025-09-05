@@ -1,4 +1,8 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@elevenlabs/ui/components/avatar';
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from '@elevenlabs/ui/components/avatar';
 import { cn } from '@elevenlabs/ui/lib/utils';
 import type { UIMessage } from 'ai';
 import type { ComponentProps, HTMLAttributes } from 'react';

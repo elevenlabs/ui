@@ -1,40 +1,40 @@
-"use client";
+'use client';
 
-import * as React from "react";
-import Link, { LinkProps } from "next/link";
-import { useRouter } from "next/navigation";
+import * as React from 'react';
+import Link, { LinkProps } from 'next/link';
+import { useRouter } from 'next/navigation';
 
-import { showMcpDocs } from "@/lib/flags";
-import { source } from "@/lib/source";
-import { cn } from "@/lib/utils";
-import { Button } from "@elevenlabs/ui/components/button";
+import { showMcpDocs } from '@/lib/flags';
+import { source } from '@/lib/source';
+import { cn } from '@/lib/utils';
+import { Button } from '@elevenlabs/ui/components/button';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@elevenlabs/ui/components/popover";
+} from '@elevenlabs/ui/components/popover';
 
 const TOP_LEVEL_SECTIONS = [
-  { name: "Featured", href: "/projects" },
+  { name: 'Featured', href: '/projects' },
   {
-    name: "Agents",
-    href: "/projects/category/agents",
+    name: 'Agents',
+    href: '/projects/category/agents',
   },
   {
-    name: "Music",
-    href: "/projects/category/music",
+    name: 'Music',
+    href: '/projects/category/music',
   },
   {
-    name: "Text to Speech",
-    href: "/projects/category/text-to-speech",
+    name: 'Text to Speech',
+    href: '/projects/category/text-to-speech',
   },
   {
-    name: "Speech to Text",
-    href: "/projects/category/speech-to-text",
+    name: 'Speech to Text',
+    href: '/projects/category/speech-to-text',
   },
   {
-    name: "Voices",
-    href: "/projects/category/voices",
+    name: 'Voices',
+    href: '/projects/category/voices',
   },
 ];
 
@@ -55,8 +55,8 @@ export function MobileNav({
         <Button
           variant="ghost"
           className={cn(
-            "extend-touch-target h-8 touch-manipulation items-center justify-start gap-3 !px-0 hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 active:bg-transparent dark:hover:bg-transparent",
-            className
+            'extend-touch-target h-8 touch-manipulation items-center justify-start gap-3 !px-0 hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 active:bg-transparent dark:hover:bg-transparent',
+            className,
           )}
         >
           <div className="flex h-8 items-center gap-2">
@@ -65,8 +65,8 @@ export function MobileNav({
               <svg
                 viewBox="0 0 24 24"
                 className={cn(
-                  "text-foreground h-[70%] w-[70%] transition-all duration-200",
-                  open && "rotate-45"
+                  'text-foreground h-[70%] w-[70%] transition-all duration-200',
+                  open && 'rotate-45',
                 )}
                 fill="currentColor"
               >
@@ -120,7 +120,7 @@ export function MobileNav({
             </div>
             <div className="flex flex-col gap-3">
               {TOP_LEVEL_SECTIONS.map(({ name, href }) => {
-                if (!showMcpDocs && href.includes("/mcp")) {
+                if (!showMcpDocs && href.includes('/mcp')) {
                   return null;
                 }
                 return (
@@ -133,16 +133,16 @@ export function MobileNav({
           </div>
           <div className="flex flex-col gap-8">
             {tree?.children?.map((group, index) => {
-              if (group.type === "folder") {
+              if (group.type === 'folder') {
                 return (
                   <div key={index} className="flex flex-col gap-4">
                     <div className="text-muted-foreground text-sm font-medium">
                       {group.name}
                     </div>
                     <div className="flex flex-col gap-3">
-                      {group.children.map((item) => {
-                        if (item.type === "page") {
-                          if (!showMcpDocs && item.url.includes("/mcp")) {
+                      {group.children.map(item => {
+                        if (item.type === 'page') {
+                          if (!showMcpDocs && item.url.includes('/mcp')) {
                             return null;
                           }
                           return (
@@ -187,7 +187,7 @@ function MobileLink({
         router.push(href.toString());
         onOpenChange?.(false);
       }}
-      className={cn("text-2xl font-medium", className)}
+      className={cn('text-2xl font-medium', className)}
       {...props}
     >
       {children}

@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
-import { cookies } from "next/headers";
-import { encryptApiKey, validateApiKey } from "@/lib/crypto";
+import { NextRequest, NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
+import { encryptApiKey, validateApiKey } from '@/lib/crypto';
 
-const COOKIE_NAME = "el_session";
+const COOKIE_NAME = 'el_session';
 
 /**
  * POST /api/elevenlabs/auth
@@ -14,8 +14,8 @@ export async function POST(request: NextRequest) {
 
     if (!apiKey) {
       return NextResponse.json(
-        { error: "API key is required" },
-        { status: 400 }
+        { error: 'API key is required' },
+        { status: 400 },
       );
     }
 
@@ -23,8 +23,8 @@ export async function POST(request: NextRequest) {
     const isValid = await validateApiKey(apiKey);
     if (!isValid) {
       return NextResponse.json(
-        { error: "Invalid ElevenLabs API key" },
-        { status: 400 }
+        { error: 'Invalid ElevenLabs API key' },
+        { status: 400 },
       );
     }
 
@@ -35,18 +35,18 @@ export async function POST(request: NextRequest) {
     const cookieStore = await cookies();
     cookieStore.set(COOKIE_NAME, encrypted, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
       maxAge: 60 * 60 * 24 * 30, // 30 days
-      path: "/",
+      path: '/',
     });
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Error storing API key:", error);
+    console.error('Error storing API key:', error);
     return NextResponse.json(
-      { error: "Failed to store API key" },
-      { status: 500 }
+      { error: 'Failed to store API key' },
+      { status: 500 },
     );
   }
 }
