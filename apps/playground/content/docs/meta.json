@@ -1,11 +1,6 @@
 {
   "root": true,
   "pages": [
-    "(root)",
-    "changelog",
-    "components",
-    "installation",
-    "dark-mode",
-    "registry"
+    "(root)"
   ]
 }
