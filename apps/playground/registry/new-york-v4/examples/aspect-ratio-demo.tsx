@@ -1,6 +1,6 @@
-import Image from "next/image"
+import Image from 'next/image';
 
-import { AspectRatio } from "@elevenlabs/ui/components/aspect-ratio"
+import { AspectRatio } from '@elevenlabs/ui/components/aspect-ratio';
 
 export default function AspectRatioDemo() {
   return (
@@ -12,5 +12,5 @@ export default function AspectRatioDemo() {
         className="h-full w-full rounded-lg object-cover dark:brightness-[0.2] dark:grayscale"
       />
     </AspectRatio>
-  )
+  );
 }

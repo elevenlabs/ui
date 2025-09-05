@@ -7,7 +7,7 @@ export function Announcement() {
   return (
     <Badge asChild variant="secondary" className="rounded-full">
       <Link href="/docs/changelog">
-        Now available: shadcn CLI 3.0 and MCP Server <ArrowRightIcon />
+        Now available: Audio components crafted by ElevenLabs <ArrowRightIcon />
       </Link>
     </Badge>
   )

@@ -1,4 +1,4 @@
-"use client"
+'use client';
 
 import {
   FrameIcon,
@@ -6,7 +6,7 @@ import {
   MapIcon,
   PieChartIcon,
   SendIcon,
-} from "lucide-react"
+} from 'lucide-react';
 
 import {
   Sidebar,
@@ -19,40 +19,40 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarProvider,
-} from "@elevenlabs/ui/components/sidebar"
+} from '@elevenlabs/ui/components/sidebar';
 
 const projects = [
   {
-    name: "Design Engineering",
-    url: "#",
+    name: 'Design Engineering',
+    url: '#',
     icon: FrameIcon,
-    badge: "24",
+    badge: '24',
   },
   {
-    name: "Sales & Marketing",
-    url: "#",
+    name: 'Sales & Marketing',
+    url: '#',
     icon: PieChartIcon,
-    badge: "12",
+    badge: '12',
   },
   {
-    name: "Travel",
-    url: "#",
+    name: 'Travel',
+    url: '#',
     icon: MapIcon,
-    badge: "3",
+    badge: '3',
   },
   {
-    name: "Support",
-    url: "#",
+    name: 'Support',
+    url: '#',
     icon: LifeBuoyIcon,
-    badge: "21",
+    badge: '21',
   },
   {
-    name: "Feedback",
-    url: "#",
+    name: 'Feedback',
+    url: '#',
     icon: SendIcon,
-    badge: "8",
+    badge: '8',
   },
-]
+];
 
 export default function AppSidebar() {
   return (
@@ -63,7 +63,7 @@ export default function AppSidebar() {
             <SidebarGroupLabel>Projects</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
-                {projects.map((project) => (
+                {projects.map(project => (
                   <SidebarMenuItem key={project.name}>
                     <SidebarMenuButton
                       asChild
@@ -83,5 +83,5 @@ export default function AppSidebar() {
         </SidebarContent>
       </Sidebar>
     </SidebarProvider>
-  )
+  );
 }

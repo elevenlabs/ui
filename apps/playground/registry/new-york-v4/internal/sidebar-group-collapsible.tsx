@@ -1,12 +1,12 @@
-"use client"
+'use client';
 
-import { ChevronDownIcon, LifeBuoyIcon, SendIcon } from "lucide-react"
+import { ChevronDownIcon, LifeBuoyIcon, SendIcon } from 'lucide-react';
 
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "@elevenlabs/ui/components/collapsible"
+} from '@elevenlabs/ui/components/collapsible';
 import {
   Sidebar,
   SidebarContent,
@@ -17,7 +17,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarProvider,
-} from "@elevenlabs/ui/components/sidebar"
+} from '@elevenlabs/ui/components/sidebar';
 
 export default function AppSidebar() {
   return (
@@ -58,5 +58,5 @@ export default function AppSidebar() {
         </SidebarContent>
       </Sidebar>
     </SidebarProvider>
-  )
+  );
 }

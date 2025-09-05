@@ -1,10 +1,10 @@
-import { AlertCircleIcon } from "lucide-react"
+import { AlertCircleIcon } from 'lucide-react';
 
 import {
   Alert,
   AlertDescription,
   AlertTitle,
-} from "@elevenlabs/ui/components/alert"
+} from '@elevenlabs/ui/components/alert';
 
 export default function AlertDestructive() {
   return (
@@ -15,5 +15,5 @@ export default function AlertDestructive() {
         Your session has expired. Please log in again.
       </AlertDescription>
     </Alert>
-  )
+  );
 }

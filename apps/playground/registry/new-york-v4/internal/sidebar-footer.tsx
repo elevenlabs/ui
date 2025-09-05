@@ -1,13 +1,13 @@
-"use client"
+'use client';
 
-import { ChevronUpIcon } from "lucide-react"
+import { ChevronUpIcon } from 'lucide-react';
 
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@elevenlabs/ui/components/dropdown-menu"
+} from '@elevenlabs/ui/components/dropdown-menu';
 import {
   Sidebar,
   SidebarContent,
@@ -19,7 +19,7 @@ import {
   SidebarMenuItem,
   SidebarProvider,
   SidebarTrigger,
-} from "@elevenlabs/ui/components/sidebar"
+} from '@elevenlabs/ui/components/sidebar';
 
 export default function AppSidebar() {
   return (
@@ -62,5 +62,5 @@ export default function AppSidebar() {
         </header>
       </SidebarInset>
     </SidebarProvider>
-  )
+  );
 }

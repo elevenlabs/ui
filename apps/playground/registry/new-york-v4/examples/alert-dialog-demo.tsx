@@ -8,8 +8,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@elevenlabs/ui/components/alert-dialog"
-import { Button } from "@elevenlabs/ui/components/button"
+} from '@elevenlabs/ui/components/alert-dialog';
+import { Button } from '@elevenlabs/ui/components/button';
 
 export default function AlertDialogDemo() {
   return (
@@ -31,5 +31,5 @@ export default function AlertDialogDemo() {
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
-  )
+  );
 }

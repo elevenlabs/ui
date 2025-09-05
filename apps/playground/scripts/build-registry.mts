@@ -23,9 +23,23 @@ export const Index: Record<string, any> = {`
       continue
     }
 
-    const componentPath = item.files?.[0]?.path
-      ? `@/elevenlabs/ui/components/${item.files[0].path}`
-      : ""
+    // Generate correct import path based on item type
+    let componentPath = ""
+    if (item.files?.[0]?.path) {
+      // Remove .tsx extension from path
+      const pathWithoutExt = item.files[0].path.replace(/\.tsx$/, "")
+      
+      if (item.type === "registry:block") {
+        // Blocks are in the registry directory
+        componentPath = `@/registry/new-york-v4/${pathWithoutExt}`
+      } else if (item.type === "registry:ui") {
+        // UI components are in the packages/ui directory
+        componentPath = `@elevenlabs/ui/components/${pathWithoutExt}`
+      } else {
+        // Default to registry path for other types
+        componentPath = `@/registry/new-york-v4/${pathWithoutExt}`
+      }
+    }
 
     index += `
   "${item.name}": {
@@ -94,27 +108,23 @@ async function buildRegistryJsonFile() {
     JSON.stringify(fixedRegistry, null, 2)
   )
 
-  // 3. Copy the registry.json to the www/public/r/styles/new-york-v4 directory.
+  // 3. Ensure directory exists and copy the registry.json to the playground/public/r/styles/new-york-v4 directory.
+  const targetDir = path.join(process.cwd(), "public/r/styles/new-york-v4")
+  await fs.mkdir(targetDir, { recursive: true })
   await fs.cp(
     path.join(process.cwd(), "registry.json"),
-    path.join(
-      process.cwd(),
-      "../www/public/r/styles/new-york-v4/registry.json"
-    ),
+    path.join(targetDir, "registry.json"),
     { recursive: true }
   )
 }
 
 async function buildRegistry() {
   return new Promise((resolve, reject) => {
-    // Use local shadcn copy.
+    // Use the hosted npm package instead of local shadcn copy
+    // pnpm dlx will download and execute the latest version of shadcn from npm
     const process = exec(
-      `node ../../packages/shadcn/dist/index.js build registry.json --output ../www/public/r/styles/new-york-v4`
+      `pnpm dlx shadcn build registry.json --output public/r/styles/new-york-v4`
     )
-
-    // exec(
-    //   `pnpm dlx shadcn build registry.json --output ../www/public/r/styles/new-york-v4`
-    // )
 
     process.on("exit", (code) => {
       if (code === 0) {
@@ -139,12 +149,21 @@ async function syncRegistry() {
   }
 
   // 1. Call pnpm registry:build for www.
-  await exec("pnpm --filter=www registry:build")
+  await new Promise((resolve, reject) => {
+    const process = exec("pnpm --filter=playground registry:build")
+    process.on("exit", (code) => {
+      if (code === 0) {
+        resolve(undefined)
+      } else {
+        reject(new Error(`Process exited with code ${code}`))
+      }
+    })
+  })
 
-  // 2. Copy the www/public/r directory to v4/public/r.
+  // 2. Copy the playground/public/r directory to v4/public/r.
   rimraf.sync(path.join(process.cwd(), "public/r"))
   await fs.cp(
-    path.resolve(process.cwd(), "../www/public/r"),
+    path.resolve(process.cwd(), "../playground/public/r"),
     path.resolve(process.cwd(), "public/r"),
     { recursive: true }
   )
@@ -184,8 +203,10 @@ try {
   console.log("🏗️ Building registry...")
   await buildRegistry()
 
-  console.log("🔄 Syncing registry...")
-  await syncRegistry()
+  // Skip syncRegistry when running from playground itself
+  // This function is meant to be called from www directory
+  // console.log("🔄 Syncing registry...")
+  // await syncRegistry()
 } catch (error) {
   console.error(error)
   process.exit(1)

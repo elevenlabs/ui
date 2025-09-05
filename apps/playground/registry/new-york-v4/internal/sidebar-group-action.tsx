@@ -1,7 +1,7 @@
-"use client"
+'use client';
 
-import { FrameIcon, MapIcon, PieChartIcon, PlusIcon } from "lucide-react"
-import { toast, Toaster } from "sonner"
+import { FrameIcon, MapIcon, PieChartIcon, PlusIcon } from 'lucide-react';
+import { toast, Toaster } from 'sonner';
 
 import {
   Sidebar,
@@ -14,7 +14,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarProvider,
-} from "@elevenlabs/ui/components/sidebar"
+} from '@elevenlabs/ui/components/sidebar';
 
 export default function AppSidebar() {
   return (
@@ -22,7 +22,7 @@ export default function AppSidebar() {
       <Toaster
         position="bottom-left"
         toastOptions={{
-          className: "ml-[160px]",
+          className: 'ml-[160px]',
         }}
       />
       <Sidebar>
@@ -31,7 +31,7 @@ export default function AppSidebar() {
             <SidebarGroupLabel>Projects</SidebarGroupLabel>
             <SidebarGroupAction
               title="Add Project"
-              onClick={() => toast("You clicked the group action!")}
+              onClick={() => toast('You clicked the group action!')}
             >
               <PlusIcon /> <span className="sr-only">Add Project</span>
             </SidebarGroupAction>
@@ -67,5 +67,5 @@ export default function AppSidebar() {
         </SidebarContent>
       </Sidebar>
     </SidebarProvider>
-  )
+  );
 }

@@ -1,10 +1,10 @@
-import { AlertCircleIcon, CheckCircle2Icon, PopcornIcon } from "lucide-react"
+import { AlertCircleIcon, CheckCircle2Icon, PopcornIcon } from 'lucide-react';
 
 import {
   Alert,
   AlertDescription,
   AlertTitle,
-} from "@elevenlabs/ui/components/alert"
+} from '@elevenlabs/ui/components/alert';
 
 export default function AlertDemo() {
   return (
@@ -35,5 +35,5 @@ export default function AlertDemo() {
         </AlertDescription>
       </Alert>
     </div>
-  )
+  );
 }

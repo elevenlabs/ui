@@ -1,4 +1,4 @@
-"use client"
+'use client';
 
 import {
   CalendarIcon,
@@ -6,7 +6,7 @@ import {
   InboxIcon,
   SearchIcon,
   SettingsIcon,
-} from "lucide-react"
+} from 'lucide-react';
 
 import {
   Sidebar,
@@ -20,36 +20,36 @@ import {
   SidebarMenuItem,
   SidebarProvider,
   SidebarTrigger,
-} from "@elevenlabs/ui/components/sidebar"
+} from '@elevenlabs/ui/components/sidebar';
 
 // Menu items.
 const items = [
   {
-    title: "Home",
-    url: "#",
+    title: 'Home',
+    url: '#',
     icon: HomeIcon,
   },
   {
-    title: "Inbox",
-    url: "#",
+    title: 'Inbox',
+    url: '#',
     icon: InboxIcon,
   },
   {
-    title: "Calendar",
-    url: "#",
+    title: 'Calendar',
+    url: '#',
     icon: CalendarIcon,
   },
   {
-    title: "Search",
-    url: "#",
+    title: 'Search',
+    url: '#',
     icon: SearchIcon,
   },
   {
-    title: "Settings",
-    url: "#",
+    title: 'Settings',
+    url: '#',
     icon: SettingsIcon,
   },
-]
+];
 
 export default function AppSidebar() {
   return (
@@ -60,7 +60,7 @@ export default function AppSidebar() {
             <SidebarGroupLabel>Application</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
-                {items.map((item) => (
+                {items.map(item => (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild>
                       <a href={item.url}>
@@ -81,5 +81,5 @@ export default function AppSidebar() {
         </header>
       </SidebarInset>
     </SidebarProvider>
-  )
+  );
 }

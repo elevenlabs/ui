@@ -1,11 +1,11 @@
-import * as React from "react"
+import * as React from 'react';
 import {
   FrameIcon,
   LifeBuoyIcon,
   MapIcon,
   PieChartIcon,
   SendIcon,
-} from "lucide-react"
+} from 'lucide-react';
 
 import {
   Sidebar,
@@ -18,45 +18,45 @@ import {
   SidebarMenuItem,
   SidebarMenuSkeleton,
   SidebarProvider,
-} from "@elevenlabs/ui/components/sidebar"
+} from '@elevenlabs/ui/components/sidebar';
 
 const projects = [
   {
-    name: "Design Engineering",
-    url: "#",
+    name: 'Design Engineering',
+    url: '#',
     icon: FrameIcon,
-    badge: "24",
+    badge: '24',
   },
   {
-    name: "Sales & Marketing",
-    url: "#",
+    name: 'Sales & Marketing',
+    url: '#',
     icon: PieChartIcon,
-    badge: "12",
+    badge: '12',
   },
   {
-    name: "Travel",
-    url: "#",
+    name: 'Travel',
+    url: '#',
     icon: MapIcon,
-    badge: "3",
+    badge: '3',
   },
   {
-    name: "Support",
-    url: "#",
+    name: 'Support',
+    url: '#',
     icon: LifeBuoyIcon,
-    badge: "21",
+    badge: '21',
   },
   {
-    name: "Feedback",
-    url: "#",
+    name: 'Feedback',
+    url: '#',
     icon: SendIcon,
-    badge: "8",
+    badge: '8',
   },
-]
+];
 
 // Dummy fetch function
 async function fetchProjects() {
-  await new Promise((resolve) => setTimeout(resolve, 3000))
-  return projects
+  await new Promise(resolve => setTimeout(resolve, 3000));
+  return projects;
 }
 
 export default function AppSidebar() {
@@ -75,7 +75,7 @@ export default function AppSidebar() {
         </SidebarContent>
       </Sidebar>
     </SidebarProvider>
-  )
+  );
 }
 
 function NavProjectsSkeleton() {
@@ -87,15 +87,15 @@ function NavProjectsSkeleton() {
         </SidebarMenuItem>
       ))}
     </SidebarMenu>
-  )
+  );
 }
 
 async function NavProjects() {
-  const projects = await fetchProjects()
+  const projects = await fetchProjects();
 
   return (
     <SidebarMenu>
-      {projects.map((project) => (
+      {projects.map(project => (
         <SidebarMenuItem key={project.name}>
           <SidebarMenuButton asChild>
             <a href={project.url}>
@@ -106,5 +106,5 @@ async function NavProjects() {
         </SidebarMenuItem>
       ))}
     </SidebarMenu>
-  )
+  );
 }
