@@ -13,6 +13,11 @@ export const siteConfig = {
       label: "Playground",
       includeSubPaths: true,
     },
+    {
+      href: "/docs",
+      label: "Docs",
+      includeSubPaths: true,
+    },
   ],
 };
 

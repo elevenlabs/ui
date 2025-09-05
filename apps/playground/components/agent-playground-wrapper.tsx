@@ -20,7 +20,6 @@ export function AgentPlaygroundWrapper({
   const { isOpen, setIsOpen } = usePlaygroundSidebar();
   const isMobile = useIsMobile();
 
-  // For mobile, use Sheet component as an overlay
   if (isMobile) {
     return (
       <div className="relative flex flex-1 overflow-hidden">

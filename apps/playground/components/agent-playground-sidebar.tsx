@@ -42,7 +42,7 @@ export function AgentPlaygroundSidebar({
       widthVar="--sidebar-secondary-width"
       {...props}
     >
-      <SidebarHeader className="!bg-background border-b">
+      <SidebarHeader className="!bg-background">
         <div className="flex items-center justify-between px-2 py-2">
           <h2 className="text-sm font-bold">Logs</h2>
         </div>

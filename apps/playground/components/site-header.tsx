@@ -18,7 +18,7 @@ export async function SiteHeader() {
           <MobileNav
             tree={pageTree}
             items={siteConfig.navItems}
-            className="flex lg:hidden"
+            className="flex md:hidden"
           />
           <SiteHeaderLogo siteName={siteConfig.name} />
 
