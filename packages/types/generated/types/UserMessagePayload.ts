@@ -1,4 +1,3 @@
-
 interface UserMessagePayload {
   reservedType: 'user_message';
   reservedText?: string;

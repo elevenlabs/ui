@@ -1,4 +1,3 @@
-
 interface McpToolCallAwaitingApproval {
   serviceId: string;
   toolCallId: string;

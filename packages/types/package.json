@@ -10,7 +10,7 @@
     "generated"
   ],
   "scripts": {
-    "generate": "asyncapi generate models typescript ./schemas/agent.asyncapi.yaml -o ./generated/types --tsModelType interface && ls ./generated/types/*.ts | xargs -n1 basename | sed 's/.ts$//' | awk '{print \"export * from \\\"./\" $0 \"\\\";\"}' > ./generated/types/index.ts",
+    "generate": "asyncapi generate models typescript ./schemas/agent.asyncapi.yaml -o ./generated/types --tsModelType interface && ls ./generated/types/*.ts | xargs -n1 basename | sed 's/.ts$//' | awk '{print \"export * from \\\"./\" $0 \"\\\";\"}' > ./generated/types/index.ts && prettier --write ./generated/types/**/*.ts",
     "build": "pnpm generate && tsc",
     "dev": "pnpm generate",
     "clean": "rm -rf dist generated/types",
