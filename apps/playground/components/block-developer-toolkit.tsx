@@ -1,9 +1,7 @@
 'use client';
 
-import { useRef } from 'react';
 import { cn } from '@/lib/utils';
 import dynamic from 'next/dynamic';
-import { useRive } from '@rive-app/react-canvas';
 import { Block } from './block';
 
 const GridItem = ({
@@ -98,20 +96,22 @@ export const BlockDeveloperToolkit = () => {
     {
       title: 'Powerful SDK',
       description:
-        'Write your own conversational agent with our SDK in Python or JavaScript',
+        'Use our SDKs for JavaScript, Python, Swift, and more to embed voice agents into your apps, sites, or systems. Stream audio, manage sessions, and control behavior with minimal setup.',
     },
     {
       title: 'Low latency',
-      description: 'The most responsive conversational AI, with <500ms latency',
+      description:
+        'Responses are generated and delivered in real time, even during high-concurrency traffic. Our system is optimized for sub-second turnaround across speech, reasoning, and voice synthesis.',
     },
     {
       title: 'Bring any LLM',
-      description: 'Choose from any LLM, including your own custom LLM',
+      description:
+        'Connect any leading model — GPT-4, Claude, Gemini, or your own — with a few lines of config. Swap models at any time to match your performance, privacy, or cost needs.',
     },
     {
       title: 'RAG out of the box',
       description:
-        'Simple support for external knowledge bases and custom tools',
+        'Use Retrieval-Augmented Generation to pull from your own documents and sources. Index files and URLs instantly and get grounded, up-to-date answers with minimal latency.',
     },
   ];
 
@@ -124,6 +124,7 @@ export const BlockDeveloperToolkit = () => {
             Ship production-grade agents
           </h3>
         </div>
+
         {/* Main grid */}
         <div
           className="relative flex w-full grid-rows-2 flex-col gap-0 border-x border-[rgba(0,0,0,0.1)] dark:border-[rgba(255,255,255,0.1)] [--center-width:480px] sm:[--center-width:320px] md:[--center-width:380px] lg:grid xl:[--center-width:480px]"

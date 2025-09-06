@@ -22,6 +22,14 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'elevenlabs.io',
       },
+      {
+        protocol: 'https',
+        hostname: 'pbs.twimg.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'storage.googleapis.com',
+      },
     ],
   },
   async redirects() {

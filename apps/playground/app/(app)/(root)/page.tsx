@@ -2,11 +2,19 @@ import { Metadata } from 'next';
 import Link from 'next/link';
 
 // Use shadcn/ui components for a more Vercel-like, developer-focused feel
-import { Button } from '@elevenlabs/ui/components/button';
-import { Badge } from '@elevenlabs/ui/components/badge';
-import { Separator } from '@elevenlabs/ui/components/separator';
-
+import { AvatarStack } from '@elevenlabs/ui/components/ui/kibo-ui/avatar-stack';
 // Keep your existing ElevenLabs UI bits for the Bento grid content
+import { BlockDeveloperToolkit } from '@/components/block-developer-toolkit';
+import { CopyCodeButton } from '@/components/copy-code-button';
+import { AgentsCarousel } from '@/components/agents-carousel';
+import { MinimalCardDemo } from '@/components/hero-cards';
+import { Avatar, AvatarFallback } from '@elevenlabs/ui/components/avatar';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@elevenlabs/ui/components/tooltip';
+import BlurVignette from '@elevenlabs/ui/components/ui/blur-vignette';
 import {
   MinimalCard,
   MinimalCardDescription,
@@ -14,9 +22,15 @@ import {
   MinimalCardTitle,
 } from '@elevenlabs/ui/components/ui/minimal-card';
 import { SkiperMarquee } from '@elevenlabs/ui/components/ui/skiper-marquee';
-import { CopyCodeButton } from '@/components/copy-code-button';
-import BlurVignette from '@elevenlabs/ui/components/ui/blur-vignette';
-import { BlockDeveloperToolkit } from '@/components/block-developer-toolkit';
+import {
+  IconBrandJavascript,
+  IconBrandNextjs,
+  IconBrandPython,
+  IconBrandReact,
+  IconBrandSvelte,
+  IconBrandSwift,
+  IconBrandTypescript,
+} from '@tabler/icons-react';
 
 const title = 'ElevenLabs Agents SDK';
 const description = 'An AI Audio Research & Deployment company';
@@ -64,7 +78,7 @@ export default function IndexPage() {
       <section className="relative overflow-hidden border-b border-[rgba(0,0,0,0.1)] dark:border-[rgba(255,255,255,0.1)] bg-background">
         {/* Background marquee */}
         <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
-          <div className="w-full blur-xl opacity-30">
+          <div className="w-screen max-w-none blur-xl opacity-30 [&>section]:!p-0 [&_div.container]:!max-w-none [&_div.container]:!px-0">
             <SkiperMarquee />
           </div>
         </div>
@@ -72,21 +86,6 @@ export default function IndexPage() {
         {/* Foreground content */}
         <div className="relative z-10 container mx-auto px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20">
           <div className="mx-auto flex max-w-6xl flex-col items-center text-center py-20 md:py-28 lg:py-36">
-            <div className="mb-4 flex flex-wrap items-center justify-center gap-2">
-              <Badge
-                variant="secondary"
-                className="rounded-full px-3 py-1 text-xs"
-              >
-                TypeScript-first
-              </Badge>
-              <Badge
-                variant="outline"
-                className="rounded-full px-3 py-1 text-xs"
-              >
-                Edge-ready
-              </Badge>
-            </div>
-
             <h1 className="tracking-tight text-balance text-4xl font-semibold leading-[1.05] sm:text-5xl md:text-6xl text-foreground">
               {title}
             </h1>
@@ -94,7 +93,110 @@ export default function IndexPage() {
               {description}
             </p>
 
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+            <div className="mt-6 mb-8 flex flex-wrap items-center justify-center gap-2 opacity-80">
+              <AvatarStack>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Link href="/docs/typescript">
+                      <Avatar className="h-6 w-6 border border-border/50 transition-all hover:opacity-100 hover:border-border cursor-pointer">
+                        <AvatarFallback className="bg-background/30">
+                          <IconBrandTypescript className="h-4 w-4" />
+                        </AvatarFallback>
+                      </Avatar>
+                    </Link>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>TypeScript SDK</p>
+                  </TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Link href="/docs/react">
+                      <Avatar className="h-6 w-6 border border-border/50 transition-all hover:opacity-100 hover:border-border cursor-pointer">
+                        <AvatarFallback className="bg-background/30">
+                          <IconBrandReact className="h-4 w-4" />
+                        </AvatarFallback>
+                      </Avatar>
+                    </Link>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>React Integration</p>
+                  </TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Link href="/docs/nextjs">
+                      <Avatar className="h-6 w-6 border border-border/50 transition-all hover:opacity-100 hover:border-border cursor-pointer">
+                        <AvatarFallback className="bg-background/30">
+                          <IconBrandNextjs className="h-4 w-4" />
+                        </AvatarFallback>
+                      </Avatar>
+                    </Link>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Next.js Guide</p>
+                  </TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Link href="/docs/swift">
+                      <Avatar className="h-6 w-6 border border-border/50 transition-all hover:opacity-100 hover:border-border cursor-pointer">
+                        <AvatarFallback className="bg-background/30">
+                          <IconBrandSwift className="h-4 w-4" />
+                        </AvatarFallback>
+                      </Avatar>
+                    </Link>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Swift SDK</p>
+                  </TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Link href="/docs/python">
+                      <Avatar className="h-6 w-6 border border-border/50 transition-all hover:opacity-100 hover:border-border cursor-pointer">
+                        <AvatarFallback className="bg-background/30">
+                          <IconBrandPython className="h-4 w-4" />
+                        </AvatarFallback>
+                      </Avatar>
+                    </Link>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Python SDK</p>
+                  </TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Link href="/docs/svelte">
+                      <Avatar className="h-6 w-6 border border-border/50 transition-all hover:opacity-100 hover:border-border cursor-pointer">
+                        <AvatarFallback className="bg-background/30">
+                          <IconBrandSvelte className="h-4 w-4" />
+                        </AvatarFallback>
+                      </Avatar>
+                    </Link>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Svelte Integration</p>
+                  </TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Link href="/docs/javascript">
+                      <Avatar className="h-6 w-6 border border-border/50 transition-all hover:opacity-100 hover:border-border cursor-pointer">
+                        <AvatarFallback className="bg-background/30">
+                          <IconBrandJavascript className="h-4 w-4" />
+                        </AvatarFallback>
+                      </Avatar>
+                    </Link>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>JavaScript SDK</p>
+                  </TooltipContent>
+                </Tooltip>
+              </AvatarStack>
+            </div>
+
+            <div className="flex flex-wrap items-center justify-center gap-3">
               <CopyCodeButton />
             </div>
 
@@ -103,123 +205,52 @@ export default function IndexPage() {
         </div>
       </section>
 
-      {/* Developer Toolkit Section - moved up */}
       <section className="px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20">
         <BlockDeveloperToolkit />
       </section>
 
-      {/* Clean Bento Grid (content intact) */}
       <section className="flex-1 pb-10 md:pb-16 mt-0 px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20">
         <div className="mx-auto max-w-[700px] lg:max-w-full">
-          {/**
-           * Design goals:
-           * - Exactly 6 cards (clean, focused)
-           * - Consistent row heights via aspect ratios to avoid masonry "sticking"
-           * - Uses provided media assets
-           */}
           <div className="grid grid-cols-1 gap-0 md:grid-cols-6 border-x border-b border-[rgba(0,0,0,0.1)] dark:border-[rgba(255,255,255,0.1)]">
-            {/* 1) Lead Feature (spans 4) */}
-            <MinimalCard className="group relative col-span-1 overflow-hidden md:col-span-6 lg:col-span-4 border-b border-r border-[rgba(0,0,0,0.1)] dark:border-[rgba(255,255,255,0.1)] rounded-none bg-background">
-              <BlurVignette>
-                <div className="relative aspect-[16/9]">
-                  <MinimalCardImage
-                    src="https://elevenlabs.io/assets/images/convai/convai-gradient.svg"
-                    alt="Industry-leading voice agents"
-                    className="h-full w-full object-cover"
-                  />
+            <MinimalCard className="group relative col-span-1 overflow-hidden md:col-span-6 lg:col-span-3 border-b border-r border-[rgba(0,0,0,0.1)] dark:border-[rgba(255,255,255,0.1)] rounded-none bg-background hover:bg-background">
+              <div className="relative aspect-[16/9]">
+                <MinimalCardImage
+                  src="https://elevenlabs.io/assets/images/convai/convai-gradient.svg"
+                  alt="Industry-leading voice agents"
+                  className="h-full w-full object-cover"
+                />
 
-                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background/80 via-background/10 to-transparent" />
-                  <div className="absolute inset-x-4 bottom-4 sm:inset-x-6 sm:bottom-6">
-                    <MinimalCardTitle className="text-xl sm:text-2xl">
-                      Industry‑leading Voice Agents
-                    </MinimalCardTitle>
-                    <MinimalCardDescription className="max-w-xl text-foreground/60">
-                      ElevenLabs Agents talk, type, and take action with
-                      ultra‑low latency — grounded in your data and tailored to
-                      your workflows.
-                    </MinimalCardDescription>
-                  </div>
-                </div>
-              </BlurVignette>
-            </MinimalCard>
-
-            <MinimalCard className="col-span-1 overflow-hidden md:col-span-3 lg:col-span-2 border-b border-[rgba(0,0,0,0.1)] dark:border-[rgba(255,255,255,0.1)] rounded-none bg-background">
-              <MinimalCardImage
-                src="https://elevenlabs.io/assets/images/convai/convai-gradient.svg"
-                alt="Industry-leading voice agents"
-                className="h-full w-full object-cover"
-              />
-              <div className="p-4">
-                <MinimalCardTitle className="text-xl sm:text-2xl">
-                  Industry‑leading Voice Agents
-                </MinimalCardTitle>
-                <MinimalCardDescription className="max-w-xl text-foreground/60">
-                  ElevenLabs Agents talk, type, and take action with ultra‑low
-                  latency — grounded in your data and tailored to your
-                  workflows.
-                </MinimalCardDescription>
-              </div>
-            </MinimalCard>
-
-            {/* 4) Multilingual (spans 3) */}
-            <MinimalCard className="col-span-1 md:col-span-3 lg:col-span-3 border-b border-r border-[rgba(0,0,0,0.1)] dark:border-[rgba(255,255,255,0.1)] rounded-none">
-              <div className="flex h-full flex-col justify-between p-6">
-                <div>
-                  <MinimalCardTitle>Global by default</MinimalCardTitle>
-                  <MinimalCardDescription>
-                    Natural, human‑sounding conversations in 32 languages with
-                    automatic detection & instant switching.
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background/80 via-background/10 to-transparent" />
+                <div className="absolute inset-x-4 bottom-4 sm:inset-x-6 sm:bottom-6">
+                  <MinimalCardTitle className="text-xl sm:text-2xl">
+                    Industry‑leading Voice Agents
+                  </MinimalCardTitle>
+                  <MinimalCardDescription className="max-w-xl text-foreground/60">
+                    ElevenLabs Agents talk, type, and take action with ultra‑low
+                    latency — grounded in your data and tailored to your
+                    workflows.
                   </MinimalCardDescription>
-                </div>
-                <div className="mt-4 flex flex-wrap gap-2">
-                  {[
-                    'English',
-                    'Spanish',
-                    'French',
-                    'German',
-                    'Portuguese',
-                    'Japanese',
-                    'Italian',
-                    'Chinese',
-                    'Hindi',
-                    '+23 more',
-                  ].map(t => (
-                    <span
-                      key={t}
-                      className="rounded-full border px-3 py-1 text-xs opacity-80"
-                    >
-                      {t}
-                    </span>
-                  ))}
                 </div>
               </div>
             </MinimalCard>
 
-            {/* 5) Reliability Stats (spans 3) */}
-            <MinimalCard className="col-span-1 md:col-span-3 lg:col-span-3 border-[rgba(0,0,0,0.1)] dark:border-[rgba(255,255,255,0.1)] rounded-none bg-background">
-              <div className="flex h-full flex-col items-center justify-between gap-4 p-6 sm:flex-row sm:gap-6">
-                <div className="text-center sm:text-left">
-                  <div className="text-2xl font-bold leading-none sm:text-3xl">
-                    99.9%
-                  </div>
-                  <MinimalCardDescription>Uptime SLA</MinimalCardDescription>
-                </div>
-                <div className="hidden h-10 w-px bg-border sm:block" />
-                <div className="text-center sm:text-left">
-                  <div className="text-2xl font-bold leading-none sm:text-3xl">
-                    ~500ms
-                  </div>
-                  <MinimalCardDescription>
-                    Avg. end‑to‑end latency
-                  </MinimalCardDescription>
-                </div>
-                <div className="hidden h-10 w-px bg-border sm:block" />
-                <div className="text-center sm:text-left">
-                  <div className="text-2xl font-bold leading-none sm:text-3xl">
-                    5,000+
-                  </div>
-                  <MinimalCardDescription>
-                    Voices to choose from
+            <MinimalCard className="group relative col-span-1 overflow-hidden md:col-span-6 lg:col-span-3 border-b border-r border-[rgba(0,0,0,0.1)] dark:border-[rgba(255,255,255,0.1)] rounded-none bg-background hover:bg-background">
+              <div className="relative aspect-[16/9]">
+                <MinimalCardImage
+                  src="https://elevenlabs.io/assets/images/convai/convai-gradient.svg"
+                  alt="Industry-leading voice agents"
+                  className="h-full w-full object-cover"
+                />
+
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background/80 via-background/10 to-transparent" />
+                <div className="absolute inset-x-4 bottom-4 sm:inset-x-6 sm:bottom-6">
+                  <MinimalCardTitle className="text-xl sm:text-2xl">
+                    Industry‑leading Voice Agents
+                  </MinimalCardTitle>
+                  <MinimalCardDescription className="max-w-xl text-foreground/60">
+                    ElevenLabs Agents talk, type, and take action with ultra‑low
+                    latency — grounded in your data and tailored to your
+                    workflows.
                   </MinimalCardDescription>
                 </div>
               </div>
