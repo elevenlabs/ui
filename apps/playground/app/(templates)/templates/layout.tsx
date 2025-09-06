@@ -1,20 +1,12 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
 
-import { Announcement } from '@/components/announcement';
 import { BlocksNav } from '@/components/blocks-nav';
-import {
-  PageActions,
-  PageHeader,
-  PageHeaderDescription,
-  PageHeaderHeading,
-} from '@/components/page-actions';
 import { PageNav } from '@/components/page-nav';
 import { Button } from '@elevenlabs/ui/components/button';
 
-const title = 'Building Blocks for Audio';
-const description =
-  'Clean, modern building blocks. Copy and paste into your apps. Works with all React frameworks. Open Source. Free forever.';
+const title = 'Agent Templates';
+const description = '1-click agent templates for every use case';
 
 export const metadata: Metadata = {
   title,
@@ -47,19 +39,7 @@ export default function BlocksLayout({
 }) {
   return (
     <>
-      <PageHeader>
-        <PageHeaderHeading>{title}</PageHeaderHeading>
-        <PageHeaderDescription>{description}</PageHeaderDescription>
-        <PageActions>
-          <Button asChild size="sm">
-            <a href="#blocks">Browse Blocks</a>
-          </Button>
-          <Button asChild variant="ghost" size="sm">
-            <Link href="/docs/blocks">Add a block</Link>
-          </Button>
-        </PageActions>
-      </PageHeader>
-      <PageNav id="blocks">
+      <PageNav id="blocks" className="border-b">
         <BlocksNav />
         <Button
           asChild
@@ -70,9 +50,7 @@ export default function BlocksLayout({
           <Link href="/blocks/sidebar">Browse all blocks</Link>
         </Button>
       </PageNav>
-      <div className="container-wrapper section-soft flex-1 md:py-12">
-        <div className="container">{children}</div>
-      </div>
+      <div className="flex-1">{children}</div>
     </>
   );
 }

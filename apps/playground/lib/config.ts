@@ -23,6 +23,11 @@ export const siteConfig = {
       label: 'Audio Components',
       includeSubPaths: true,
     },
+    {
+      href: '/templates',
+      label: 'Templates',
+      includeSubPaths: true,
+    },
   ],
 };
 
