@@ -18,18 +18,18 @@ import {
 
 const TOP_LEVEL_SECTIONS = [
   { name: 'Get Started', href: '/docs' },
-  {
-    name: 'Components',
-    href: '/docs/components',
-  },
-  {
-    name: 'Registry',
-    href: '/docs/registry',
-  },
-  {
-    name: 'MCP Server',
-    href: '/docs/mcp',
-  },
+  // {
+  //   name: 'Components',
+  //   href: '/docs/components',
+  // },
+  // {
+  //   name: 'Registry',
+  //   href: '/docs/registry',
+  // },
+  // {
+  //   name: 'MCP Server',
+  //   href: '/docs/mcp',
+  // },
 ];
 const EXCLUDED_SECTIONS = ['installation', 'dark-mode'];
 const EXCLUDED_PAGES = ['/docs'];

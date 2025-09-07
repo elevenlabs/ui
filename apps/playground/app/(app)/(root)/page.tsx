@@ -31,8 +31,9 @@ import {
   IconBrandSwift,
   IconBrandTypescript,
 } from '@tabler/icons-react';
+import { Announcement } from '@/components/announcement';
 
-const title = 'ElevenLabs Agents SDK';
+const title = 'ElevenLabs Agents';
 const description = 'An AI Audio Research & Deployment company';
 
 export const dynamic = 'force-static';
@@ -86,6 +87,7 @@ export default function IndexPage() {
         {/* Foreground content */}
         <div className="relative z-10 container mx-auto px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20">
           <div className="mx-auto flex max-w-6xl flex-col items-center text-center py-20 md:py-28 lg:py-36">
+            <Announcement />
             <h1 className="tracking-tight text-balance text-4xl font-semibold leading-[1.05] sm:text-5xl md:text-6xl text-foreground">
               {title}
             </h1>
@@ -207,61 +209,6 @@ export default function IndexPage() {
 
       <section className="px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20">
         <BlockDeveloperToolkit />
-      </section>
-
-      <section className="flex-1 pb-10 md:pb-16 mt-0 px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20">
-        <div className="mx-auto max-w-[700px] lg:max-w-full">
-          <div className="grid grid-cols-1 gap-0 md:grid-cols-6 border-x border-b border-[rgba(0,0,0,0.1)] dark:border-[rgba(255,255,255,0.1)]">
-            <MinimalCard className="group relative col-span-1 overflow-hidden md:col-span-6 lg:col-span-3 border-b border-r border-[rgba(0,0,0,0.1)] dark:border-[rgba(255,255,255,0.1)] rounded-none bg-background hover:bg-background">
-              <div className="relative aspect-[16/9]">
-                <MinimalCardImage
-                  src="https://elevenlabs.io/assets/images/convai/convai-gradient.svg"
-                  alt="Industry-leading voice agents"
-                  className="h-full w-full object-cover"
-                />
-
-                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background/80 via-background/10 to-transparent" />
-                <div className="absolute inset-x-4 bottom-4 sm:inset-x-6 sm:bottom-6">
-                  <MinimalCardTitle className="text-xl sm:text-2xl">
-                    Industry‑leading Voice Agents
-                  </MinimalCardTitle>
-                  <MinimalCardDescription className="max-w-xl text-foreground/60">
-                    ElevenLabs Agents talk, type, and take action with ultra‑low
-                    latency — grounded in your data and tailored to your
-                    workflows.
-                  </MinimalCardDescription>
-                </div>
-              </div>
-            </MinimalCard>
-
-            <MinimalCard className="group relative col-span-1 overflow-hidden md:col-span-6 lg:col-span-3 border-b border-r border-[rgba(0,0,0,0.1)] dark:border-[rgba(255,255,255,0.1)] rounded-none bg-background hover:bg-background">
-              <div className="relative aspect-[16/9]">
-                <MinimalCardImage
-                  src="https://elevenlabs.io/assets/images/convai/convai-gradient.svg"
-                  alt="Industry-leading voice agents"
-                  className="h-full w-full object-cover"
-                />
-
-                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background/80 via-background/10 to-transparent" />
-                <div className="absolute inset-x-4 bottom-4 sm:inset-x-6 sm:bottom-6">
-                  <MinimalCardTitle className="text-xl sm:text-2xl">
-                    Industry‑leading Voice Agents
-                  </MinimalCardTitle>
-                  <MinimalCardDescription className="max-w-xl text-foreground/60">
-                    ElevenLabs Agents talk, type, and take action with ultra‑low
-                    latency — grounded in your data and tailored to your
-                    workflows.
-                  </MinimalCardDescription>
-                </div>
-              </div>
-            </MinimalCard>
-          </div>
-        </div>
-
-        {/* Mobile marquee separator kept for parity; hidden above md */}
-        <div className="container mx-auto px-6 md:hidden">
-          <section className="w-full rounded-lg border border-border/50" />
-        </div>
       </section>
 
       {/* Footer-ish spacer */}

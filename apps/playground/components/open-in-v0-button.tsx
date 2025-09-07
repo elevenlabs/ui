@@ -3,7 +3,7 @@ import { Icons } from '@/components/icons';
 import { Button } from '@elevenlabs/ui/components/button';
 
 // v0 uses the default style.
-const V0_STYLE = 'new-york-v4';
+const V0_STYLE = 'audio-components';
 
 export function OpenInV0Button({
   name,

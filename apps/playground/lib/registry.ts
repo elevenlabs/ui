@@ -143,6 +143,13 @@ function fixFilePaths(files: z.infer<typeof registryItemSchema>['files']) {
 }
 
 export function fixImport(content: string) {
+  // First handle @elevenlabs/ui/components imports
+  let updatedContent = content.replace(
+    /@elevenlabs\/ui\/components\/([\w-]+)/g,
+    '@/components/ui/$1',
+  );
+
+  // Then handle other import patterns
   const regex = /@\/(.+?)\/((?:.*?\/)?(?:components|ui|hooks|lib))\/([\w-]+)/g;
 
   const replacement = (
@@ -164,7 +171,7 @@ export function fixImport(content: string) {
     return match;
   };
 
-  return content.replace(regex, replacement);
+  return updatedContent.replace(regex, replacement);
 }
 
 export type FileTree = {

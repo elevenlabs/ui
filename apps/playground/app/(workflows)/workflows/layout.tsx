@@ -1,17 +1,12 @@
 import { Metadata } from 'next';
+import Link from 'next/link';
 
-import { Announcement } from '@/components/announcement';
 import { BlocksNav } from '@/components/blocks-nav';
-import {
-  PageHeader,
-  PageHeaderDescription,
-  PageHeaderHeading,
-} from '@/components/page-actions';
 import { PageNav } from '@/components/page-nav';
+import { Button } from '@elevenlabs/ui/components/button';
 
-const title = 'Building Blocks for Audio';
-const description =
-  'Clean, open source modern building blocks for audio. Copy and paste into your apps. Works with all React frameworks.';
+const title = '1,000+ Workflows';
+const description = '1-click workflows for every use case';
 
 export const metadata: Metadata = {
   title,
@@ -44,17 +39,18 @@ export default function BlocksLayout({
 }) {
   return (
     <>
-      <PageHeader>
-        <Announcement />
-        <PageHeaderHeading>{title}</PageHeaderHeading>
-        <PageHeaderDescription>{description}</PageHeaderDescription>
-      </PageHeader>
-      <PageNav id="blocks">
+      <PageNav id="blocks" className="border-b">
         <BlocksNav />
+        <Button
+          asChild
+          variant="secondary"
+          size="sm"
+          className="mr-7 hidden shadow-none lg:flex"
+        >
+          <Link href="/blocks/sidebar">Browse all blocks</Link>
+        </Button>
       </PageNav>
-      <div className="container-wrapper section-soft flex-1 md:py-12">
-        <div className="container">{children}</div>
-      </div>
+      <div className="flex-1">{children}</div>
     </>
   );
 }

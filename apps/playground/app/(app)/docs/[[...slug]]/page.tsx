@@ -12,7 +12,6 @@ import { source } from '@/lib/source';
 import { absoluteUrl } from '@/lib/utils';
 import { DocsCopyPage } from '@/components/docs-copy-page';
 import { DocsTableOfContents } from '@/components/docs-toc';
-import { OpenInV0Cta } from '@/components/open-in-v0-cta';
 import { Badge } from '@elevenlabs/ui/components/badge';
 import { Button } from '@elevenlabs/ui/components/button';
 
@@ -203,9 +202,7 @@ export default async function Page(props: {
             <div className="h-12" />
           </div>
         ) : null}
-        <div className="flex flex-1 flex-col gap-12 px-6">
-          <OpenInV0Cta />
-        </div>
+        <div className="flex flex-1 flex-col gap-12 px-6"></div>
       </div>
     </div>
   );

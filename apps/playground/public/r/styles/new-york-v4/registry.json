@@ -5,32 +5,18 @@
     {
       "name": "index",
       "type": "registry:style",
-      "dependencies": [
-        "class-variance-authority",
-        "lucide-react"
-      ],
-      "devDependencies": [
-        "tw-animate-css"
-      ],
-      "registryDependencies": [
-        "utils"
-      ],
+      "dependencies": ["class-variance-authority", "lucide-react"],
+      "devDependencies": ["tw-animate-css"],
+      "registryDependencies": ["utils"],
       "files": [],
       "cssVars": {}
     },
     {
       "name": "style",
       "type": "registry:style",
-      "dependencies": [
-        "class-variance-authority",
-        "lucide-react"
-      ],
-      "devDependencies": [
-        "tw-animate-css"
-      ],
-      "registryDependencies": [
-        "utils"
-      ],
+      "dependencies": ["class-variance-authority", "lucide-react"],
+      "devDependencies": ["tw-animate-css"],
+      "registryDependencies": ["utils"],
       "files": [],
       "cssVars": {}
     },
@@ -70,46 +56,44 @@
       ],
       "files": [
         {
-          "path": "registry/new-york-v4/blocks/dashboard-01/page.tsx",
+          "path": "registry/audio-components/blocks/dashboard-01/page.tsx",
           "type": "registry:page",
           "target": "app/dashboard/page.tsx"
         },
         {
-          "path": "registry/new-york-v4/blocks/dashboard-01/data.json",
+          "path": "registry/audio-components/blocks/dashboard-01/data.json",
           "type": "registry:file",
           "target": "app/dashboard/data.json"
         },
         {
-          "path": "registry/new-york-v4/blocks/dashboard-01/components/app-sidebar.tsx",
+          "path": "registry/audio-components/blocks/dashboard-01/components/app-sidebar.tsx",
           "type": "registry:component"
         },
         {
-          "path": "registry/new-york-v4/blocks/dashboard-01/components/nav-main.tsx",
+          "path": "registry/audio-components/blocks/dashboard-01/components/nav-main.tsx",
           "type": "registry:component"
         },
         {
-          "path": "registry/new-york-v4/blocks/dashboard-01/components/nav-secondary.tsx",
+          "path": "registry/audio-components/blocks/dashboard-01/components/nav-secondary.tsx",
           "type": "registry:component"
         },
         {
-          "path": "registry/new-york-v4/blocks/dashboard-01/components/nav-user.tsx",
+          "path": "registry/audio-components/blocks/dashboard-01/components/nav-user.tsx",
           "type": "registry:component"
         },
         {
-          "path": "registry/new-york-v4/blocks/dashboard-01/components/section-cards.tsx",
+          "path": "registry/audio-components/blocks/dashboard-01/components/section-cards.tsx",
           "type": "registry:component"
         },
         {
-          "path": "registry/new-york-v4/blocks/dashboard-01/components/site-header.tsx",
+          "path": "registry/audio-components/blocks/dashboard-01/components/site-header.tsx",
           "type": "registry:component"
         }
       ],
       "meta": {
         "iframeHeight": "1000px"
       },
-      "categories": [
-        "dashboard"
-      ]
+      "categories": ["dashboard"]
     }
   ]
 }

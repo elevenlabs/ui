@@ -1,14 +1,22 @@
-import Link from 'next/link';
-import { ArrowRightIcon } from 'lucide-react';
+import { ArrowUpRightIcon } from 'lucide-react';
 
-import { Badge } from '@elevenlabs/ui/components/badge';
+import {
+  Announcement as AnnouncementComponent,
+  AnnouncementTag,
+  AnnouncementTitle,
+} from '@elevenlabs/ui/components/ui/kibo-ui/announcement';
 
 export function Announcement() {
   return (
-    <Badge asChild variant="secondary" className="rounded-full">
-      <Link href="/docs/changelog">
-        Now available: Audio components crafted by ElevenLabs <ArrowRightIcon />
-      </Link>
-    </Badge>
+    <AnnouncementComponent>
+      <AnnouncementTag>Latest update</AnnouncementTag>
+      <AnnouncementTitle>
+        Agents SDK
+        <ArrowUpRightIcon
+          className="shrink-0 text-muted-foreground"
+          size={16}
+        />
+      </AnnouncementTitle>
+    </AnnouncementComponent>
   );
 }

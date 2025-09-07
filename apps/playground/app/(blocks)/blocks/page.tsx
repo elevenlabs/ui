@@ -6,13 +6,7 @@ import { Button } from '@elevenlabs/ui/components/button';
 export const dynamic = 'force-static';
 export const revalidate = false;
 
-const FEATURED_BLOCKS = [
-  'dashboard-01',
-  'sidebar-07',
-  'sidebar-03',
-  'login-03',
-  'login-04',
-];
+const FEATURED_BLOCKS = ['music-player'];
 
 export default async function BlocksPage() {
   return (

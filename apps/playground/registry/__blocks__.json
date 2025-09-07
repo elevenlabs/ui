@@ -1,7 +1,7 @@
 [
   {
-    "name": "dashboard-01",
-    "description": "A dashboard with sidebar, charts and data table.",
-    "categories": ["dashboard"]
+    "name": "music-player",
+    "description": "A music player with form and image.",
+    "categories": ["music"]
   }
 ]

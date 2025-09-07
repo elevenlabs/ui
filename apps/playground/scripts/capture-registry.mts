@@ -1,32 +1,32 @@
-import { existsSync } from "fs"
-import path from "path"
-import puppeteer from "puppeteer"
+import { existsSync } from 'fs';
+import path from 'path';
+import puppeteer from 'puppeteer';
 
-import { getAllBlockIds } from "../lib/blocks"
+import { getAllBlockIds } from '../lib/blocks';
 
-const REGISTRY_PATH = path.join(process.cwd(), "public/r")
+const REGISTRY_PATH = path.join(process.cwd(), 'public/r');
 
 // ----------------------------------------------------------------------------
 // Capture screenshots.
 // ----------------------------------------------------------------------------
 async function captureScreenshots() {
-  const blockIds = await getAllBlockIds()
-  const blocks = blockIds.filter((block) => {
+  const blockIds = await getAllBlockIds();
+  const blocks = blockIds.filter(block => {
     // Check if screenshots already exist
     const lightPath = path.join(
       REGISTRY_PATH,
-      `styles/new-york-v4/${block}-light.png`
-    )
+      `styles/audio-components/${block}-light.png`,
+    );
     const darkPath = path.join(
       REGISTRY_PATH,
-      `styles/new-york-v4/${block}-dark.png`
-    )
-    return !existsSync(lightPath) || !existsSync(darkPath)
-  })
+      `styles/audio-components/${block}-dark.png`,
+    );
+    return !existsSync(lightPath) || !existsSync(darkPath);
+  });
 
   if (blocks.length === 0) {
-    console.log("✨ All screenshots exist, nothing to capture")
-    return
+    console.log('✨ All screenshots exist, nothing to capture');
+    return;
   }
 
   const browser = await puppeteer.launch({
@@ -35,66 +35,66 @@ async function captureScreenshots() {
       height: 900,
       deviceScaleFactor: 2,
     },
-  })
+  });
 
   for (const block of blocks) {
-    const pageUrl = `http://localhost:4000/view/${block}`
+    const pageUrl = `http://localhost:4000/view/${block}`;
 
-    const page = await browser.newPage()
+    const page = await browser.newPage();
     await page.goto(pageUrl, {
-      waitUntil: "networkidle2",
-    })
+      waitUntil: 'networkidle2',
+    });
 
-    console.log(`- Capturing ${block}...`)
+    console.log(`- Capturing ${block}...`);
 
-    for (const theme of ["light", "dark"]) {
+    for (const theme of ['light', 'dark']) {
       const screenshotPath = path.join(
         REGISTRY_PATH,
-        `styles/new-york-v4/${block}${theme === "dark" ? "-dark" : "-light"}.png`
-      )
+        `styles/audio-components/${block}${theme === 'dark' ? '-dark' : '-light'}.png`,
+      );
 
       if (existsSync(screenshotPath)) {
-        continue
+        continue;
       }
 
       // Set theme and reload page
-      await page.evaluate((currentTheme) => {
-        localStorage.setItem("theme", currentTheme)
-      }, theme)
+      await page.evaluate(currentTheme => {
+        localStorage.setItem('theme', currentTheme);
+      }, theme);
 
-      await page.reload({ waitUntil: "networkidle2" })
+      await page.reload({ waitUntil: 'networkidle2' });
 
       // Wait for animations to complete
-      if (block.startsWith("chart") || block.startsWith("dashboard")) {
-        await new Promise((resolve) => setTimeout(resolve, 1000))
+      if (block.startsWith('chart') || block.startsWith('dashboard')) {
+        await new Promise(resolve => setTimeout(resolve, 1000));
       }
 
       // Hide Tailwind indicator
       await page.evaluate(() => {
-        const indicator = document.querySelector("[data-tailwind-indicator]")
+        const indicator = document.querySelector('[data-tailwind-indicator]');
         if (indicator) {
-          indicator.remove()
+          indicator.remove();
         }
-      })
+      });
 
       await page.screenshot({
         path: screenshotPath,
-      })
+      });
     }
 
-    await page.close()
+    await page.close();
   }
 
-  await browser.close()
+  await browser.close();
 }
 
 try {
-  console.log("🔍 Capturing screenshots...")
+  console.log('🔍 Capturing screenshots...');
 
-  await captureScreenshots()
+  await captureScreenshots();
 
-  console.log("✅ Done!")
+  console.log('✅ Done!');
 } catch (error) {
-  console.error(error)
-  process.exit(1)
+  console.error(error);
+  process.exit(1);
 }

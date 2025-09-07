@@ -36,14 +36,14 @@ export function ComponentPreview({
     return (
       <div className="relative aspect-[4/2.5] w-full overflow-hidden rounded-md border md:-mx-1">
         <Image
-          src={`/r/styles/new-york-v4/${name}-light.png`}
+          src={`/r/styles/audio-components/${name}-light.png`}
           alt={name}
           width={1440}
           height={900}
           className="bg-background absolute top-0 left-0 z-20 w-[970px] max-w-none sm:w-[1280px] md:hidden dark:hidden md:dark:hidden"
         />
         <Image
-          src={`/r/styles/new-york-v4/${name}-dark.png`}
+          src={`/r/styles/audio-components/${name}-dark.png`}
           alt={name}
           width={1440}
           height={900}

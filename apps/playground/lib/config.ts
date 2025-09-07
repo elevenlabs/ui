@@ -24,8 +24,13 @@ export const siteConfig = {
       includeSubPaths: true,
     },
     {
-      href: '/templates',
+      href: '/workflows',
       label: 'Templates',
+      includeSubPaths: true,
+    },
+    {
+      href: '/workflows/tools',
+      label: 'Tools',
       includeSubPaths: true,
     },
   ],

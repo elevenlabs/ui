@@ -2,13 +2,13 @@ import { useAtom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
 
 type Config = {
-  style: 'new-york-v4';
+  style: 'audio-components';
   packageManager: 'npm' | 'yarn' | 'pnpm' | 'bun';
   installationType: 'cli' | 'manual';
 };
 
 const configAtom = atomWithStorage<Config>('config', {
-  style: 'new-york-v4',
+  style: 'audio-components',
   packageManager: 'pnpm',
   installationType: 'cli',
 });

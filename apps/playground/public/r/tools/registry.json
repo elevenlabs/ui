@@ -1,0 +1,36 @@
+{
+  "name": "@elevenlabs/agent-tools",
+  "description": "A collection of tools for ElevenLabs voice agents",
+  "version": "1.0.0",
+  "homepage": "https://elevenlabs-agents.vercel.app/tools",
+  "categories": [
+    {
+      "id": "search",
+      "name": "Search & Discovery",
+      "description": "Tools for searching and finding information"
+    },
+    {
+      "id": "data",
+      "name": "Data & Analytics",
+      "description": "Tools for data manipulation and analysis"
+    },
+    {
+      "id": "productivity",
+      "name": "Productivity",
+      "description": "Tools for task management and automation"
+    },
+    {
+      "id": "communication",
+      "name": "Communication",
+      "description": "Tools for messaging and notifications"
+    },
+    {
+      "id": "ai",
+      "name": "AI & Machine Learning",
+      "description": "Tools powered by artificial intelligence"
+    }
+  ],
+  "tools": [
+    "web-search"
+  ]
+}

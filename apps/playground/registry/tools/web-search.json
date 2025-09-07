@@ -1,0 +1,84 @@
+{
+  "type": "webhook",
+  "name": "web_search",
+  "display_name": "Web Search",
+  "description": "Use to perform live searches across the internet. Retrieves fresh, relevant information from websites, news & other online content.",
+  "category": "search",
+  "icon": "Search",
+  "disable_interruptions": false,
+  "force_pre_tool_speech": "auto",
+  "assignments": [],
+  "api_schema": {
+    "url": "https://api.perplexity.ai/chat/completions",
+    "method": "POST",
+    "path_params_schema": [],
+    "query_params_schema": [],
+    "request_body_schema": {
+      "id": "body",
+      "type": "object",
+      "description": "Search parameters",
+      "properties": [
+        {
+          "id": "model",
+          "type": "string",
+          "value_type": "llm_prompt",
+          "description": "The name of the model that will complete your prompt.\n- `sonar` (lightweight search)\n- `sonar-pro` (advanced search)",
+          "dynamic_variable": "",
+          "constant_value": "",
+          "required": true
+        },
+        {
+          "id": "messages",
+          "type": "array",
+          "description": "The search request",
+          "items": {
+            "id": "",
+            "type": "object",
+            "description": "The search request",
+            "properties": [
+              {
+                "id": "content",
+                "type": "string",
+                "value_type": "llm_prompt",
+                "description": "The search request goes here",
+                "dynamic_variable": "",
+                "constant_value": "",
+                "required": true
+              },
+              {
+                "id": "role",
+                "type": "string",
+                "value_type": "constant",
+                "description": "",
+                "dynamic_variable": "",
+                "constant_value": "user",
+                "required": true
+              }
+            ],
+            "required": false,
+            "value_type": "llm_prompt"
+          },
+          "required": true,
+          "value_type": "llm_prompt"
+        }
+      ],
+      "required": false,
+      "value_type": "llm_prompt"
+    },
+    "request_headers": [],
+    "auth_connection": null
+  },
+  "response_timeout_secs": 40,
+  "dynamic_variables": {
+    "dynamic_variable_placeholders": {}
+  },
+  "required_secrets": [
+    {
+      "name": "PERPLEXITY_API_KEY",
+      "description": "Your Perplexity API key for web search",
+      "header_name": "Authorization"
+    }
+  ],
+  "example_usage": "Search for the latest news about AI developments",
+  "tags": ["search", "web", "real-time", "ai-powered"]
+}
