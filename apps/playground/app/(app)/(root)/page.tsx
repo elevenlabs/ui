@@ -4,23 +4,15 @@ import Link from 'next/link';
 // Use shadcn/ui components for a more Vercel-like, developer-focused feel
 import { AvatarStack } from '@elevenlabs/ui/components/ui/kibo-ui/avatar-stack';
 // Keep your existing ElevenLabs UI bits for the Bento grid content
+import { Announcement } from '@/components/announcement';
 import { BlockDeveloperToolkit } from '@/components/block-developer-toolkit';
 import { CopyCodeButton } from '@/components/copy-code-button';
-import { AgentsCarousel } from '@/components/agents-carousel';
-import { MinimalCardDemo } from '@/components/hero-cards';
 import { Avatar, AvatarFallback } from '@elevenlabs/ui/components/avatar';
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from '@elevenlabs/ui/components/tooltip';
-import BlurVignette from '@elevenlabs/ui/components/ui/blur-vignette';
-import {
-  MinimalCard,
-  MinimalCardDescription,
-  MinimalCardImage,
-  MinimalCardTitle,
-} from '@elevenlabs/ui/components/ui/minimal-card';
 import { SkiperMarquee } from '@elevenlabs/ui/components/ui/skiper-marquee';
 import {
   IconBrandJavascript,
@@ -31,7 +23,6 @@ import {
   IconBrandSwift,
   IconBrandTypescript,
 } from '@tabler/icons-react';
-import { Announcement } from '@/components/announcement';
 
 const title = 'ElevenLabs Agents';
 const description = 'An AI Audio Research & Deployment company';
@@ -63,22 +54,13 @@ export const metadata: Metadata = {
   },
 };
 
-// --- Full-bleed wrapper helper (escapes container to span viewport) ---
-function FullBleed({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="relative left-1/2 right-1/2 -mx-[50vw] w-screen">
-      {children}
-    </div>
-  );
-}
-
 export default function IndexPage() {
   return (
     <div className="flex-1 overflow-y-auto">
       {/* Hero */}
       <section className="relative overflow-hidden border-b border-[rgba(0,0,0,0.1)] dark:border-[rgba(255,255,255,0.1)] bg-background">
         {/* Background marquee */}
-        <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
+        <div className="absolute inset-0 flex items-center justify-center overflow-hidden pointer-events-none\">
           <div className="w-screen max-w-none blur-xl opacity-30 [&>section]:!p-0 [&_div.container]:!max-w-none [&_div.container]:!px-0">
             <SkiperMarquee />
           </div>
@@ -86,16 +68,24 @@ export default function IndexPage() {
 
         {/* Foreground content */}
         <div className="relative z-10 container mx-auto px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20">
-          <div className="mx-auto flex max-w-6xl flex-col items-center text-center py-20 md:py-28 lg:py-36">
-            <Announcement />
-            <h1 className="tracking-tight text-balance text-4xl font-semibold leading-[1.05] sm:text-5xl md:text-6xl text-foreground">
+          <div className="mx-auto flex max-w-6xl flex-col items-center text-center pt-16 md:pt-20 lg:pt-24 pb-10 md:pb-12 lg:pb-14">
+            {/* Announcement gets its own rhythm-block to breathe */}
+            <div className="mb-4 md:mb-5\">
+              <Announcement />
+            </div>
+
+            {/* Title: balanced wrapping, tight tracking, responsive sizes */}
+            <h1 className="text-balance tracking-tight text-5xl sm:text-6xl md:text-7xl font-semibold leading-[1.06] md:leading-[1.03] text-foreground">
               {title}
             </h1>
-            <p className="mt-4 max-w-2xl text-pretty text-base text-muted-foreground sm:text-lg">
+
+            {/* Description: slightly larger, calm line-height, soft contrast */}
+            <p className="mt-5 md:mt-6 max-w-3xl text-pretty text-base sm:text-lg md:text-xl lg:text-2xl leading-relaxed text-muted-foreground/90\">
               {description}
             </p>
 
-            <div className="mt-6 mb-8 flex flex-wrap items-center justify-center gap-2 opacity-80">
+            {/* Tech pills row stays visually subordinate to hero copy */}
+            <div className="mt-6 md:mt-7 mb-6 flex flex-wrap items-center justify-center gap-2 opacity-80\">
               <AvatarStack>
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -198,7 +188,7 @@ export default function IndexPage() {
               </AvatarStack>
             </div>
 
-            <div className="flex flex-wrap items-center justify-center gap-3">
+            <div className="mt-2 flex flex-wrap items-center justify-center gap-3\">
               <CopyCodeButton />
             </div>
 
