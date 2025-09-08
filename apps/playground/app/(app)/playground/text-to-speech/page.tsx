@@ -1,4 +1,4 @@
-import { AgentPlaygroundTextToSpeech } from '@/components/agent-playground-text-to-speech';
+import { ChatBotDemo } from '@/components/chat-bot-demo';
 import { AgentPlaygroundWrapper } from '@/components/agent-playground-wrapper';
 import { PageHeader } from '@/components/page-header';
 import { ViewLogsButton } from '@/components/view-logs-button';
@@ -45,9 +45,11 @@ export default function PlaygroundPage() {
             <ViewLogsButton />
           </div>
         </PageHeader>
-        <AgentPlaygroundWrapper>
-          <AgentPlaygroundTextToSpeech />
-        </AgentPlaygroundWrapper>
+        <div className="flex flex-col flex-1 overflow-hidden">
+          <AgentPlaygroundWrapper>
+            <ChatBotDemo />
+          </AgentPlaygroundWrapper>
+        </div>
       </div>
     </div>
   );

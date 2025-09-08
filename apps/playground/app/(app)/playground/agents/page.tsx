@@ -45,9 +45,11 @@ export default function PlaygroundPage() {
             <ViewLogsButton />
           </div>
         </PageHeader>
-        <AgentPlaygroundWrapper>
-          <AgentPlaygroundConversation />
-        </AgentPlaygroundWrapper>
+        <div className="flex flex-col flex-1 overflow-hidden">
+          <AgentPlaygroundWrapper>
+            <AgentPlaygroundConversation />
+          </AgentPlaygroundWrapper>
+        </div>
       </div>
     </div>
   );

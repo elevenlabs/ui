@@ -19,7 +19,7 @@ export const siteConfig = {
       includeSubPaths: true,
     },
     {
-      href: '/blocks',
+      href: '/components',
       label: 'Audio Components',
       includeSubPaths: true,
     },

@@ -3,6 +3,7 @@
 import { ConversationBar } from '@/components/conversation-bar';
 import { EmptyState } from '@/components/empty-state';
 import { Icons } from '@/components/icons';
+import { ConversationBar1 } from './conversation-bar-1';
 
 export const AgentPlaygroundConversation = () => {
   return (
@@ -15,6 +16,7 @@ export const AgentPlaygroundConversation = () => {
         />
       </div>
       <div className="relative">
+        <ConversationBar1 />
         <ConversationBar />
       </div>
     </>

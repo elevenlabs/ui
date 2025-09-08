@@ -21,6 +21,7 @@ export function ConversationBar() {
     useMicrophone();
   const [selectedDevice, setSelectedDevice] = useState<string>('');
   const [isMuted, setIsMuted] = useState(false);
+  const [isStarting, setIsStarting] = useState(false);
 
   // Set the default selected device to the first one when devices load
   const defaultDeviceId = devices[0]?.deviceId || '';
@@ -56,6 +57,19 @@ export function ConversationBar() {
     setMuted(newMuteState);
   };
 
+  const handleStartConversation = async () => {
+    try {
+      setIsStarting(true);
+      if (!isActive) {
+        await startMicrophone(selectedDevice || defaultDeviceId, isMuted);
+      } else {
+        stopMicrophone();
+      }
+    } finally {
+      setIsStarting(false);
+    }
+  };
+
   return (
     <div className="flex justify-center p-4">
       <Card className="shadow-lg border p-2 m-0">
@@ -64,9 +78,11 @@ export function ConversationBar() {
             size="sm"
             variant="default"
             className="flex items-center gap-2 cursor-pointer"
+            onClick={handleStartConversation}
+            disabled={isStarting}
           >
             <Icons.orb className="size-5" />
-            <span>Start conversation</span>
+            <span>{isActive ? 'Stop' : 'Start'} conversation</span>
           </Button>
 
           <DropdownMenu onOpenChange={handleDropdownOpenChange}>
