@@ -21,6 +21,7 @@ export function NavPlayground({
     title: string;
     url: string;
     icon?: Icon | React.ReactElement;
+    disabled?: boolean;
   }[];
 }) {
   const pathname = usePathname();
@@ -40,6 +41,7 @@ export function NavPlayground({
                   tooltip={item.title}
                   isActive={isActive}
                   asChild
+                  disabled={item.disabled}
                 >
                   <Link href={item.url}>
                     {item.icon &&

@@ -1,18 +1,24 @@
-"use client";
+'use client';
 
-import type * as React from "react";
-import { useRef, useEffect, useState } from "react";
-import { cn } from "@/lib/utils";
+import type * as React from 'react';
+import { useRef, useEffect, useState } from 'react';
+import { cn } from '@/lib/utils';
 
 export interface BlockProps extends React.HTMLAttributes<HTMLDivElement> {
   children?: React.ReactNode;
   className?: string;
   name: string;
   revealClass?: string;
-  tag?: "div" | "section";
+  tag?: 'div' | 'section';
 }
 
-const Block = ({ name, tag = "div", revealClass = "block-in-view", className, ...props }: BlockProps) => {
+const Block = ({
+  name,
+  tag = 'div',
+  revealClass = 'block-in-view',
+  className,
+  ...props
+}: BlockProps) => {
   const Tag = tag;
   const intersectionRef = useRef<HTMLDivElement>(null);
   const [inView, setInView] = useState(false);
@@ -24,7 +30,7 @@ const Block = ({ name, tag = "div", revealClass = "block-in-view", className, ..
           setInView(true);
         }
       },
-      { threshold: 0.1 }
+      { threshold: 0.1 },
     );
 
     if (intersectionRef.current) {
@@ -40,13 +46,18 @@ const Block = ({ name, tag = "div", revealClass = "block-in-view", className, ..
 
   return (
     <Tag
-      className={cn("block-el", `block-el-${name}`, inView ? revealClass : "", className)}
+      className={cn(
+        'block-el',
+        `block-el-${name}`,
+        inView ? revealClass : '',
+        className,
+      )}
       ref={intersectionRef}
       {...props}
     />
   );
 };
 
-Block.displayName = "Block";
+Block.displayName = 'Block';
 
 export { Block };

@@ -18,20 +18,22 @@ import { Sidebar, SidebarContent } from '@elevenlabs/ui/components/sidebar';
 const data = {
   navMain: [
     {
-      title: 'Agents',
+      title: 'Voice Agents',
       url: '/playground/agents',
       icon: <Icons.orb className="text-foreground" />,
     },
     {
-      title: 'Text to Speech',
+      title: 'Text Agents',
       url: '/playground/text-to-speech',
       icon: <Icons.textToSpeech className="text-foreground" />,
+      disabled: true,
     },
 
     {
-      title: 'Speech to Text',
+      title: 'Phone Agents',
       url: '/playground/speech-to-text',
       icon: <Icons.speechToText className="text-foreground" />,
+      disabled: true,
     },
   ],
   navClouds: [

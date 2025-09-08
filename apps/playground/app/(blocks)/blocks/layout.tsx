@@ -8,7 +8,6 @@ import {
   PageHeaderHeading,
 } from '@/components/page-actions';
 import { PageNav } from '@/components/page-nav';
-import { AudioToggles } from '@/components/audio-toggles';
 
 const title = 'Building Blocks for Audio';
 const description =
@@ -50,7 +49,7 @@ export default function BlocksLayout({
         <PageHeaderHeading>{title}</PageHeaderHeading>
         <PageHeaderDescription>{description}</PageHeaderDescription>
       </PageHeader>
-      <AudioToggles />
+
       <PageNav id="blocks">
         <BlocksNav />
       </PageNav>

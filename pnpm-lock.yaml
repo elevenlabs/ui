@@ -111,6 +111,9 @@ importers:
       date-fns:
         specifier: ^4.1.0
         version: 4.1.0
+      framer-motion:
+        specifier: ^12.23.12
+        version: 12.23.12(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       fumadocs-core:
         specifier: 15.3.1
         version: 15.3.1(@types/react@19.1.12)(next@15.5.0(@babel/core@7.28.3)(@opentelemetry/api@1.9.0)(@playwright/test@1.55.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
@@ -202,6 +205,49 @@ importers:
       typescript:
         specifier: ^5.9.2
         version: 5.9.2
+
+  packages/agents:
+    dependencies:
+      '@elevenlabs/gateway':
+        specifier: workspace:*
+        version: link:../gateway
+      '@elevenlabs/provider':
+        specifier: workspace:*
+        version: link:../provider
+      '@elevenlabs/provider-utils':
+        specifier: workspace:*
+        version: link:../provider-utils
+      '@opentelemetry/api':
+        specifier: 1.9.0
+        version: 1.9.0
+    devDependencies:
+      '@edge-runtime/vm':
+        specifier: ^5.0.0
+        version: 5.0.0
+      '@elevenlabs/eslint-config':
+        specifier: workspace:*
+        version: link:../eslint-config
+      '@elevenlabs/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      '@types/json-schema':
+        specifier: 7.0.15
+        version: 7.0.15
+      '@types/node':
+        specifier: 20.17.24
+        version: 20.17.24
+      eslint:
+        specifier: 8.57.1
+        version: 8.57.1
+      tsup:
+        specifier: ^7.2.0
+        version: 7.3.0(postcss@8.5.6)(ts-node@10.9.2(@types/node@20.17.24)(typescript@5.8.3))(typescript@5.8.3)
+      typescript:
+        specifier: 5.8.3
+        version: 5.8.3
+      zod:
+        specifier: 3.25.76
+        version: 3.25.76
 
   packages/ai:
     dependencies:
