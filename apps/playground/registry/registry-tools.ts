@@ -11,21 +11,27 @@ export const toolSchema = z.object({
     input: z.record(z.any()),
     output: z.record(z.any()),
   }),
-  config: z.object({
-    apiKeyRequired: z.boolean().optional(),
-    endpoint: z.string().optional(),
-    rateLimit: z.string().optional(),
-    scopes: z.array(z.string()).optional(),
-    providers: z.array(z.string()).optional(),
-    supportedDatabases: z.array(z.string()).optional(),
-    readOnly: z.boolean().optional(),
-    vectorDatabase: z.string().optional(),
-    embeddingModel: z.string().optional(),
-  }).optional(),
-  examples: z.array(z.object({
-    input: z.record(z.any()),
-    output: z.record(z.any()),
-  })).optional(),
+  config: z
+    .object({
+      apiKeyRequired: z.boolean().optional(),
+      endpoint: z.string().optional(),
+      rateLimit: z.string().optional(),
+      scopes: z.array(z.string()).optional(),
+      providers: z.array(z.string()).optional(),
+      supportedDatabases: z.array(z.string()).optional(),
+      readOnly: z.boolean().optional(),
+      vectorDatabase: z.string().optional(),
+      embeddingModel: z.string().optional(),
+    })
+    .optional(),
+  examples: z
+    .array(
+      z.object({
+        input: z.record(z.any()),
+        output: z.record(z.any()),
+      }),
+    )
+    .optional(),
 });
 
 export type Tool = z.infer<typeof toolSchema>;
@@ -36,11 +42,13 @@ export const toolsRegistrySchema = z.object({
   description: z.string(),
   version: z.string(),
   homepage: z.string(),
-  categories: z.array(z.object({
-    id: z.string(),
-    name: z.string(),
-    description: z.string(),
-  })),
+  categories: z.array(
+    z.object({
+      id: z.string(),
+      name: z.string(),
+      description: z.string(),
+    }),
+  ),
   tools: z.array(z.string()),
 });
 

@@ -7,18 +7,19 @@ export async function POST(request: NextRequest) {
     const { toolId, secrets } = body;
 
     const result = await addToolWithSecrets(toolId, secrets);
-    
+
     return NextResponse.json({
       success: true,
       message: result.message,
-      toolId: result.toolId
+      toolId: result.toolId,
     });
-
   } catch (error) {
     console.error('Error adding tool:', error);
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Internal server error' },
-      { status: 500 }
+      {
+        error: error instanceof Error ? error.message : 'Internal server error',
+      },
+      { status: 500 },
     );
   }
 }
