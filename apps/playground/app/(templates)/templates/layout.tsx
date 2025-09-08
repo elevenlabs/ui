@@ -1,18 +1,17 @@
 import { Metadata } from 'next';
 
 import { Announcement } from '@/components/announcement';
-import { BlocksNav } from '@/components/blocks-nav';
+import { TemplatesNav } from '@/components/templates-nav';
 import {
   PageHeader,
   PageHeaderDescription,
   PageHeaderHeading,
 } from '@/components/page-actions';
 import { PageNav } from '@/components/page-nav';
-import { AudioToggles } from '@/components/audio-toggles';
 
-const title = 'Building Blocks for Audio';
+const title = 'Templates';
 const description =
-  'Clean, open source modern building blocks for audio. Copy and paste into your apps. Works with all React frameworks.';
+  'Templates for voice agents. 1-click deploy tools & agents into ElevenLabs.';
 
 export const metadata: Metadata = {
   title,
@@ -50,9 +49,8 @@ export default function BlocksLayout({
         <PageHeaderHeading>{title}</PageHeaderHeading>
         <PageHeaderDescription>{description}</PageHeaderDescription>
       </PageHeader>
-      <AudioToggles />
       <PageNav id="blocks">
-        <BlocksNav />
+        <TemplatesNav />
       </PageNav>
       <div className="container-wrapper section-soft flex-1 md:py-12">
         <div className="container">{children}</div>

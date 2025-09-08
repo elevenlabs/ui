@@ -1,9 +1,7 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
 
-// Use shadcn/ui components for a more Vercel-like, developer-focused feel
 import { AvatarStack } from '@elevenlabs/ui/components/ui/kibo-ui/avatar-stack';
-// Keep your existing ElevenLabs UI bits for the Bento grid content
 import { Announcement } from '@/components/announcement';
 import { BlockDeveloperToolkit } from '@/components/block-developer-toolkit';
 import { CopyCodeButton } from '@/components/copy-code-button';

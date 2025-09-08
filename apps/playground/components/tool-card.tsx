@@ -19,7 +19,17 @@ import { Input } from '@elevenlabs/ui/components/input';
 import { Label } from '@elevenlabs/ui/components/label';
 import { Badge } from '@elevenlabs/ui/components/badge';
 import { Separator } from '@elevenlabs/ui/components/separator';
-import { Search, ExternalLink, Plus, CheckCircle2, Loader2, ArrowRight, KeyRound, Shield, Zap } from 'lucide-react';
+import {
+  Search,
+  ExternalLink,
+  Plus,
+  CheckCircle2,
+  Loader2,
+  ArrowRight,
+  KeyRound,
+  Shield,
+  Zap,
+} from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -49,7 +59,9 @@ export function ToolCard({ tool }: ToolCardProps) {
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [secrets, setSecrets] = useState<Record<string, string>>({});
   const [step, setStep] = useState<AddToolStep>('configure');
-  const [creatingStage, setCreatingStage] = useState<'secrets' | 'tool' | 'done'>('secrets');
+  const [creatingStage, setCreatingStage] = useState<
+    'secrets' | 'tool' | 'done'
+  >('secrets');
   const [error, setError] = useState<string | null>(null);
 
   const Icon = tool.icon ? iconMap[tool.icon] : null;
@@ -75,11 +87,11 @@ export function ToolCard({ tool }: ToolCardProps) {
         // Wait a bit before transitioning to tool creation phase
         await new Promise(resolve => setTimeout(resolve, 500));
         setCreatingStage('tool');
-        
+
         // Show tool creation for a bit
         await new Promise(resolve => setTimeout(resolve, 1500));
         setCreatingStage('done');
-        
+
         // Small delay before showing success
         await new Promise(resolve => setTimeout(resolve, 500));
         setStep('success');
@@ -90,7 +102,9 @@ export function ToolCard({ tool }: ToolCardProps) {
       }
     } catch (error) {
       console.error('Error adding tool:', error);
-      setError(error instanceof Error ? error.message : 'An unexpected error occurred');
+      setError(
+        error instanceof Error ? error.message : 'An unexpected error occurred',
+      );
       setStep('configure');
     }
   };
@@ -118,7 +132,9 @@ export function ToolCard({ tool }: ToolCardProps) {
               )}
               <div>
                 <CardTitle className="text-lg">{tool.display_name}</CardTitle>
-                <CardDescription className="mt-1">{tool.description}</CardDescription>
+                <CardDescription className="mt-1">
+                  {tool.description}
+                </CardDescription>
               </div>
             </div>
           </div>
@@ -131,7 +147,7 @@ export function ToolCard({ tool }: ToolCardProps) {
           )}
           {tool.tags && tool.tags.length > 0 && (
             <div className="flex flex-wrap gap-2">
-              {tool.tags.map((tag) => (
+              {tool.tags.map(tag => (
                 <Badge key={tag} variant="secondary" className="text-xs">
                   {tag}
                 </Badge>
@@ -148,21 +164,14 @@ export function ToolCard({ tool }: ToolCardProps) {
             <Plus className="mr-2 h-4 w-4" />
             Add Tool
           </Button>
-          <Button variant="outline" size="sm" asChild>
-            <a
-              href={`/docs/tools/${tool.id}`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <ExternalLink className="h-4 w-4" />
-            </a>
-          </Button>
         </CardFooter>
       </Card>
 
       <Dialog open={showAddDialog} onOpenChange={resetDialog}>
         <DialogContent className="max-w-4xl p-0 gap-0">
-          <DialogTitle className="sr-only">Add {tool.display_name} to your agent</DialogTitle>
+          <DialogTitle className="sr-only">
+            Add {tool.display_name} to your agent
+          </DialogTitle>
           <div className="flex h-[600px]">
             {/* Left side - Configuration */}
             <div className="flex-1 p-6 overflow-y-auto">
@@ -170,7 +179,9 @@ export function ToolCard({ tool }: ToolCardProps) {
                 <div>
                   <div className="flex items-center gap-3 mb-2">
                     {Icon && <Icon className="h-6 w-6" />}
-                    <h2 className="text-2xl font-semibold">{tool.display_name}</h2>
+                    <h2 className="text-2xl font-semibold">
+                      {tool.display_name}
+                    </h2>
                   </div>
                   <p className="text-muted-foreground">{tool.description}</p>
                 </div>
@@ -185,7 +196,8 @@ export function ToolCard({ tool }: ToolCardProps) {
                       <div>
                         <p className="font-medium">Real-time Integration</p>
                         <p className="text-sm text-muted-foreground">
-                          Seamlessly integrates with your voice agent for instant access
+                          Seamlessly integrates with your voice agent for
+                          instant access
                         </p>
                       </div>
                     </div>
@@ -206,9 +218,12 @@ export function ToolCard({ tool }: ToolCardProps) {
                     <Separator />
                     <div className="space-y-4">
                       <h3 className="text-lg font-medium">API Configuration</h3>
-                      {tool.required_secrets.map((secret) => (
+                      {tool.required_secrets.map(secret => (
                         <div key={secret.name} className="space-y-2">
-                          <Label htmlFor={secret.name} className="flex items-center gap-2">
+                          <Label
+                            htmlFor={secret.name}
+                            className="flex items-center gap-2"
+                          >
                             <KeyRound className="h-4 w-4" />
                             {secret.name}
                           </Label>
@@ -217,15 +232,17 @@ export function ToolCard({ tool }: ToolCardProps) {
                             type="password"
                             placeholder={secret.description}
                             value={secrets[secret.name] || ''}
-                            onChange={(e) =>
-                              setSecrets((prev) => ({
+                            onChange={e =>
+                              setSecrets(prev => ({
                                 ...prev,
                                 [secret.name]: e.target.value,
                               }))
                             }
                             disabled={step !== 'configure'}
                           />
-                          <p className="text-sm text-muted-foreground">{secret.description}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {secret.description}
+                          </p>
                         </div>
                       ))}
                     </div>
@@ -236,7 +253,6 @@ export function ToolCard({ tool }: ToolCardProps) {
 
             <Separator orientation="vertical" className="h-full" />
 
-            {/* Right side - Status */}
             <div className="flex-1 bg-muted/30 p-6 flex flex-col">
               {step === 'configure' && (
                 <div className="flex-1 flex flex-col justify-center items-center text-center space-y-4">
@@ -244,9 +260,12 @@ export function ToolCard({ tool }: ToolCardProps) {
                     <Plus className="h-8 w-8 text-primary" />
                   </div>
                   <div className="space-y-2">
-                    <h3 className="text-lg font-semibold">Ready to add {tool.display_name}?</h3>
+                    <h3 className="text-lg font-semibold">
+                      Ready to add {tool.display_name}?
+                    </h3>
                     <p className="text-sm text-muted-foreground max-w-sm">
-                      Configure your API credentials and click Create to add this tool to your agent
+                      Configure your API credentials and click Create to add
+                      this tool to your agent
                     </p>
                   </div>
                   {error && (
@@ -256,7 +275,9 @@ export function ToolCard({ tool }: ToolCardProps) {
                   )}
                   <Button
                     onClick={handleAddTool}
-                    disabled={tool.required_secrets?.some(s => !secrets[s.name])}
+                    disabled={tool.required_secrets?.some(
+                      s => !secrets[s.name],
+                    )}
                     className="mt-4"
                   >
                     Create Tool
@@ -268,10 +289,14 @@ export function ToolCard({ tool }: ToolCardProps) {
                 <div className="flex-1 flex flex-col justify-center space-y-8">
                   <div className="space-y-6">
                     <div className="flex items-center gap-4">
-                      <div className={cn(
-                        "w-10 h-10 rounded-full flex items-center justify-center",
-                        creatingStage === 'secrets' ? "bg-primary/10" : "bg-primary"
-                      )}>
+                      <div
+                        className={cn(
+                          'w-10 h-10 rounded-full flex items-center justify-center',
+                          creatingStage === 'secrets'
+                            ? 'bg-primary/10'
+                            : 'bg-primary',
+                        )}
+                      >
                         {creatingStage === 'secrets' ? (
                           <Loader2 className="h-5 w-5 text-primary animate-spin" />
                         ) : (
@@ -279,10 +304,13 @@ export function ToolCard({ tool }: ToolCardProps) {
                         )}
                       </div>
                       <div className="flex-1">
-                        <p className={cn(
-                          "font-medium",
-                          creatingStage !== 'secrets' && "text-muted-foreground"
-                        )}>
+                        <p
+                          className={cn(
+                            'font-medium',
+                            creatingStage !== 'secrets' &&
+                              'text-muted-foreground',
+                          )}
+                        >
                           Creating secure secrets
                         </p>
                         <p className="text-sm text-muted-foreground">
@@ -292,11 +320,16 @@ export function ToolCard({ tool }: ToolCardProps) {
                     </div>
 
                     <div className="flex items-center gap-4">
-                      <div className={cn(
-                        "w-10 h-10 rounded-full flex items-center justify-center",
-                        creatingStage === 'tool' ? "bg-primary/10" : 
-                        creatingStage === 'done' ? "bg-primary" : "bg-muted"
-                      )}>
+                      <div
+                        className={cn(
+                          'w-10 h-10 rounded-full flex items-center justify-center',
+                          creatingStage === 'tool'
+                            ? 'bg-primary/10'
+                            : creatingStage === 'done'
+                              ? 'bg-primary'
+                              : 'bg-muted',
+                        )}
+                      >
                         {creatingStage === 'tool' ? (
                           <Loader2 className="h-5 w-5 text-primary animate-spin" />
                         ) : creatingStage === 'done' ? (
@@ -306,10 +339,13 @@ export function ToolCard({ tool }: ToolCardProps) {
                         )}
                       </div>
                       <div className="flex-1">
-                        <p className={cn(
-                          "font-medium",
-                          creatingStage === 'secrets' && "text-muted-foreground"
-                        )}>
+                        <p
+                          className={cn(
+                            'font-medium',
+                            creatingStage === 'secrets' &&
+                              'text-muted-foreground',
+                          )}
+                        >
                           Adding tool to agent
                         </p>
                         <p className="text-sm text-muted-foreground">
@@ -327,16 +363,19 @@ export function ToolCard({ tool }: ToolCardProps) {
                     <CheckCircle2 className="h-8 w-8 text-green-500" />
                   </div>
                   <div className="space-y-2">
-                    <h3 className="text-lg font-semibold">Tool added successfully!</h3>
+                    <h3 className="text-lg font-semibold">
+                      Tool added successfully!
+                    </h3>
                     <p className="text-sm text-muted-foreground max-w-sm">
-                      {tool.display_name} has been added to your agent and is ready to use
+                      {tool.display_name} has been added to your agent and is
+                      ready to use
                     </p>
                   </div>
                   <div className="flex flex-col gap-2 mt-4">
                     <Button asChild>
-                      <a 
-                        href="https://elevenlabs.io/app/agents/tools" 
-                        target="_blank" 
+                      <a
+                        href="https://elevenlabs.io/app/agents/tools"
+                        target="_blank"
                         rel="noopener noreferrer"
                         className="gap-2"
                       >
