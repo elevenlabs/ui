@@ -25,7 +25,7 @@ import {
 } from '@elevenlabs/ui/components/ai-elements/prompt-input';
 import { Actions, Action } from '@elevenlabs/ui/components/ai-elements/actions';
 import { useState } from 'react';
-import { useChat } from '@elevenlabs/react';
+// import { useChat } from '@elevenlabs/react';
 import { Response } from '@elevenlabs/ui/components/ai-elements/response';
 import { GlobeIcon, RefreshCcwIcon, CopyIcon } from 'lucide-react';
 import {
@@ -56,36 +56,40 @@ export const ChatBotDemo = () => {
   const [input, setInput] = useState('');
   const [model, setModel] = useState<string>(models[0].value);
   const [webSearch, setWebSearch] = useState(false);
-  const { messages, sendMessage, status } = useChat();
+  const [messages, setMessages] = useState<any[]>([]);
+  // const { messages, sendMessage, status } = useChat();
+
+  // Temporary status while useChat is commented out
+  const status = 'idle' as const;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (input.trim()) {
-      sendMessage(
-        { text: input },
-        {
-          body: {
-            model: model,
-            webSearch: webSearch,
-          },
-        },
-      );
+      // sendMessage(
+      //   { text: input },
+      //   {
+      //     body: {
+      //       model: model,
+      //       webSearch: webSearch,
+      //     },
+      //   },
+      // );
       setInput('');
     }
   };
 
   const regenerate = () => {
-    sendMessage(
-      { text: input },
-      { body: { model: model, webSearch: webSearch } },
-    );
+    // sendMessage(
+    //   { text: input },
+    //   { body: { model: model, webSearch: webSearch } },
+    // );
   };
 
   return (
     <div className="max-w-4xl mx-auto p-6 relative size-full">
       <div className="flex flex-col h-full">
         <Conversation className="h-full">
-          <ConversationContent>
+          {/* <ConversationContent>
             {messages.map(message => (
               <div key={message.id}>
                 {message.role === 'assistant' &&
@@ -165,7 +169,7 @@ export const ChatBotDemo = () => {
               </div>
             ))}
             {status === 'submitted' && <Loader />}
-          </ConversationContent>
+          </ConversationContent> */}
           <ConversationScrollButton />
         </Conversation>
 
@@ -204,7 +208,7 @@ export const ChatBotDemo = () => {
                 </PromptInputModelSelectContent>
               </PromptInputModelSelect>
             </PromptInputTools>
-            <PromptInputSubmit disabled={!input} status={status} />
+            {/* <PromptInputSubmit disabled={!input} status={status} /> */}
           </PromptInputToolbar>
         </PromptInput>
       </div>

@@ -1,0 +1,53 @@
+{
+  "name": "@elevenlabs/react",
+  "version": "0.6.1",
+  "description": "ElevenLabs React Library",
+  "main": "./dist/lib.umd.js",
+  "module": "./dist/lib.module.js",
+  "source": "src/index.ts",
+  "type": "module",
+  "unpkg": "./dist/lib.umd.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/lib.modern.js",
+      "require": "./dist/lib.cjs"
+    }
+  },
+  "scripts": {
+    "generate-version": "printf \"// This file is auto-generated during build\\nexport const PACKAGE_VERSION = \\\"%s\\\";\\n\" \"$npm_package_version\" > src/version.ts",
+    "prebuild": "pnpm run generate-version",
+    "build": "BROWSERSLIST_ENV=modern microbundle --jsx React.createElement --jsxFragment React.Fragment --jsxImportSource react src/index.ts",
+    "clean": "rm -rf ./dist",
+    "dev": "pnpm run clean && pnpm run generate-version && BROWSERSLIST_ENV=development microbundle --jsx React.createElement --jsxFragment React.Fragment --jsxImportSource react src/index.ts -w -f modern",
+    "lint": "pnpm run lint:ts && pnpm run lint:es && pnpm run lint:prettier",
+    "lint:ts": "tsc --noEmit --skipLibCheck",
+    "lint:es": "pnpm exec eslint .",
+    "lint:prettier": "prettier 'src/**/*.ts' --check",
+    "prepublishOnly": "pnpm run build",
+    "test": "jest"
+  },
+  "keywords": [],
+  "author": "ElevenLabs",
+  "license": "MIT",
+  "dependencies": {
+    "@elevenlabs/client": "workspace:*"
+  },
+  "peerDependencies": {
+    "react": ">=16.8.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.12",
+    "@types/react": "^18.3.3",
+    "eslint": "^9.8.0",
+    "jest": "^29.7.0",
+    "microbundle": "^0.15.1",
+    "typescript": "^5.5.4"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/elevenlabs/packages.git",
+    "directory": "packages/react"
+  }
+}
