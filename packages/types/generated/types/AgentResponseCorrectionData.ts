@@ -1,6 +1,6 @@
 interface AgentResponseCorrectionData {
-  originalAgentResponse: string;
-  correctedAgentResponse: string;
+  original_agent_response: string;
+  corrected_agent_response: string;
   additionalProperties?: Map<string, any>;
 }
-export default AgentResponseCorrectionData;
+export { AgentResponseCorrectionData };

@@ -1,7 +1,7 @@
-import ClientToolCallData from './ClientToolCallData';
+import { ClientToolCallData } from './ClientToolCallData';
 interface ClientToolCallPayload {
-  reservedType: 'client_tool_call';
-  clientToolCall: ClientToolCallData;
+  type: 'client_tool_call';
+  client_tool_call: ClientToolCallData;
   additionalProperties?: Map<string, any>;
 }
-export default ClientToolCallPayload;
+export { ClientToolCallPayload };

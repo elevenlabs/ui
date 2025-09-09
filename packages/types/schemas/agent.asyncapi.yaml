@@ -1,7 +1,7 @@
-asyncapi: "2.6.0"
+asyncapi: '2.6.0'
 info:
   title: ElevenLabs Agents Contract
-  version: "1.0.0"
+  version: '1.0.0'
   description: |
     Real-time Agents with voice synthesis and transcription.
     This WebSocket API enables bidirectional audio streaming and text messaging
@@ -30,29 +30,29 @@ channels:
       message:
         oneOf:
           # Server -> Client messages
-          - $ref: "#/components/messages/Audio"
-          - $ref: "#/components/messages/UserTranscript"
-          - $ref: "#/components/messages/TentativeUserTranscript"
-          - $ref: "#/components/messages/AgentResponse"
-          - $ref: "#/components/messages/AgentResponseCorrection"
-          - $ref: "#/components/messages/Interruption"
-          - $ref: "#/components/messages/ConversationMetadata"
-          - $ref: "#/components/messages/ClientToolCall"
-          - $ref: "#/components/messages/AgentToolResponse"
-          - $ref: "#/components/messages/MCPToolCall"
-          - $ref: "#/components/messages/MCPConnectionStatus"
-          - $ref: "#/components/messages/VADScore"
-          - $ref: "#/components/messages/Ping"
+          - $ref: '#/components/messages/Audio'
+          - $ref: '#/components/messages/UserTranscript'
+          - $ref: '#/components/messages/TentativeUserTranscript'
+          - $ref: '#/components/messages/AgentResponse'
+          - $ref: '#/components/messages/AgentResponseCorrection'
+          - $ref: '#/components/messages/Interruption'
+          - $ref: '#/components/messages/ConversationMetadata'
+          - $ref: '#/components/messages/ClientToolCall'
+          - $ref: '#/components/messages/AgentToolResponse'
+          - $ref: '#/components/messages/MCPToolCall'
+          - $ref: '#/components/messages/MCPConnectionStatus'
+          - $ref: '#/components/messages/VADScore'
+          - $ref: '#/components/messages/Ping'
           # Client -> Server messages
-          - $ref: "#/components/messages/UserAudio"
-          - $ref: "#/components/messages/Pong"
-          - $ref: "#/components/messages/UserMessage"
-          - $ref: "#/components/messages/UserActivity"
-          - $ref: "#/components/messages/UserFeedback"
-          - $ref: "#/components/messages/ClientToolResult"
-          - $ref: "#/components/messages/MCPToolApprovalResult"
-          - $ref: "#/components/messages/ContextualUpdate"
-          - $ref: "#/components/messages/ConversationInitiation"
+          - $ref: '#/components/messages/UserAudio'
+          - $ref: '#/components/messages/Pong'
+          - $ref: '#/components/messages/UserMessage'
+          - $ref: '#/components/messages/UserActivity'
+          - $ref: '#/components/messages/UserFeedback'
+          - $ref: '#/components/messages/ClientToolResult'
+          - $ref: '#/components/messages/MCPToolApprovalResult'
+          - $ref: '#/components/messages/ContextualUpdate'
+          - $ref: '#/components/messages/ConversationInitiation'
 components:
   messages:
     # ===== CLIENT → SERVER MESSAGES =====
@@ -63,7 +63,7 @@ components:
       summary: Audio data from user (no type field for performance optimization)
       contentType: application/json
       payload:
-        $ref: "#/components/schemas/UserAudioPayload"
+        $ref: '#/components/schemas/UserAudioPayload'
 
     Pong:
       name: PongClientToOrchestratorEvent
@@ -71,7 +71,7 @@ components:
       summary: Response to server ping for latency measurement
       contentType: application/json
       payload:
-        $ref: "#/components/schemas/PongPayload"
+        $ref: '#/components/schemas/PongPayload'
 
     UserMessage:
       name: UserMessageClientToOrchestratorEvent
@@ -79,7 +79,7 @@ components:
       summary: Text message from user
       contentType: application/json
       payload:
-        $ref: "#/components/schemas/UserMessagePayload"
+        $ref: '#/components/schemas/UserMessagePayload'
 
     UserActivity:
       name: UserActivityClientToOrchestratorEvent
@@ -87,7 +87,7 @@ components:
       summary: Signal that user is active (typing, etc.)
       contentType: application/json
       payload:
-        $ref: "#/components/schemas/UserActivityPayload"
+        $ref: '#/components/schemas/UserActivityPayload'
 
     UserFeedback:
       name: UserFeedbackClientToOrchestratorEvent
@@ -95,7 +95,7 @@ components:
       summary: User feedback on agent response
       contentType: application/json
       payload:
-        $ref: "#/components/schemas/UserFeedbackPayload"
+        $ref: '#/components/schemas/UserFeedbackPayload'
 
     ClientToolResult:
       name: ClientToolResultClientToOrchestratorEvent
@@ -103,7 +103,7 @@ components:
       summary: Result of client-side tool execution
       contentType: application/json
       payload:
-        $ref: "#/components/schemas/ClientToolResultPayload"
+        $ref: '#/components/schemas/ClientToolResultPayload'
 
     MCPToolApprovalResult:
       name: MCPToolApprovalResultClientToOrchestratorEvent
@@ -111,7 +111,7 @@ components:
       summary: User approval/rejection of MCP tool execution
       contentType: application/json
       payload:
-        $ref: "#/components/schemas/MCPToolApprovalResultPayload"
+        $ref: '#/components/schemas/MCPToolApprovalResultPayload'
 
     ContextualUpdate:
       name: ContextualUpdateClientToOrchestratorEvent
@@ -119,7 +119,7 @@ components:
       summary: Non-interrupting context update
       contentType: application/json
       payload:
-        $ref: "#/components/schemas/ContextualUpdatePayload"
+        $ref: '#/components/schemas/ContextualUpdatePayload'
 
     ConversationInitiation:
       name: ConversationInitiationClientToOrchestratorEvent
@@ -127,7 +127,7 @@ components:
       summary: Initial configuration and overrides
       contentType: application/json
       payload:
-        $ref: "#/components/schemas/ConversationInitiationPayload"
+        $ref: '#/components/schemas/ConversationInitiationPayload'
 
     # ===== SERVER → CLIENT MESSAGES =====
 
@@ -137,7 +137,7 @@ components:
       summary: Synthesized audio from agent
       contentType: application/json
       payload:
-        $ref: "#/components/schemas/AudioPayload"
+        $ref: '#/components/schemas/AudioPayload'
 
     UserTranscript:
       name: UserTranscriptionClientEvent
@@ -145,7 +145,7 @@ components:
       summary: Final transcription of user speech
       contentType: application/json
       payload:
-        $ref: "#/components/schemas/UserTranscriptPayload"
+        $ref: '#/components/schemas/UserTranscriptPayload'
 
     TentativeUserTranscript:
       name: TentativeUserTranscriptionClientEvent
@@ -153,7 +153,7 @@ components:
       summary: In-progress transcription (may change)
       contentType: application/json
       payload:
-        $ref: "#/components/schemas/TentativeUserTranscriptPayload"
+        $ref: '#/components/schemas/TentativeUserTranscriptPayload'
 
     AgentResponse:
       name: AgentResponseClientEvent
@@ -161,7 +161,7 @@ components:
       summary: Agent's text response
       contentType: application/json
       payload:
-        $ref: "#/components/schemas/AgentResponsePayload"
+        $ref: '#/components/schemas/AgentResponsePayload'
 
     AgentResponseCorrection:
       name: AgentResponseCorrectionClientEvent
@@ -169,7 +169,7 @@ components:
       summary: Corrected response after interruption
       contentType: application/json
       payload:
-        $ref: "#/components/schemas/AgentResponseCorrectionPayload"
+        $ref: '#/components/schemas/AgentResponseCorrectionPayload'
 
     Interruption:
       name: InterruptionEvent
@@ -177,7 +177,7 @@ components:
       summary: User interrupted agent speech
       contentType: application/json
       payload:
-        $ref: "#/components/schemas/InterruptionPayload"
+        $ref: '#/components/schemas/InterruptionPayload'
 
     ConversationMetadata:
       name: ConversationInitiationMetadataEvent
@@ -185,7 +185,7 @@ components:
       summary: Initial connection metadata
       contentType: application/json
       payload:
-        $ref: "#/components/schemas/ConversationMetadataPayload"
+        $ref: '#/components/schemas/ConversationMetadataPayload'
 
     ClientToolCall:
       name: ClientToolCallClientEvent
@@ -193,7 +193,7 @@ components:
       summary: Tool for client to execute
       contentType: application/json
       payload:
-        $ref: "#/components/schemas/ClientToolCallPayload"
+        $ref: '#/components/schemas/ClientToolCallPayload'
 
     AgentToolResponse:
       name: AgentToolResponseClientEvent
@@ -201,7 +201,7 @@ components:
       summary: Result of agent tool execution
       contentType: application/json
       payload:
-        $ref: "#/components/schemas/AgentToolResponsePayload"
+        $ref: '#/components/schemas/AgentToolResponsePayload'
 
     MCPToolCall:
       name: MCPToolCallClientEvent
@@ -209,7 +209,7 @@ components:
       summary: Model Context Protocol tool call
       contentType: application/json
       payload:
-        $ref: "#/components/schemas/MCPToolCallPayload"
+        $ref: '#/components/schemas/MCPToolCallPayload'
 
     MCPConnectionStatus:
       name: MCPConnectionStatusClientEvent
@@ -217,7 +217,7 @@ components:
       summary: Status of MCP service connections
       contentType: application/json
       payload:
-        $ref: "#/components/schemas/MCPConnectionStatusPayload"
+        $ref: '#/components/schemas/MCPConnectionStatusPayload'
 
     VADScore:
       name: VADScoreClientEvent
@@ -225,7 +225,7 @@ components:
       summary: Voice Activity Detection score
       contentType: application/json
       payload:
-        $ref: "#/components/schemas/VADScorePayload"
+        $ref: '#/components/schemas/VADScorePayload'
 
     Ping:
       name: PingEvent
@@ -233,7 +233,7 @@ components:
       summary: Keepalive ping from server
       contentType: application/json
       payload:
-        $ref: "#/components/schemas/PingPayload"
+        $ref: '#/components/schemas/PingPayload'
 
   schemas:
     AudioFormat:
@@ -247,6 +247,20 @@ components:
         - pcm_48000
         - ulaw_8000
       description: Audio encoding format
+
+    FeedbackScore:
+      type: string
+      enum:
+        - like
+        - dislike
+      description: User's feedback score
+
+    MCPIntegrationType:
+      type: string
+      enum:
+        - mcp_server
+        - mcp_integration
+      description: Type of MCP integration
 
     MCPToolCallBase:
       type: object
@@ -276,7 +290,7 @@ components:
 
     MCPToolCallLoading:
       allOf:
-        - $ref: "#/components/schemas/MCPToolCallBase"
+        - $ref: '#/components/schemas/MCPToolCallBase'
         - type: object
           required: [state]
           additionalProperties: false
@@ -288,7 +302,7 @@ components:
 
     MCPToolCallAwaitingApproval:
       allOf:
-        - $ref: "#/components/schemas/MCPToolCallBase"
+        - $ref: '#/components/schemas/MCPToolCallBase'
         - type: object
           required: [state, approval_timeout_secs]
           additionalProperties: false
@@ -304,7 +318,7 @@ components:
 
     MCPToolCallSuccess:
       allOf:
-        - $ref: "#/components/schemas/MCPToolCallBase"
+        - $ref: '#/components/schemas/MCPToolCallBase'
         - type: object
           required: [state, result]
           additionalProperties: false
@@ -322,7 +336,7 @@ components:
 
     MCPToolCallFailure:
       allOf:
-        - $ref: "#/components/schemas/MCPToolCallBase"
+        - $ref: '#/components/schemas/MCPToolCallBase'
         - type: object
           required: [state, error_message]
           additionalProperties: false
@@ -388,9 +402,7 @@ components:
           type: integer
           description: ID of the event being given feedback on
         score:
-          type: string
-          enum: [like, dislike]
-          description: User's feedback score (like or dislike)
+          $ref: '#/components/schemas/FeedbackScore'
 
     ClientToolResultPayload:
       type: object
@@ -454,7 +466,7 @@ components:
           type: string
           const: audio
         audio_event:
-          $ref: "#/components/schemas/AudioEventData"
+          $ref: '#/components/schemas/AudioEventData'
 
     UserTranscriptPayload:
       type: object
@@ -464,7 +476,7 @@ components:
           type: string
           const: user_transcript
         user_transcription_event:
-          $ref: "#/components/schemas/UserTranscriptionData"
+          $ref: '#/components/schemas/UserTranscriptionData'
 
     TentativeUserTranscriptPayload:
       type: object
@@ -474,7 +486,7 @@ components:
           type: string
           const: tentative_user_transcript
         tentative_user_transcription_event:
-          $ref: "#/components/schemas/TentativeTranscriptionData"
+          $ref: '#/components/schemas/TentativeTranscriptionData'
 
     AgentResponsePayload:
       type: object
@@ -484,7 +496,7 @@ components:
           type: string
           const: agent_response
         agent_response_event:
-          $ref: "#/components/schemas/AgentResponseData"
+          $ref: '#/components/schemas/AgentResponseData'
 
     AgentResponseCorrectionPayload:
       type: object
@@ -494,7 +506,7 @@ components:
           type: string
           const: agent_response_correction
         agent_response_correction_event:
-          $ref: "#/components/schemas/AgentResponseCorrectionData"
+          $ref: '#/components/schemas/AgentResponseCorrectionData'
 
     InterruptionPayload:
       type: object
@@ -504,7 +516,7 @@ components:
           type: string
           const: interruption
         interruption_event:
-          $ref: "#/components/schemas/InterruptionData"
+          $ref: '#/components/schemas/InterruptionData'
 
     ConversationMetadataPayload:
       type: object
@@ -514,7 +526,7 @@ components:
           type: string
           const: conversation_initiation_metadata
         conversation_initiation_metadata_event:
-          $ref: "#/components/schemas/ConversationMetadataData"
+          $ref: '#/components/schemas/ConversationMetadataData'
 
     ClientToolCallPayload:
       type: object
@@ -524,7 +536,7 @@ components:
           type: string
           const: client_tool_call
         client_tool_call:
-          $ref: "#/components/schemas/ClientToolCallData"
+          $ref: '#/components/schemas/ClientToolCallData'
 
     AgentToolResponsePayload:
       type: object
@@ -534,7 +546,7 @@ components:
           type: string
           const: agent_tool_response
         agent_tool_response:
-          $ref: "#/components/schemas/AgentToolResponseData"
+          $ref: '#/components/schemas/AgentToolResponseData'
 
     MCPToolCallPayload:
       type: object
@@ -547,10 +559,10 @@ components:
           type: object
           description: MCP tool call data (polymorphic based on state)
           oneOf:
-            - $ref: "#/components/schemas/MCPToolCallLoading"
-            - $ref: "#/components/schemas/MCPToolCallAwaitingApproval"
-            - $ref: "#/components/schemas/MCPToolCallSuccess"
-            - $ref: "#/components/schemas/MCPToolCallFailure"
+            - $ref: '#/components/schemas/MCPToolCallLoading'
+            - $ref: '#/components/schemas/MCPToolCallAwaitingApproval'
+            - $ref: '#/components/schemas/MCPToolCallSuccess'
+            - $ref: '#/components/schemas/MCPToolCallFailure'
 
     MCPConnectionStatusPayload:
       type: object
@@ -560,7 +572,7 @@ components:
           type: string
           const: mcp_connection_status
         mcp_connection_status:
-          $ref: "#/components/schemas/MCPConnectionStatusData"
+          $ref: '#/components/schemas/MCPConnectionStatusData'
 
     VADScorePayload:
       type: object
@@ -570,7 +582,7 @@ components:
           type: string
           const: vad_score
         vad_score_event:
-          $ref: "#/components/schemas/VADScoreData"
+          $ref: '#/components/schemas/VADScoreData'
 
     PingPayload:
       type: object
@@ -580,7 +592,7 @@ components:
           type: string
           const: ping
         ping_event:
-          $ref: "#/components/schemas/PingData"
+          $ref: '#/components/schemas/PingData'
 
     # ===== NAMED SCHEMAS FOR EVENT DATA =====
 
@@ -641,9 +653,9 @@ components:
         conversation_id:
           type: string
         agent_output_audio_format:
-          $ref: "#/components/schemas/AudioFormat"
+          $ref: '#/components/schemas/AudioFormat'
         user_input_audio_format:
-          $ref: "#/components/schemas/AudioFormat"
+          $ref: '#/components/schemas/AudioFormat'
 
     ClientToolCallData:
       type: object
@@ -681,7 +693,7 @@ components:
           type: array
           description: List of MCP integration statuses
           items:
-            $ref: "#/components/schemas/MCPIntegrationStatus"
+            $ref: '#/components/schemas/MCPIntegrationStatus'
 
     MCPIntegrationStatus:
       type: object
@@ -691,9 +703,7 @@ components:
           type: string
           description: Unique identifier for the integration
         integration_type:
-          type: string
-          enum: [mcp_server, mcp_integration]
-          description: Type of MCP integration
+          $ref: '#/components/schemas/MCPIntegrationType'
         is_connected:
           type: boolean
           description: Whether the integration is currently connected

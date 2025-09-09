@@ -1,5 +1,5 @@
-enum AnonymousSchema_50 {
+enum McpIntegrationType {
   MCP_SERVER = 'mcp_server',
   MCP_INTEGRATION = 'mcp_integration',
 }
-export default AnonymousSchema_50;
+export { McpIntegrationType };

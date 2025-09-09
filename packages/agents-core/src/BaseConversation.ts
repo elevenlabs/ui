@@ -4,7 +4,7 @@ import type {
   OnDisconnectCallback,
   SessionConfig,
   FormatConfig,
-} from "./utils/BaseConnection";
+} from './utils/BaseConnection';
 import type {
   AgentAudioEvent,
   AgentResponseEvent,
@@ -14,18 +14,19 @@ import type {
   InterruptionEvent,
   UserTranscriptionEvent,
   VadScoreEvent,
-} from "./utils/events";
-import type { InputConfig } from "./utils/input";
+} from './utils/events';
+import type { InputConfig } from './utils/input';
+import { FeedbackScore } from './utils/events';
 
-export type Role = "user" | "ai";
+export type Role = 'user' | 'ai';
 
-export type Mode = "speaking" | "listening";
+export type Mode = 'speaking' | 'listening';
 
 export type Status =
-  | "connecting"
-  | "connected"
-  | "disconnecting"
-  | "disconnected";
+  | 'connecting'
+  | 'connected'
+  | 'disconnecting'
+  | 'disconnected';
 
 export type Options = SessionConfig &
   Callbacks &
@@ -42,7 +43,7 @@ export type ClientToolsConfig = {
   clientTools: Record<
     string,
     (
-      parameters: any
+      parameters: any,
     ) => Promise<string | number | void> | string | number | void
   >;
 };
@@ -59,7 +60,7 @@ export type Callbacks = {
   onStatusChange?: (prop: { status: Status }) => void;
   onCanSendFeedbackChange?: (prop: { canSendFeedback: boolean }) => void;
   onUnhandledClientToolCall?: (
-    params: ClientToolCallEvent["client_tool_call"]
+    params: ClientToolCallEvent['client_tool_call'],
   ) => void;
   onVadScore?: (props: { vadScore: number }) => void;
 };
@@ -68,8 +69,8 @@ const EMPTY_FREQUENCY_DATA = new Uint8Array(0);
 
 export class BaseConversation {
   protected lastInterruptTimestamp = 0;
-  protected mode: Mode = "listening";
-  protected status: Status = "connecting";
+  protected mode: Mode = 'listening';
+  protected status: Status = 'connecting';
   protected volume = 1;
   protected currentEventId = 1;
   protected lastFeedbackEventId = 0;
@@ -93,7 +94,7 @@ export class BaseConversation {
 
   protected constructor(
     protected readonly options: Options,
-    protected readonly connection: BaseConnection
+    protected readonly connection: BaseConnection,
   ) {
     if (this.options.onConnect) {
       this.options.onConnect({ conversationId: connection.conversationId });
@@ -101,18 +102,18 @@ export class BaseConversation {
     this.connection.onMessage(this.onMessage);
     this.connection.onDisconnect(this.endSessionWithDetails);
     this.connection.onModeChange(mode => this.updateMode(mode));
-    this.updateStatus("connected");
+    this.updateStatus('connected');
   }
 
   public endSession() {
-    return this.endSessionWithDetails({ reason: "user" });
+    return this.endSessionWithDetails({ reason: 'user' });
   }
 
   private endSessionWithDetails = async (details: DisconnectionDetails) => {
-    if (this.status !== "connected" && this.status !== "connecting") return;
-    this.updateStatus("disconnecting");
+    if (this.status !== 'connected' && this.status !== 'connecting') return;
+    this.updateStatus('disconnecting');
     await this.handleEndSession();
-    this.updateStatus("disconnected");
+    this.updateStatus('disconnected');
     if (this.options.onDisconnect) {
       this.options.onDisconnect(details);
     }
@@ -159,7 +160,7 @@ export class BaseConversation {
   protected handleAgentResponse(event: AgentResponseEvent) {
     if (this.options.onMessage) {
       this.options.onMessage({
-        source: "ai",
+        source: 'ai',
         message: event.agent_response_event.agent_response,
       });
     }
@@ -168,18 +169,18 @@ export class BaseConversation {
   protected handleUserTranscript(event: UserTranscriptionEvent) {
     if (this.options.onMessage) {
       this.options.onMessage({
-        source: "user",
+        source: 'user',
         message: event.user_transcription_event.user_transcript,
       });
     }
   }
 
   protected handleTentativeAgentResponse(
-    event: InternalTentativeAgentResponseEvent
+    event: InternalTentativeAgentResponseEvent,
   ) {
     if (this.options.onDebug) {
       this.options.onDebug({
-        type: "tentative_agent_response",
+        type: 'tentative_agent_response',
         response:
           event.tentative_agent_response_internal_event
             .tentative_agent_response,
@@ -199,21 +200,21 @@ export class BaseConversation {
     if (
       Object.prototype.hasOwnProperty.call(
         this.options.clientTools,
-        event.client_tool_call.tool_name
+        event.client_tool_call.tool_name,
       )
     ) {
       try {
         const result =
           (await this.options.clientTools[event.client_tool_call.tool_name](
-            event.client_tool_call.parameters
-          )) ?? "Client tool execution successful."; // default client-tool call response
+            event.client_tool_call.parameters,
+          )) ?? 'Client tool execution successful.'; // default client-tool call response
 
         // The API expects result to be a string, so we need to convert it if it's not already a string
         const formattedResult =
-          typeof result === "object" ? JSON.stringify(result) : String(result);
+          typeof result === 'object' ? JSON.stringify(result) : String(result);
 
         this.connection.sendMessage({
-          type: "client_tool_result",
+          type: 'client_tool_result',
           tool_call_id: event.client_tool_call.tool_call_id,
           result: formattedResult,
           is_error: false,
@@ -223,10 +224,10 @@ export class BaseConversation {
           `Client tool execution failed with following error: ${(e as Error)?.message}`,
           {
             clientToolName: event.client_tool_call.tool_name,
-          }
+          },
         );
         this.connection.sendMessage({
-          type: "client_tool_result",
+          type: 'client_tool_result',
           tool_call_id: event.client_tool_call.tool_call_id,
           result: `Client tool execution failed: ${(e as Error)?.message}`,
           is_error: true,
@@ -243,10 +244,10 @@ export class BaseConversation {
         `Client tool with name ${event.client_tool_call.tool_name} is not defined on client`,
         {
           clientToolName: event.client_tool_call.tool_name,
-        }
+        },
       );
       this.connection.sendMessage({
-        type: "client_tool_result",
+        type: 'client_tool_result',
         tool_call_id: event.client_tool_call.tool_call_id,
         result: `Client tool with name ${event.client_tool_call.tool_name} is not defined on client`,
         is_error: true,
@@ -258,23 +259,23 @@ export class BaseConversation {
 
   private onMessage = async (parsedEvent: IncomingSocketEvent) => {
     switch (parsedEvent.type) {
-      case "interruption": {
+      case 'interruption': {
         this.handleInterruption(parsedEvent);
         return;
       }
-      case "agent_response": {
+      case 'agent_response': {
         this.handleAgentResponse(parsedEvent);
         return;
       }
-      case "user_transcript": {
+      case 'user_transcript': {
         this.handleUserTranscript(parsedEvent);
         return;
       }
-      case "internal_tentative_agent_response": {
+      case 'internal_tentative_agent_response': {
         this.handleTentativeAgentResponse(parsedEvent);
         return;
       }
-      case "client_tool_call": {
+      case 'client_tool_call': {
         try {
           await this.handleClientToolCall(parsedEvent);
         } catch (error) {
@@ -283,24 +284,24 @@ export class BaseConversation {
             {
               clientToolName: parsedEvent.client_tool_call.tool_name,
               toolCallId: parsedEvent.client_tool_call.tool_call_id,
-            }
+            },
           );
         }
         return;
       }
-      case "audio": {
+      case 'audio': {
         this.handleAudio(parsedEvent);
         return;
       }
 
-      case "vad_score": {
+      case 'vad_score': {
         this.handleVadScore(parsedEvent);
         return;
       }
 
-      case "ping": {
+      case 'ping': {
         this.connection.sendMessage({
-          type: "pong",
+          type: 'pong',
           event_id: parsedEvent.ping_event.event_id,
         });
         // parsedEvent.ping_event.ping_ms can be used on client side, for example
@@ -330,7 +331,7 @@ export class BaseConversation {
   }
 
   public isOpen() {
-    return this.status === "connected";
+    return this.status === 'connected';
   }
 
   public setVolume = ({ volume }: { volume: number }) => {
@@ -360,16 +361,16 @@ export class BaseConversation {
   public sendFeedback(like: boolean) {
     if (!this.canSendFeedback) {
       console.warn(
-        this.lastFeedbackEventId === 0
-          ? "Cannot send feedback: the conversation has not started yet."
-          : "Cannot send feedback: feedback has already been sent for the current response."
+        this.lastFeedbackEventId === this.currentEventId
+          ? 'Cannot send feedback: feedback has already been sent for the current response.'
+          : 'Cannot send feedback: no response has been received yet.',
       );
       return;
     }
 
     this.connection.sendMessage({
-      type: "feedback",
-      score: like ? "like" : "dislike",
+      type: 'feedback',
+      score: like ? FeedbackScore.LIKE : FeedbackScore.DISLIKE,
       event_id: this.currentEventId,
     });
     this.lastFeedbackEventId = this.currentEventId;
@@ -378,27 +379,27 @@ export class BaseConversation {
 
   public sendContextualUpdate(text: string) {
     this.connection.sendMessage({
-      type: "contextual_update",
+      type: 'contextual_update',
       text,
     });
   }
 
   public sendUserMessage(text: string) {
     this.connection.sendMessage({
-      type: "user_message",
+      type: 'user_message',
       text,
     });
   }
 
   public sendUserActivity() {
     this.connection.sendMessage({
-      type: "user_activity",
+      type: 'user_activity',
     });
   }
 
   public sendMCPToolApprovalResult(toolCallId: string, isApproved: boolean) {
     this.connection.sendMessage({
-      type: "mcp_tool_approval_result",
+      type: 'mcp_tool_approval_result',
       tool_call_id: toolCallId,
       is_approved: isApproved,
     });

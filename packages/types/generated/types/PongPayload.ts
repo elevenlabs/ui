@@ -1,6 +1,6 @@
 interface PongPayload {
-  reservedType: 'pong';
-  eventId: number;
+  type: 'pong';
+  event_id: number;
   additionalProperties?: Map<string, any>;
 }
-export default PongPayload;
+export { PongPayload };

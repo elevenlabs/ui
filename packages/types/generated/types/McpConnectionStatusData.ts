@@ -1,6 +1,6 @@
-import McpIntegrationStatus from './McpIntegrationStatus';
+import { McpIntegrationStatus } from './McpIntegrationStatus';
 interface McpConnectionStatusData {
   integrations: McpIntegrationStatus[];
   additionalProperties?: Map<string, any>;
 }
-export default McpConnectionStatusData;
+export { McpConnectionStatusData };

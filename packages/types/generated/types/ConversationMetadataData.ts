@@ -1,8 +1,8 @@
-import AudioFormat from './AudioFormat';
+import { AudioFormat } from './AudioFormat';
 interface ConversationMetadataData {
-  conversationId: string;
-  agentOutputAudioFormat: AudioFormat;
-  userInputAudioFormat: AudioFormat;
+  conversation_id: string;
+  agent_output_audio_format: AudioFormat;
+  user_input_audio_format: AudioFormat;
   additionalProperties?: Map<string, any>;
 }
-export default ConversationMetadataData;
+export { ConversationMetadataData };

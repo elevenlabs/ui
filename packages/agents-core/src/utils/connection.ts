@@ -1,5 +1,5 @@
 // Re-export from the new connection architecture for backward compatibility
-export {
+export type {
   Language,
   DelayConfig,
   FormatConfig,
@@ -7,15 +7,15 @@ export {
   OnDisconnectCallback,
   OnMessageCallback,
   SessionConfig,
-  parseFormat,
-} from "./BaseConnection";
+} from './BaseConnection';
+export { parseFormat } from './BaseConnection';
 
-import { createConnection } from "./ConnectionFactory";
+import { createConnection } from './ConnectionFactory';
 export { createConnection };
-export { WebSocketConnection } from "./WebSocketConnection";
-export { WebRTCConnection } from "./WebRTCConnection";
-export { BaseConnection } from "./BaseConnection";
-import type { SessionConfig } from "./BaseConnection";
+export { WebSocketConnection } from './WebSocketConnection';
+export { WebRTCConnection } from './WebRTCConnection';
+export { BaseConnection } from './BaseConnection';
+import type { SessionConfig } from './BaseConnection';
 
 // Legacy Connection class that uses the factory
 export class Connection {

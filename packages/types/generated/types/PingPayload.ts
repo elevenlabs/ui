@@ -1,7 +1,7 @@
-import PingData from './PingData';
+import { PingData } from './PingData';
 interface PingPayload {
-  reservedType: 'ping';
-  pingEvent: PingData;
+  type: 'ping';
+  ping_event: PingData;
   additionalProperties?: Map<string, any>;
 }
-export default PingPayload;
+export { PingPayload };

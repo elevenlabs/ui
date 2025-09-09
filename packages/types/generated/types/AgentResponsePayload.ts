@@ -1,7 +1,7 @@
-import AgentResponseData from './AgentResponseData';
+import { AgentResponseData } from './AgentResponseData';
 interface AgentResponsePayload {
-  reservedType: 'agent_response';
-  agentResponseEvent: AgentResponseData;
+  type: 'agent_response';
+  agent_response_event: AgentResponseData;
   additionalProperties?: Map<string, any>;
 }
-export default AgentResponsePayload;
+export { AgentResponsePayload };

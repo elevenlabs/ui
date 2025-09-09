@@ -199,13 +199,16 @@ importers:
 
   packages/agents-core:
     dependencies:
+      '@elevenlabs/types':
+        specifier: workspace:*
+        version: link:../types
       livekit-client:
         specifier: ^2.11.4
         version: 2.15.6(@types/dom-mediacapture-record@1.0.22)
     devDependencies:
-      '@types/node-wav':
-        specifier: ^0.0.3
-        version: 0.0.3
+      '@elevenlabs/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
       '@vitest/browser':
         specifier: ^3.0.5
         version: 3.2.4(msw@2.11.1(@types/node@22.15.3)(typescript@5.9.2))(playwright@1.55.0)(vite@5.4.19(@types/node@22.15.3)(lightningcss@1.30.1)(terser@5.44.0))(vitest@3.2.4)
@@ -218,9 +221,6 @@ importers:
       mock-socket:
         specifier: ^9.3.1
         version: 9.3.1
-      node-wav:
-        specifier: ^0.0.2
-        version: 0.0.2
       playwright:
         specifier: ^1.54.1
         version: 1.55.0
@@ -240,6 +240,9 @@ importers:
         specifier: '>=16.8.0'
         version: 19.1.1
     devDependencies:
+      '@elevenlabs/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
       '@types/jest':
         specifier: ^29.5.12
         version: 29.5.14
@@ -315,6 +318,9 @@ importers:
       eslint:
         specifier: ^9.20.0
         version: 9.34.0(jiti@2.5.1)
+      glob:
+        specifier: ^11.0.3
+        version: 11.0.3
       typescript:
         specifier: ^5.9.2
         version: 5.9.2
@@ -4689,9 +4695,6 @@ packages:
 
   '@types/mute-stream@0.0.4':
     resolution: {integrity: sha512-CPM9nzrCPPJHQNA9keH9CVkVI+WR5kMa+7XEs5jcGQ0VoAGnLv242w8lIVgwAEfmE4oufJRaTc9PNLQl0ioAow==}
-
-  '@types/node-wav@0.0.3':
-    resolution: {integrity: sha512-U53HwwM1qt/WAl+rZkxpM0nkOo7JdabgKs8HHt0h+wL/SkIw42pY38JRGd6x2tSE8XJyxk8Z71xYCfjjxfmE8A==}
 
   '@types/node@12.20.55':
     resolution: {integrity: sha512-J8xLz7q2OFulZ2cyGTLE1TbbZcjpno7FaN6zdJNrgAdrJ+DZzh/uFR6YrTb4C+nXakvud8Q4+rbhoIWlYQbUFQ==}
@@ -9131,10 +9134,6 @@ packages:
   node-sarif-builder@2.0.3:
     resolution: {integrity: sha512-Pzr3rol8fvhG/oJjIq2NTVB0vmdNNlz22FENhhPojYRZ4/ee08CfK4YuKmuL54V9MLhI1kpzxfOJ/63LzmZzDg==}
     engines: {node: '>=14'}
-
-  node-wav@0.0.2:
-    resolution: {integrity: sha512-M6Rm/bbG6De/gKGxOpeOobx/dnGuP0dz40adqx38boqHhlWssBJZgLCPBNtb9NkrmnKYiV04xELq+R6PFOnoLA==}
-    engines: {node: '>=4.4.0'}
 
   nopt@6.0.0:
     resolution: {integrity: sha512-ZwLpbTgdhuZUnZzjd7nb1ZV+4DoiC6/sfiVKok72ym/4Tlf+DFdlHYmT2JPmcNNWV6Pi3SDf1kT+A4r9RTuT9g==}
@@ -18483,10 +18482,6 @@ snapshots:
     dependencies:
       '@types/node': 20.19.11
 
-  '@types/node-wav@0.0.3':
-    dependencies:
-      '@types/node': 20.19.11
-
   '@types/node@12.20.55': {}
 
   '@types/node@16.18.126': {}
@@ -24180,8 +24175,6 @@ snapshots:
     dependencies:
       '@types/sarif': 2.1.7
       fs-extra: 10.1.0
-
-  node-wav@0.0.2: {}
 
   nopt@6.0.0:
     dependencies:

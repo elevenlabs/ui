@@ -1,7 +1,7 @@
-import TentativeTranscriptionData from './TentativeTranscriptionData';
+import { TentativeTranscriptionData } from './TentativeTranscriptionData';
 interface TentativeUserTranscriptPayload {
-  reservedType: 'tentative_user_transcript';
-  tentativeUserTranscriptionEvent: TentativeTranscriptionData;
+  type: 'tentative_user_transcript';
+  tentative_user_transcription_event: TentativeTranscriptionData;
   additionalProperties?: Map<string, any>;
 }
-export default TentativeUserTranscriptPayload;
+export { TentativeUserTranscriptPayload };

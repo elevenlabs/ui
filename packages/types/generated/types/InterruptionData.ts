@@ -1,5 +1,5 @@
 interface InterruptionData {
-  eventId: number;
+  event_id: number;
   additionalProperties?: Map<string, any>;
 }
-export default InterruptionData;
+export { InterruptionData };

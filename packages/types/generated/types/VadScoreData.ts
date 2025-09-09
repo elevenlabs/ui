@@ -1,5 +1,5 @@
 interface VadScoreData {
-  vadScore: number;
+  vad_score: number;
   additionalProperties?: Map<string, any>;
 }
-export default VadScoreData;
+export { VadScoreData };

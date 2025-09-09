@@ -1,7 +1,7 @@
-import McpConnectionStatusData from './McpConnectionStatusData';
+import { McpConnectionStatusData } from './McpConnectionStatusData';
 interface McpConnectionStatusPayload {
-  reservedType: 'mcp_connection_status';
-  mcpConnectionStatus: McpConnectionStatusData;
+  type: 'mcp_connection_status';
+  mcp_connection_status: McpConnectionStatusData;
   additionalProperties?: Map<string, any>;
 }
-export default McpConnectionStatusPayload;
+export { McpConnectionStatusPayload };

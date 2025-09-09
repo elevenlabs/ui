@@ -1,5 +1,5 @@
 interface UserAudioPayload {
-  userAudioChunk: string;
+  user_audio_chunk: string;
   additionalProperties?: Map<string, any>;
 }
-export default UserAudioPayload;
+export { UserAudioPayload };

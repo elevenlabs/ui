@@ -1,7 +1,7 @@
-import VadScoreData from './VadScoreData';
+import { VadScoreData } from './VadScoreData';
 interface VadScorePayload {
-  reservedType: 'vad_score';
-  vadScoreEvent: VadScoreData;
+  type: 'vad_score';
+  vad_score_event: VadScoreData;
   additionalProperties?: Map<string, any>;
 }
-export default VadScorePayload;
+export { VadScorePayload };

@@ -1,7 +1,7 @@
-import AudioEventData from './AudioEventData';
+import { AudioEventData } from './AudioEventData';
 interface AudioPayload {
-  reservedType: 'audio';
-  audioEvent: AudioEventData;
+  type: 'audio';
+  audio_event: AudioEventData;
   additionalProperties?: Map<string, any>;
 }
-export default AudioPayload;
+export { AudioPayload };

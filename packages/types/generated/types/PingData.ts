@@ -1,6 +1,6 @@
 interface PingData {
-  eventId: number;
-  pingMs?: number;
+  event_id: number;
+  ping_ms?: number;
   additionalProperties?: Map<string, any>;
 }
-export default PingData;
+export { PingData };

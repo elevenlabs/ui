@@ -1,11 +1,11 @@
 interface McpToolCallAwaitingApproval {
-  serviceId: string;
-  toolCallId: string;
-  toolName: string;
-  toolDescription?: string;
+  service_id: string;
+  tool_call_id: string;
+  tool_name: string;
+  tool_description?: string;
   parameters: Map<string, any>;
   timestamp: string;
   state: 'awaiting_approval';
-  approvalTimeoutSecs: number;
+  approval_timeout_secs: number;
 }
-export default McpToolCallAwaitingApproval;
+export { McpToolCallAwaitingApproval };

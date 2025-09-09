@@ -1,5 +1,5 @@
 interface UserTranscriptionData {
-  userTranscript: string;
+  user_transcript: string;
   additionalProperties?: Map<string, any>;
 }
-export default UserTranscriptionData;
+export { UserTranscriptionData };

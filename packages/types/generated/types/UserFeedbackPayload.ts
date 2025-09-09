@@ -1,8 +1,8 @@
-import AnonymousSchema_66 from './AnonymousSchema_66';
+import { FeedbackScore } from './FeedbackScore';
 interface UserFeedbackPayload {
-  reservedType?: 'feedback';
-  eventId: number;
-  score: AnonymousSchema_66;
+  type?: 'feedback';
+  event_id: number;
+  score: FeedbackScore;
   additionalProperties?: Map<string, any>;
 }
-export default UserFeedbackPayload;
+export { UserFeedbackPayload };

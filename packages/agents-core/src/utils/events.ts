@@ -1,94 +1,58 @@
-import type { Language } from "./connection";
-import type { CONVERSATION_INITIATION_CLIENT_DATA_TYPE } from "./overrides";
+import type { Language } from './connection';
+import type { CONVERSATION_INITIATION_CLIENT_DATA_TYPE } from './overrides';
+import { FeedbackScore } from '@elevenlabs/types';
+import type {
+  AudioPayload as AgentAudioEvent,
+  AgentResponsePayload as AgentResponseEvent,
+  UserTranscriptPayload as UserTranscriptionEvent,
+  InterruptionPayload as InterruptionEvent,
+  ConversationMetadataPayload as ConfigEvent,
+  PingPayload as PingEvent,
+  ClientToolCallPayload as ClientToolCallEvent,
+  VadScorePayload as VadScoreEvent,
+  PongPayload as PongEvent,
+  UserFeedbackPayload,
+  ClientToolResultPayload,
+  ContextualUpdatePayload,
+  UserMessagePayload,
+  UserActivityPayload,
+  McpToolApprovalResultPayload as MCPToolApprovalResultEvent,
+} from '@elevenlabs/types';
 
-export type UserTranscriptionEvent = {
-  type: "user_transcript";
-  user_transcription_event: { user_transcript: string };
+// Re-export the types with the names used in the SDK
+export type {
+  AgentAudioEvent,
+  AgentResponseEvent,
+  UserTranscriptionEvent,
+  InterruptionEvent,
+  ConfigEvent,
+  PingEvent,
+  ClientToolCallEvent,
+  VadScoreEvent,
+  PongEvent,
 };
-export type AgentResponseEvent = {
-  type: "agent_response";
-  agent_response_event: { agent_response: string };
-};
-export type AgentAudioEvent = {
-  type: "audio";
-  audio_event: {
-    audio_base_64: string;
-    event_id: number;
-  };
-};
-export type InterruptionEvent = {
-  type: "interruption";
-  interruption_event: {
-    event_id: number;
-  };
-};
+
+// Re-export the enum for feedback scores
+export { FeedbackScore };
+
+// Types that need custom mapping because they have different structures in our SDK
 export type InternalTentativeAgentResponseEvent = {
-  type: "internal_tentative_agent_response";
+  type: 'internal_tentative_agent_response';
   tentative_agent_response_internal_event: {
     tentative_agent_response: string;
   };
 };
-export type ConfigEvent = {
-  type: "conversation_initiation_metadata";
-  conversation_initiation_metadata_event: {
-    conversation_id: string;
-    agent_output_audio_format: string;
-    user_input_audio_format?: string;
-  };
-};
-export type PingEvent = {
-  type: "ping";
-  ping_event: {
-    event_id: number;
-    ping_ms?: number;
-  };
-};
-export type ClientToolCallEvent = {
-  type: "client_tool_call";
-  client_tool_call: {
-    tool_name: string;
-    tool_call_id: string;
-    parameters: any;
-    expects_response: boolean;
-  };
-};
-export type VadScoreEvent = {
-  type: "vad_score";
-  vad_score_event: {
-    vad_score: number;
-  };
-};
 
-// TODO correction missing
-export type IncomingSocketEvent =
-  | UserTranscriptionEvent
-  | AgentResponseEvent
-  | AgentAudioEvent
-  | InterruptionEvent
-  | InternalTentativeAgentResponseEvent
-  | ConfigEvent
-  | PingEvent
-  | ClientToolCallEvent
-  | VadScoreEvent;
-
-export type PongEvent = {
-  type: "pong";
-  event_id: number;
-};
+// User audio is special - it has no type field for performance
 export type UserAudioEvent = {
   user_audio_chunk: string;
 };
-export type UserFeedbackEvent = {
-  type: "feedback";
-  score: "like" | "dislike";
-  event_id: number;
-};
-export type ClientToolResultEvent = {
-  type: "client_tool_result";
-  tool_call_id: string;
-  result: any;
-  is_error: boolean;
-};
+
+// Use the UserFeedbackPayload directly with the enum for the score
+export type UserFeedbackEvent = UserFeedbackPayload;
+
+export type ClientToolResultEvent = ClientToolResultPayload;
+
 export type InitiationClientDataEvent = {
   type: typeof CONVERSATION_INITIATION_CLIENT_DATA_TYPE;
   conversation_config_override?: {
@@ -114,22 +78,25 @@ export type InitiationClientDataEvent = {
     version?: string;
   };
 };
-export type ContextualUpdateEvent = {
-  type: "contextual_update";
-  text: string;
-};
-export type UserMessageEvent = {
-  type: "user_message";
-  text: string;
-};
-export type UserActivityEvent = {
-  type: "user_activity";
-};
-export type MCPToolApprovalResultEvent = {
-  type: "mcp_tool_approval_result";
-  tool_call_id: string;
-  is_approved: boolean;
-};
+
+export type ContextualUpdateEvent = ContextualUpdatePayload;
+
+export type UserMessageEvent = UserMessagePayload;
+
+export type UserActivityEvent = UserActivityPayload;
+
+// TODO correction missing
+export type IncomingSocketEvent =
+  | UserTranscriptionEvent
+  | AgentResponseEvent
+  | AgentAudioEvent
+  | InterruptionEvent
+  | InternalTentativeAgentResponseEvent
+  | ConfigEvent
+  | PingEvent
+  | ClientToolCallEvent
+  | VadScoreEvent;
+
 export type OutgoingSocketEvent =
   | PongEvent
   | UserAudioEvent

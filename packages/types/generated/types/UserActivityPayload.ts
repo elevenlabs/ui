@@ -1,5 +1,5 @@
 interface UserActivityPayload {
-  reservedType: 'user_activity';
+  type: 'user_activity';
   additionalProperties?: Map<string, any>;
 }
-export default UserActivityPayload;
+export { UserActivityPayload };

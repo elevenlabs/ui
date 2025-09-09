@@ -1,11 +1,11 @@
 interface McpToolCallFailure {
-  serviceId: string;
-  toolCallId: string;
-  toolName: string;
-  toolDescription?: string;
+  service_id: string;
+  tool_call_id: string;
+  tool_name: string;
+  tool_description?: string;
   parameters: Map<string, any>;
   timestamp: string;
   state: 'failure';
-  errorMessage: string;
+  error_message: string;
 }
-export default McpToolCallFailure;
+export { McpToolCallFailure };

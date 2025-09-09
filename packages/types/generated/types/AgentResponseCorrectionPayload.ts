@@ -1,7 +1,7 @@
-import AgentResponseCorrectionData from './AgentResponseCorrectionData';
+import { AgentResponseCorrectionData } from './AgentResponseCorrectionData';
 interface AgentResponseCorrectionPayload {
-  reservedType: 'agent_response_correction';
-  agentResponseCorrectionEvent: AgentResponseCorrectionData;
+  type: 'agent_response_correction';
+  agent_response_correction_event: AgentResponseCorrectionData;
   additionalProperties?: Map<string, any>;
 }
-export default AgentResponseCorrectionPayload;
+export { AgentResponseCorrectionPayload };

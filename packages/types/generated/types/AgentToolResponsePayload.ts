@@ -1,7 +1,7 @@
-import AgentToolResponseData from './AgentToolResponseData';
+import { AgentToolResponseData } from './AgentToolResponseData';
 interface AgentToolResponsePayload {
-  reservedType: 'agent_tool_response';
-  agentToolResponse: AgentToolResponseData;
+  type: 'agent_tool_response';
+  agent_tool_response: AgentToolResponseData;
   additionalProperties?: Map<string, any>;
 }
-export default AgentToolResponsePayload;
+export { AgentToolResponsePayload };

@@ -18,26 +18,26 @@
   "scripts": {
     "generate-version": "printf \"// This file is auto-generated during build\\nexport const PACKAGE_VERSION = \\\"%s\\\";\\n\" \"$npm_package_version\" > src/version.ts",
     "prebuild": "pnpm run generate-version",
-    "build": "BROWSERSLIST_ENV=modern microbundle --jsx React.createElement --jsxFragment React.Fragment --jsxImportSource react src/index.ts",
-    "clean": "rm -rf ./dist",
-    "dev": "pnpm run clean && pnpm run generate-version && BROWSERSLIST_ENV=development microbundle --jsx React.createElement --jsxFragment React.Fragment --jsxImportSource react src/index.ts -w -f modern",
+    "build": "BROWSERSLIST_ENV=modern microbundle src/index.ts",
+    "clean": "rm -rf ./dist ./src/version.ts",
+    "dev": "pnpm run clean && pnpm run generate-version && BROWSERSLIST_ENV=development microbundle src/index.ts -w -f modern",
     "lint": "pnpm run lint:ts && pnpm run lint:es && pnpm run lint:prettier",
     "lint:ts": "tsc --noEmit --skipLibCheck",
     "lint:es": "pnpm exec eslint .",
     "lint:prettier": "prettier 'src/**/*.ts' --check",
     "prepublishOnly": "pnpm run build",
-    "test": "vitest"
+    "test": "vitest",
+    "check-types": "tsc --noEmit"
   },
   "keywords": [],
   "author": "ElevenLabs",
   "license": "MIT",
   "devDependencies": {
-    "@types/node-wav": "^0.0.3",
+    "@elevenlabs/typescript-config": "workspace:*",
     "@vitest/browser": "^3.0.5",
     "eslint": "^9.8.0",
     "microbundle": "^0.15.1",
     "mock-socket": "^9.3.1",
-    "node-wav": "^0.0.2",
     "playwright": "^1.54.1",
     "typescript": "^5.5.4",
     "vitest": "^3.0.5"
@@ -48,6 +48,7 @@
     "directory": "packages/client"
   },
   "dependencies": {
+    "@elevenlabs/types": "workspace:*",
     "livekit-client": "^2.11.4"
   }
 }

@@ -1,10 +1,10 @@
 interface McpToolCallLoading {
-  serviceId: string;
-  toolCallId: string;
-  toolName: string;
-  toolDescription?: string;
+  service_id: string;
+  tool_call_id: string;
+  tool_name: string;
+  tool_description?: string;
   parameters: Map<string, any>;
   timestamp: string;
   state: 'loading';
 }
-export default McpToolCallLoading;
+export { McpToolCallLoading };

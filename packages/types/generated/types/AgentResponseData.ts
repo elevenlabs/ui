@@ -1,5 +1,5 @@
 interface AgentResponseData {
-  agentResponse: string;
+  agent_response: string;
   additionalProperties?: Map<string, any>;
 }
-export default AgentResponseData;
+export { AgentResponseData };

@@ -3,14 +3,14 @@
   "version": "0.0.1",
   "private": true,
   "description": "AsyncAPI contracts and generated TypeScript types for ElevenLabs agent communication",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "./dist/src/index.js",
+  "types": "./dist/src/index.d.ts",
   "files": [
     "dist",
     "generated"
   ],
   "scripts": {
-    "generate": "asyncapi generate models typescript ./schemas/agent.asyncapi.yaml -o ./generated/types --tsModelType interface && ls ./generated/types/*.ts | xargs -n1 basename | sed 's/.ts$//' | awk '{print \"export * from \\\"./\" $0 \"\\\";\"}' > ./generated/types/index.ts && prettier --write ./generated/types/**/*.ts",
+    "generate": "asyncapi generate models typescript ./schemas/agent.asyncapi.yaml -o ./generated/types --tsModelType interface --tsRawPropertyNames --tsExportType named && ls ./generated/types/*.ts | xargs -n1 basename | sed 's/.ts$//' | awk '{print \"export * from \\\"./\" $0 \"\\\";\"}' > ./generated/types/index.ts && prettier --write ./generated/types/**/*.ts",
     "build": "pnpm generate && tsc",
     "dev": "pnpm generate",
     "clean": "rm -rf dist generated/types",
@@ -24,12 +24,13 @@
     "@elevenlabs/eslint-config": "workspace:*",
     "@elevenlabs/typescript-config": "workspace:*",
     "eslint": "^9.20.0",
+    "glob": "^11.0.3",
     "typescript": "^5.9.2"
   },
   "exports": {
     ".": {
-      "import": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "import": "./dist/src/index.js",
+      "types": "./dist/src/index.d.ts"
     },
     "./types": {
       "import": "./generated/types/index.js",

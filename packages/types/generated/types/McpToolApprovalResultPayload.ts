@@ -1,7 +1,7 @@
 interface McpToolApprovalResultPayload {
-  reservedType: 'mcp_tool_approval_result';
-  toolCallId: string;
-  isApproved: boolean;
+  type: 'mcp_tool_approval_result';
+  tool_call_id: string;
+  is_approved: boolean;
   additionalProperties?: Map<string, any>;
 }
-export default McpToolApprovalResultPayload;
+export { McpToolApprovalResultPayload };

@@ -1,7 +1,7 @@
-import UserTranscriptionData from './UserTranscriptionData';
+import { UserTranscriptionData } from './UserTranscriptionData';
 interface UserTranscriptPayload {
-  reservedType: 'user_transcript';
-  userTranscriptionEvent: UserTranscriptionData;
+  type: 'user_transcript';
+  user_transcription_event: UserTranscriptionData;
   additionalProperties?: Map<string, any>;
 }
-export default UserTranscriptPayload;
+export { UserTranscriptPayload };

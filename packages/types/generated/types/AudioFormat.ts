@@ -7,4 +7,4 @@ enum AudioFormat {
   PCM_48000 = 'pcm_48000',
   ULAW_8000 = 'ulaw_8000',
 }
-export default AudioFormat;
+export { AudioFormat };

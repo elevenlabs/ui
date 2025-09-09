@@ -1,8 +1,8 @@
 interface ConversationInitiationPayload {
-  reservedType: 'conversation_initiation_client_data';
-  conversationConfigOverride?: Map<string, any>;
-  customLlmExtraBody?: Map<string, any>;
-  dynamicVariables?: Map<string, any>;
+  type: 'conversation_initiation_client_data';
+  conversation_config_override?: Map<string, any>;
+  custom_llm_extra_body?: Map<string, any>;
+  dynamic_variables?: Map<string, any>;
   additionalProperties?: Map<string, any>;
 }
-export default ConversationInitiationPayload;
+export { ConversationInitiationPayload };

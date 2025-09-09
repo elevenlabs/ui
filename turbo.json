@@ -3,20 +3,59 @@
   "ui": "tui",
   "globalEnv": ["NODE_ENV"],
   "tasks": {
+    "generate-version": {
+      "inputs": ["package.json"],
+      "outputs": ["src/version.ts"]
+    },
     "build": {
+      "dependsOn": ["^build", "generate-version"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        ".env*",
+        "src/**",
+        "!src/**/*.test.*",
+        "!src/**/*.spec.*"
+      ],
+      "outputs": ["dist/**", ".next/**", "!.next/cache/**", "generated/**"]
+    },
+    "test": {
       "dependsOn": ["^build"],
-      "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": [".next/**", "!.next/cache/**", "dist/**", "generated/**"]
+      "inputs": [
+        "src/**",
+        "**/*.test.*",
+        "**/*.spec.*",
+        "vitest.config.ts",
+        "jest.config.*"
+      ],
+      "cache": true
     },
     "lint": {
-      "dependsOn": ["^lint"]
+      "dependsOn": ["^build"]
+    },
+    "lint:ts": {
+      "dependsOn": ["^build"],
+      "cache": true
+    },
+    "lint:es": {
+      "cache": true,
+      "inputs": ["src/**", ".eslintrc*", "eslint.config.*"]
+    },
+    "lint:prettier": {
+      "cache": true,
+      "inputs": ["src/**", ".prettierrc*", "prettier.config.*"]
     },
     "check-types": {
-      "dependsOn": ["^check-types"]
+      "dependsOn": ["^build"],
+      "cache": true,
+      "inputs": ["src/**", "tsconfig.json"]
+    },
+    "clean": {
+      "cache": false
     },
     "dev": {
       "cache": false,
-      "persistent": true
+      "persistent": true,
+      "dependsOn": ["generate-version"]
     },
     "generate": {
       "inputs": ["schemas/**/*.yaml", "schemas/**/*.yml"],

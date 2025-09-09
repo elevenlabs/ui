@@ -1,6 +1,6 @@
 interface UserMessagePayload {
-  reservedType: 'user_message';
-  reservedText?: string;
+  type: 'user_message';
+  text?: string;
   additionalProperties?: Map<string, any>;
 }
-export default UserMessagePayload;
+export { UserMessagePayload };

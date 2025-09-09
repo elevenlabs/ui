@@ -1,7 +1,7 @@
-import ConversationMetadataData from './ConversationMetadataData';
+import { ConversationMetadataData } from './ConversationMetadataData';
 interface ConversationMetadataPayload {
-  reservedType: 'conversation_initiation_metadata';
-  conversationInitiationMetadataEvent: ConversationMetadataData;
+  type: 'conversation_initiation_metadata';
+  conversation_initiation_metadata_event: ConversationMetadataData;
   additionalProperties?: Map<string, any>;
 }
-export default ConversationMetadataPayload;
+export { ConversationMetadataPayload };

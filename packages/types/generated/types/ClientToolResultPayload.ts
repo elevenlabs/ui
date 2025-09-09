@@ -1,8 +1,8 @@
 interface ClientToolResultPayload {
-  reservedType: 'client_tool_result';
-  toolCallId: string;
+  type: 'client_tool_result';
+  tool_call_id: string;
   result: string;
-  isError: boolean;
+  is_error: boolean;
   additionalProperties?: Map<string, any>;
 }
-export default ClientToolResultPayload;
+export { ClientToolResultPayload };

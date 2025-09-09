@@ -1,9 +1,9 @@
-import AnonymousSchema_50 from './AnonymousSchema_50';
+import { McpIntegrationType } from './McpIntegrationType';
 interface McpIntegrationStatus {
-  integrationId: string;
-  integrationType: AnonymousSchema_50;
-  isConnected: boolean;
-  toolCount: number;
+  integration_id: string;
+  integration_type: McpIntegrationType;
+  is_connected: boolean;
+  tool_count: number;
   additionalProperties?: Map<string, any>;
 }
-export default McpIntegrationStatus;
+export { McpIntegrationStatus };

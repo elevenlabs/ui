@@ -19,14 +19,15 @@
     "generate-version": "printf \"// This file is auto-generated during build\\nexport const PACKAGE_VERSION = \\\"%s\\\";\\n\" \"$npm_package_version\" > src/version.ts",
     "prebuild": "pnpm run generate-version",
     "build": "BROWSERSLIST_ENV=modern microbundle --jsx React.createElement --jsxFragment React.Fragment --jsxImportSource react src/index.ts",
-    "clean": "rm -rf ./dist",
+    "clean": "rm -rf ./dist ./src/version.ts",
     "dev": "pnpm run clean && pnpm run generate-version && BROWSERSLIST_ENV=development microbundle --jsx React.createElement --jsxFragment React.Fragment --jsxImportSource react src/index.ts -w -f modern",
     "lint": "pnpm run lint:ts && pnpm run lint:es && pnpm run lint:prettier",
     "lint:ts": "tsc --noEmit --skipLibCheck",
     "lint:es": "pnpm exec eslint .",
     "lint:prettier": "prettier 'src/**/*.ts' --check",
     "prepublishOnly": "pnpm run build",
-    "test": "jest"
+    "test": "jest",
+    "check-types": "tsc --noEmit"
   },
   "keywords": [],
   "author": "ElevenLabs",
@@ -38,6 +39,7 @@
     "react": ">=16.8.0"
   },
   "devDependencies": {
+    "@elevenlabs/typescript-config": "workspace:*",
     "@types/jest": "^29.5.12",
     "@types/react": "^18.3.3",
     "eslint": "^9.8.0",

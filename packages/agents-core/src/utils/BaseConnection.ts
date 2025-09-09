@@ -1,40 +1,40 @@
-import type { IncomingSocketEvent, OutgoingSocketEvent } from "./events";
-import type { Mode } from "../BaseConversation";
+import type { IncomingSocketEvent, OutgoingSocketEvent } from './events';
+import type { Mode } from '../BaseConversation';
 
 export type Language =
-  | "en"
-  | "ja"
-  | "zh"
-  | "de"
-  | "hi"
-  | "fr"
-  | "ko"
-  | "pt"
-  | "pt-br"
-  | "it"
-  | "es"
-  | "id"
-  | "nl"
-  | "tr"
-  | "pl"
-  | "sv"
-  | "bg"
-  | "ro"
-  | "ar"
-  | "cs"
-  | "el"
-  | "fi"
-  | "ms"
-  | "da"
-  | "ta"
-  | "uk"
-  | "ru"
-  | "hu"
-  | "hr"
-  | "sk"
-  | "no"
-  | "vi"
-  | "tl";
+  | 'en'
+  | 'ja'
+  | 'zh'
+  | 'de'
+  | 'hi'
+  | 'fr'
+  | 'ko'
+  | 'pt'
+  | 'pt-br'
+  | 'it'
+  | 'es'
+  | 'id'
+  | 'nl'
+  | 'tr'
+  | 'pl'
+  | 'sv'
+  | 'bg'
+  | 'ro'
+  | 'ar'
+  | 'cs'
+  | 'el'
+  | 'fi'
+  | 'ms'
+  | 'da'
+  | 'ta'
+  | 'uk'
+  | 'ru'
+  | 'hu'
+  | 'hr'
+  | 'sk'
+  | 'no'
+  | 'vi'
+  | 'tl';
 
 export type DelayConfig = {
   default: number;
@@ -43,23 +43,23 @@ export type DelayConfig = {
 };
 
 export type FormatConfig = {
-  format: "pcm" | "ulaw";
+  format: 'pcm' | 'ulaw';
   sampleRate: number;
   outputDeviceId?: string;
 };
 
 export type DisconnectionDetails =
   | {
-      reason: "error";
+      reason: 'error';
       message: string;
       context: Event;
     }
   | {
-      reason: "agent";
+      reason: 'agent';
       context: CloseEvent;
     }
   | {
-      reason: "user";
+      reason: 'user';
     };
 
 export type OnDisconnectCallback = (details: DisconnectionDetails) => void;
@@ -96,7 +96,7 @@ export type BaseSessionConfig = {
   userId?: string;
 };
 
-export type ConnectionType = "websocket" | "webrtc";
+export type ConnectionType = 'websocket' | 'webrtc';
 
 export type PublicSessionConfig = BaseSessionConfig & {
   agentId: string;
@@ -107,14 +107,14 @@ export type PublicSessionConfig = BaseSessionConfig & {
 
 export type PrivateWebSocketSessionConfig = BaseSessionConfig & {
   signedUrl: string;
-  connectionType?: "websocket";
+  connectionType?: 'websocket';
   agentId?: never;
   conversationToken?: never;
 };
 
 export type PrivateWebRTCSessionConfig = BaseSessionConfig & {
   conversationToken: string;
-  connectionType?: "webrtc";
+  connectionType?: 'webrtc';
   agentId?: never;
   signedUrl?: never;
 };
@@ -200,8 +200,8 @@ export abstract class BaseConnection {
 }
 
 export function parseFormat(format: string): FormatConfig {
-  const [formatPart, sampleRatePart] = format.split("_");
-  if (!["pcm", "ulaw"].includes(formatPart)) {
+  const [formatPart, sampleRatePart] = format.split('_');
+  if (!['pcm', 'ulaw'].includes(formatPart)) {
     throw new Error(`Invalid format: ${format}`);
   }
 
@@ -211,7 +211,7 @@ export function parseFormat(format: string): FormatConfig {
   }
 
   return {
-    format: formatPart as FormatConfig["format"],
+    format: formatPart as FormatConfig['format'],
     sampleRate,
   };
 }
