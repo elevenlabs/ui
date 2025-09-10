@@ -5,6 +5,8 @@ import {
   InlineStatusChipLive,
 } from '@/components/audio-components-demo/variants';
 import { Demo2 } from '@/components/audio-components-demo/demo-2';
+import { Card } from '@elevenlabs/ui/components/card';
+import { PlayerDemoWrapper } from './player-demo';
 
 export function AudioComponentsDemo() {
   return (
@@ -17,6 +19,11 @@ export function AudioComponentsDemo() {
 
         {/* Middle row - Live and Transcribing */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="col-span-3">
+            <Card className="shadow-lg border p-2 m-0">
+              <PlayerDemoWrapper />
+            </Card>
+          </div>
           <div className="col-span-1">
             <InlineStatusChipLive />
           </div>

@@ -1,0 +1,303 @@
+'use client';
+
+import { cn } from '@/lib/utils';
+import { Button } from '@elevenlabs/ui/components/button';
+import { useAnimationFrame } from 'framer-motion';
+import { PauseIcon, PlayIcon } from 'lucide-react';
+import {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
+
+export interface PlayerProviderProps {}
+
+interface PlayerState {
+  src: string | null;
+  time: number;
+  readyState: number;
+  error: any;
+}
+
+interface PlayerItem {
+  id: string | number;
+  src: string;
+  data?: any;
+}
+
+interface PlayerApi {
+  activeItem: PlayerItem | null;
+  readyState: number;
+  duration: number | undefined;
+  error: MediaError | null;
+  isPlaying: boolean;
+  isBuffering: boolean;
+  isActive: (id: string | number) => boolean;
+  play: (options?: { item?: PlayerItem | null }) => Promise<void>;
+  pause: () => void;
+}
+
+const PlayerContext = createContext<PlayerApi | null>(null);
+
+export const usePlayer = () => {
+  const api = useContext(PlayerContext);
+  if (!api) {
+    throw new Error('usePlayer cannot be called outside of PlayerProvider');
+  }
+  return api;
+};
+
+export const PlayerProvider = ({ children }: { children: ReactNode }) => {
+  //   const [state, setState] = useState<PlayerState>({
+  //     src: null,
+  //     time: 0,
+  //     readyState: 0,
+  //     error: null,
+  //   });
+
+  const [audio] = useState(() => new Audio());
+  const [readyState, setReadyState] = useState<number>(0);
+  const [networkState, setNetworkState] = useState<number>(0);
+  const [time, setTime] = useState<number>(0);
+  const [duration, setDuration] = useState<number | undefined>(undefined);
+  const [error, setError] = useState<MediaError | null>(null);
+  const [activeItem, setActiveItem] = useState<PlayerItem | null>(null);
+  const [paused, setPaused] = useState(true);
+
+  const setItem = async (item: PlayerItem | null) => {
+    if (item?.id === activeItem?.id) {
+      return;
+    } else {
+      if (item === null) {
+        audio.removeAttribute('src');
+      } else {
+        audio.src = item.src;
+      }
+      await audio.load();
+      setActiveItem(item);
+      setTime(0);
+      setDuration(undefined);
+    }
+  };
+
+  const play = async ({ item }: { item?: PlayerItem | null } = {}) => {
+    if (item === undefined) {
+      return audio.play();
+    } else if (item?.id === activeItem?.id) {
+      return audio.play();
+    } else {
+      audio.src = item?.src || '';
+      await audio.load();
+      setActiveItem(item);
+      setTime(0);
+      setDuration(undefined);
+      return audio.play();
+    }
+  };
+
+  const pause = () => {
+    return audio.pause();
+  };
+
+  const isActive = (id: string | number | null) => {
+    return activeItem?.id === id;
+  };
+
+  useAnimationFrame(() => {
+    setReadyState(audio.readyState);
+    setNetworkState(audio.networkState);
+    setTime(audio.currentTime);
+    setPaused(audio.paused);
+    setError(audio.error);
+  });
+
+  useEffect(() => {
+    console.log({ audio });
+  }, [audio]);
+
+  //   useEffect(() => {
+  //     if (!activeItem) {
+  //       audio.removeAttribute('src');
+  //       audio.load();
+  //     } else {
+  //       audio.src = activeItem.src;
+  //       audio.load();
+  //     }
+  //   }, [activeItem]);
+
+  const isPlaying = !paused;
+  const isBuffering =
+    readyState < HTMLMediaElement.HAVE_FUTURE_DATA &&
+    networkState === HTMLMediaElement.NETWORK_LOADING;
+
+  const api = useMemo(
+    () => ({
+      audio,
+      activeItem,
+      readyState,
+      duration,
+      error,
+      isPlaying,
+      isBuffering,
+      isActive,
+      play,
+      pause,
+    }),
+    [
+      audio,
+      activeItem,
+      readyState,
+      duration,
+      error,
+      isPlaying,
+      isBuffering,
+      isActive,
+      play,
+      pause,
+    ],
+  );
+
+  return (
+    <PlayerContext.Provider value={api}>{children}</PlayerContext.Provider>
+  );
+
+  //   return (
+  //     <audio
+  //       ref={ref}
+  //       onDurationChange={e => {
+  //         setDuration(e.currentTarget.duration);
+  //       }}
+  //       onError={e => {
+  //         setError(e.currentTarget.error);
+  //       }}
+  //     >
+  //       {src && <source src={src} />}
+  //     </audio>
+  //   );
+};
+
+export interface PlayerProgressProps {}
+
+export const PlayerProgress = () => {};
+
+export interface PlayerTimeProps {}
+
+export const PlayerTime = () => {};
+
+export interface PlayerDurationProps {}
+
+export const PlayerDuration = () => {};
+
+interface SpinnerProps {
+  size?: 'sm' | 'md' | 'lg';
+  className?: string;
+}
+
+export function Spinner({ size = 'md', className }: SpinnerProps) {
+  const sizeClasses = {
+    sm: 'h-4 w-4',
+    md: 'h-6 w-6',
+    lg: 'h-8 w-8',
+  };
+
+  return (
+    <div
+      className={cn(
+        'animate-spin rounded-full border-2 border-muted border-t-primary',
+        sizeClasses[size],
+        className,
+      )}
+      role="status"
+      aria-label="Loading"
+    >
+      <span className="sr-only">Loading...</span>
+    </div>
+  );
+}
+
+export const PlayButton = ({
+  playing,
+  onPlayingChange,
+  className,
+  onClick,
+  loading,
+  ...otherProps
+}: {
+  playing: boolean;
+  onPlayingChange: (playing: boolean) => void;
+  loading?: boolean;
+} & React.ComponentProps<typeof Button>) => {
+  return (
+    <Button
+      {...otherProps}
+      onClick={e => {
+        onPlayingChange(!playing);
+        onClick?.(e);
+      }}
+      size="lg"
+      className={cn('relative w-11 h-11 p-0 rounded-xl', className)}
+      aria-label={playing ? 'Pause' : 'Play'}
+    >
+      {playing ? (
+        <PauseIcon className="w-5 h-5 scale-125" />
+      ) : (
+        <PlayIcon className="w-5 h-5 scale-125 translate-x-0.5" />
+      )}
+      {loading && (
+        <div className="absolute inset-0 rounded-[inherit] flex items-center justify-center backdrop-blur-md">
+          <Spinner size="sm" />
+        </div>
+      )}
+    </Button>
+  );
+};
+
+export interface PlayerButtonProps {}
+
+export const PlayerButton = ({
+  item,
+  ...otherProps
+}: {
+  item?: PlayerItem;
+} & React.ComponentProps<typeof Button>) => {
+  const player = usePlayer();
+
+  if (item) {
+    return (
+      <PlayButton
+        {...otherProps}
+        playing={player.isActive(item.id) && player.isPlaying}
+        onPlayingChange={shouldPlay => {
+          if (shouldPlay) {
+            player.play({ item });
+          } else {
+            player.pause();
+          }
+        }}
+        loading={
+          player.isActive(item.id) && player.isBuffering && player.isPlaying
+        }
+      />
+    );
+  } else {
+    return (
+      <PlayButton
+        {...otherProps}
+        playing={player.isPlaying}
+        onPlayingChange={shouldPlay => {
+          console.log(shouldPlay);
+
+          if (shouldPlay) {
+            player.play();
+          } else {
+            player.pause();
+          }
+        }}
+        loading={player.isBuffering && player.isPlaying}
+      />
+    );
+  }
+};
