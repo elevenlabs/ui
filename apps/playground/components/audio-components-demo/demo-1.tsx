@@ -4,7 +4,7 @@ import { Button } from '@elevenlabs/ui/components/button';
 import { Card } from '@elevenlabs/ui/components/card';
 import { ChevronDown, Keyboard, Mic, MicOff, XIcon } from 'lucide-react';
 import React, { useState } from 'react';
-import { AudioVisualizer } from '@/components/audio-components-demo/audio-visualizer';
+import { AudioVisualizer } from '@/registry/audio-components/ui/audio-visualizer';
 
 export function ConversationBar1() {
   const [isMuted, setIsMuted] = useState(false);
@@ -36,7 +36,7 @@ export function ConversationBar1() {
   }, [timerId]);
 
   return (
-    <div className="flex justify-center p-4">
+    <div className="flex justify-start">
       <Card className="shadow-lg border p-2 m-0">
         <div className="flex items-center gap-2">
           <div className="w-[140px] h-8 md:h-10">

@@ -1,70 +1,38 @@
 'use client';
 
-import { AudioVisualizer } from '@/components/audio-components-demo/audio-visualizer';
-import { Button } from '@elevenlabs/ui/components/button';
+import { AudioVisualizer } from '@/registry/audio-components/ui/audio-visualizer';
 import { Card } from '@elevenlabs/ui/components/card';
-import { Mic, MicOff } from 'lucide-react';
 import React from 'react';
-
-export function PillMicButton() {
-  const [listening, setListening] = React.useState(false);
-  return (
-    <Card>
-      <div className="flex w-full items-center justify-center p-4">
-        <Button
-          onClick={() => setListening(v => !v)}
-          className="inline-flex h-10 items-center gap-3 rounded-full border bg-background px-4"
-          variant="outline"
-        >
-          {listening ? (
-            <MicOff className="h-4 w-4" />
-          ) : (
-            <Mic className="h-4 w-4" />
-          )}
-          <span className="text-sm font-medium">
-            {listening ? 'Stop' : 'Start'} Listening
-          </span>
-          <div className="h-5 w-[120px] rounded-full bg-foreground/5 px-2 py-1">
-            <AudioVisualizer
-              height="h-full"
-              className="rounded-full"
-              barGap="sm"
-              barWidth={3}
-              speed={44}
-              animated={listening}
-              useMicrophone={listening}
-              sensitivity={1.6}
-              minUnit={0.03}
-            />
-          </div>
-        </Button>
-      </div>
-    </Card>
-  );
-}
 
 export function InlineStatusChipLive() {
   return (
-    <Card>
-      <div className="flex items-center justify-between gap-3 p-4">
-        <span className="inline-flex items-center gap-2 rounded-full border bg-background px-3 py-1 text-xs">
-          <span className="relative inline-flex h-2 w-2 items-center justify-center">
-            <span className="absolute inline-flex h-2 w-2 rounded-full bg-red-500/30" />
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-red-500" />
-          </span>
-          Live
+    <Card className="shadow-lg border h-full min-h-[140px] flex flex-col items-center justify-center p-6 space-y-3">
+      <span className="inline-flex items-center gap-2 rounded-full bg-red-500/5 border border-red-500/20 px-3 py-1.5 text-sm">
+        <span className="relative inline-flex h-2 w-2 items-center justify-center">
+          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-500 opacity-40" />
+          <span className="relative inline-flex h-2 w-2 rounded-full bg-red-500" />
         </span>
-        <span className="inline-flex h-4 w-[96px] items-center rounded-full bg-red-500/10 px-2 text-red-600">
+        <span className="text-red-600/90 font-medium">Live</span>
+      </span>
+      <div className="h-8 w-full max-w-[140px] flex items-center rounded-md bg-red-500/5 px-2">
+        <div className="h-full w-full py-1">
+          <style jsx>{`
+            .red-bars > * {
+              background-color: rgb(239, 68, 68, 0.6) !important;
+            }
+          `}</style>
           <AudioVisualizer
             height="h-full"
-            className="rounded-full"
+            className="rounded-sm red-bars"
             barGap="sm"
             barWidth={3}
             speed={50}
-            useTextColor
             animated
+            sensitivity={2.0}
+            minUnit={0.15}
+            barCount={20}
           />
-        </span>
+        </div>
       </div>
     </Card>
   );
@@ -72,19 +40,19 @@ export function InlineStatusChipLive() {
 
 export function FooterStripTranscribing() {
   return (
-    <Card>
-      <div className="flex items-center gap-3 p-4">
-        <span className="text-xs text-foreground/70">Transcribing…</span>
-        <div className="h-3 flex-1 rounded bg-foreground/5 px-2">
-          <AudioVisualizer
-            height="h-full"
-            className="rounded"
-            barGap="sm"
-            barWidth={3}
-            speed={56}
-            animated
-          />
-        </div>
+    <Card className="shadow-lg border p-0 h-full flex flex-col justify-center">
+      <div className="h-full w-full rounded-md bg-foreground/5 px-2 py-1">
+        <AudioVisualizer
+          height="h-full"
+          className="rounded-sm"
+          barGap="sm"
+          barWidth={3}
+          speed={56}
+          animated
+          sensitivity={1.8}
+          minUnit={0.02}
+          useTextColor
+        />
       </div>
     </Card>
   );

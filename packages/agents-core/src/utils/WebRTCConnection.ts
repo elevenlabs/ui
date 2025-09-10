@@ -3,34 +3,34 @@ import {
   type SessionConfig,
   type FormatConfig,
   parseFormat,
-} from "./BaseConnection";
-import { PACKAGE_VERSION } from "../version";
-import { isValidSocketEvent, type OutgoingSocketEvent } from "./events";
+} from './BaseConnection';
+import { PACKAGE_VERSION } from '../version';
+import { isValidSocketEvent, type OutgoingSocketEvent } from './events';
 import {
   Room,
   RoomEvent,
   Track,
   ConnectionState,
   createLocalAudioTrack,
-} from "livekit-client";
+} from 'livekit-client';
 import type {
   RemoteAudioTrack,
   Participant,
   TrackPublication,
-} from "livekit-client";
+} from 'livekit-client';
 import {
   constructOverrides,
   CONVERSATION_INITIATION_CLIENT_DATA_TYPE,
-} from "./overrides";
-import { arrayBufferToBase64 } from "./audio";
-import { loadRawAudioProcessor } from "./rawAudioProcessor";
+} from './overrides';
+import { arrayBufferToBase64 } from './audio';
+import { loadRawAudioProcessor } from './rawAudioProcessor';
 
-const DEFAULT_LIVEKIT_WS_URL = "wss://livekit.rtc.elevenlabs.io";
-const HTTPS_API_ORIGIN = "https://api.elevenlabs.io";
+const DEFAULT_LIVEKIT_WS_URL = 'wss://livekit.rtc.elevenlabs.io';
+const HTTPS_API_ORIGIN = 'https://api.elevenlabs.io';
 
 // Convert WSS origin to HTTPS for API calls
 function convertWssToHttps(origin: string): string {
-  return origin.replace(/^wss:\/\//, "https://");
+  return origin.replace(/^wss:\/\//, 'https://');
 }
 
 export type ConnectionConfig = SessionConfig & {
@@ -57,7 +57,7 @@ export class WebRTCConnection extends BaseConnection {
     conversationId: string,
     inputFormat: FormatConfig,
     outputFormat: FormatConfig,
-    config: { onDebug?: (info: unknown) => void } = {}
+    config: { onDebug?: (info: unknown) => void } = {},
   ) {
     super(config);
     this.room = room;
@@ -69,19 +69,19 @@ export class WebRTCConnection extends BaseConnection {
   }
 
   public static async create(
-    config: ConnectionConfig
+    config: ConnectionConfig,
   ): Promise<WebRTCConnection> {
     let conversationToken: string;
 
     // Handle different authentication scenarios
-    if ("conversationToken" in config && config.conversationToken) {
+    if ('conversationToken' in config && config.conversationToken) {
       // Direct token provided
       conversationToken = config.conversationToken;
-    } else if ("agentId" in config && config.agentId) {
+    } else if ('agentId' in config && config.agentId) {
       // Agent ID provided - fetch token from API
       try {
         const version = config.overrides?.client?.version || PACKAGE_VERSION;
-        const source = config.overrides?.client?.source || "js_sdk";
+        const source = config.overrides?.client?.source || 'js_sdk';
         const configOrigin = config.origin ?? HTTPS_API_ORIGIN;
         const origin = convertWssToHttps(configOrigin); //origin is wss, not https
         const url = `${origin}/v1/convai/conversation/token?agent_id=${config.agentId}&source=${source}&version=${version}`;
@@ -89,7 +89,7 @@ export class WebRTCConnection extends BaseConnection {
 
         if (!response.ok) {
           throw new Error(
-            `ElevenLabs API returned ${response.status} ${response.statusText}`
+            `ElevenLabs API returned ${response.status} ${response.statusText}`,
           );
         }
 
@@ -97,22 +97,22 @@ export class WebRTCConnection extends BaseConnection {
         conversationToken = data.token;
 
         if (!conversationToken) {
-          throw new Error("No conversation token received from API");
+          throw new Error('No conversation token received from API');
         }
       } catch (error) {
         let msg = error instanceof Error ? error.message : String(error);
-        if (error instanceof Error && error.message.includes("401")) {
+        if (error instanceof Error && error.message.includes('401')) {
           msg =
-            "Your agent has authentication enabled, but no signed URL or conversation token was provided.";
+            'Your agent has authentication enabled, but no signed URL or conversation token was provided.';
         }
 
         throw new Error(
-          `Failed to fetch conversation token for agent ${config.agentId}: ${msg}`
+          `Failed to fetch conversation token for agent ${config.agentId}: ${msg}`,
         );
       }
     } else {
       throw new Error(
-        "Either conversationToken or agentId is required for WebRTC connection"
+        'Either conversationToken or agentId is required for WebRTC connection',
       );
     }
 
@@ -121,15 +121,18 @@ export class WebRTCConnection extends BaseConnection {
     try {
       // Create connection instance first to set up event listeners
       const conversationId = `room_${Date.now()}`;
-      const inputFormat = parseFormat("pcm_48000");
-      const outputFormat = parseFormat("pcm_48000");
+      const inputFormat = parseFormat('pcm_48000');
+      const outputFormat = parseFormat('pcm_48000');
       const connection = new WebRTCConnection(
         room,
         conversationId,
         inputFormat,
         outputFormat,
-        config
+        config,
       );
+
+      // Set mode to connecting while establishing connection
+      connection.updateMode('connecting');
 
       // Use configurable LiveKit URL or default if not provided
       const livekitUrl = config.livekitUrl || DEFAULT_LIVEKIT_WS_URL;
@@ -155,6 +158,9 @@ export class WebRTCConnection extends BaseConnection {
           room.name.match(/(conv_[a-zA-Z0-9]+)/)?.[0] || room.name;
       }
 
+      // Set mode to initializing while setting up the conversation
+      connection.updateMode('initializing');
+
       // Enable microphone and send overrides
       await room.localParticipant.setMicrophoneEnabled(true);
 
@@ -167,6 +173,9 @@ export class WebRTCConnection extends BaseConnection {
 
       await connection.sendMessage(overridesEvent);
 
+      // Set mode to listening after initialization is complete
+      connection.updateMode('listening');
+
       return connection;
     } catch (error) {
       await room.disconnect();
@@ -177,14 +186,14 @@ export class WebRTCConnection extends BaseConnection {
   private setupRoomEventListeners() {
     this.room.on(RoomEvent.Connected, async () => {
       this.isConnected = true;
-      console.info("WebRTC room connected");
+      console.info('WebRTC room connected');
     });
 
     this.room.on(RoomEvent.Disconnected, reason => {
       this.isConnected = false;
       this.disconnect({
-        reason: "agent",
-        context: new CloseEvent("close", { reason: reason?.toString() }),
+        reason: 'agent',
+        context: new CloseEvent('close', { reason: reason?.toString() }),
       });
     });
 
@@ -192,9 +201,9 @@ export class WebRTCConnection extends BaseConnection {
       if (state === ConnectionState.Disconnected) {
         this.isConnected = false;
         this.disconnect({
-          reason: "error",
+          reason: 'error',
           message: `LiveKit connection state changed to ${state}`,
-          context: new Event("connection_state_changed"),
+          context: new Event('connection_state_changed'),
         });
       }
     });
@@ -207,20 +216,20 @@ export class WebRTCConnection extends BaseConnection {
           const message = JSON.parse(new TextDecoder().decode(payload));
 
           // Filter out audio messages for WebRTC - they're handled via audio tracks
-          if (message.type === "audio") {
+          if (message.type === 'audio') {
             return;
           }
 
           if (isValidSocketEvent(message)) {
             this.handleMessage(message);
           } else {
-            console.warn("Invalid socket event received:", message);
+            console.warn('Invalid socket event received:', message);
           }
         } catch (error) {
-          console.warn("Failed to parse incoming data message:", error);
-          console.warn("Raw payload:", new TextDecoder().decode(payload));
+          console.warn('Failed to parse incoming data message:', error);
+          console.warn('Raw payload:', new TextDecoder().decode(payload));
         }
-      }
+      },
     );
 
     this.room.on(
@@ -228,11 +237,11 @@ export class WebRTCConnection extends BaseConnection {
       async (
         track: Track,
         _publication: TrackPublication,
-        participant: Participant
+        participant: Participant,
       ) => {
         if (
           track.kind === Track.Kind.Audio &&
-          participant.identity.includes("agent")
+          participant.identity.includes('agent')
         ) {
           // Play the audio track
           const remoteAudioTrack = track as RemoteAudioTrack;
@@ -246,14 +255,14 @@ export class WebRTCConnection extends BaseConnection {
               await audioElement.setSinkId(this.outputDeviceId);
             } catch (error) {
               console.warn(
-                "Failed to set output device for new audio element:",
-                error
+                'Failed to set output device for new audio element:',
+                error,
               );
             }
           }
 
           // Add to DOM (hidden) to ensure it plays
-          audioElement.style.display = "none";
+          audioElement.style.display = 'none';
           document.body.appendChild(audioElement);
 
           // Store reference for volume control
@@ -262,13 +271,13 @@ export class WebRTCConnection extends BaseConnection {
           // Apply current volume if it exists (for when volume was set before audio track arrived)
           if (this.audioElements.length === 1) {
             // First audio element - trigger a callback to sync with current volume
-            this.onDebug?.({ type: "audio_element_ready" });
+            this.onDebug?.({ type: 'audio_element_ready' });
           }
 
           // Set up audio capture for onAudio callback
           await this.setupAudioCapture(remoteAudioTrack);
         }
-      }
+      },
     );
 
     this.room.on(
@@ -276,12 +285,12 @@ export class WebRTCConnection extends BaseConnection {
       async (speakers: Participant[]) => {
         if (speakers.length > 0) {
           this.updateMode(
-            speakers[0].identity.startsWith("agent") ? "speaking" : "listening"
+            speakers[0].identity.startsWith('agent') ? 'speaking' : 'listening',
           );
         } else {
-          this.updateMode("listening");
+          this.updateMode('listening');
         }
-      }
+      },
     );
   }
 
@@ -294,16 +303,16 @@ export class WebRTCConnection extends BaseConnection {
             if (publication.track) {
               publication.track.stop();
             }
-          }
+          },
         );
       } catch (error) {
-        console.warn("Error stopping local tracks:", error);
+        console.warn('Error stopping local tracks:', error);
       }
 
       // Clean up audio capture context (non-blocking)
       if (this.audioCaptureContext) {
         this.audioCaptureContext.close().catch(error => {
-          console.warn("Error closing audio capture context:", error);
+          console.warn('Error closing audio capture context:', error);
         });
         this.audioCaptureContext = null;
       }
@@ -323,13 +332,13 @@ export class WebRTCConnection extends BaseConnection {
   public async sendMessage(message: OutgoingSocketEvent) {
     if (!this.isConnected || !this.room.localParticipant) {
       console.warn(
-        "Cannot send message: room not connected or no local participant"
+        'Cannot send message: room not connected or no local participant',
       );
       return;
     }
 
     // In WebRTC mode, audio is sent via published tracks, not data messages
-    if ("user_audio_chunk" in message) {
+    if ('user_audio_chunk' in message) {
       // Ignore audio data messages - audio flows through WebRTC tracks
       return;
     }
@@ -341,13 +350,13 @@ export class WebRTCConnection extends BaseConnection {
       await this.room.localParticipant.publishData(data, { reliable: true });
     } catch (error) {
       this.debug({
-        type: "send_message_error",
+        type: 'send_message_error',
         message: {
           message,
           error,
         },
       });
-      console.error("Failed to send message via WebRTC:", error);
+      console.error('Failed to send message via WebRTC:', error);
     }
   }
 
@@ -359,14 +368,14 @@ export class WebRTCConnection extends BaseConnection {
   public async setMicMuted(isMuted: boolean): Promise<void> {
     if (!this.isConnected || !this.room.localParticipant) {
       console.warn(
-        "Cannot set microphone muted: room not connected or no local participant"
+        'Cannot set microphone muted: room not connected or no local participant',
       );
       return;
     }
 
     // Get the microphone track publication
     const micTrackPublication = this.room.localParticipant.getTrackPublication(
-      Track.Source.Microphone
+      Track.Source.Microphone,
     );
 
     if (micTrackPublication?.track) {
@@ -408,14 +417,14 @@ export class WebRTCConnection extends BaseConnection {
       source.connect(this.outputAnalyser);
 
       await loadRawAudioProcessor(audioContext.audioWorklet);
-      const worklet = new AudioWorkletNode(audioContext, "raw-audio-processor");
+      const worklet = new AudioWorkletNode(audioContext, 'raw-audio-processor');
 
       // Connect analyser to worklet for processing
       this.outputAnalyser.connect(worklet);
 
       // Configure the processor for the output format
       worklet.port.postMessage({
-        type: "setFormat",
+        type: 'setFormat',
         format: this.outputFormat.format,
         sampleRate: this.outputFormat.sampleRate,
       });
@@ -436,7 +445,7 @@ export class WebRTCConnection extends BaseConnection {
 
           // Trigger the onAudio callback by simulating an audio event
           this.handleMessage({
-            type: "audio",
+            type: 'audio',
             audio_event: {
               audio_base_64: base64Audio,
               event_id: eventId,
@@ -448,7 +457,7 @@ export class WebRTCConnection extends BaseConnection {
       // Connect the audio processing chain
       source.connect(worklet);
     } catch (error) {
-      console.warn("Failed to set up audio capture:", error);
+      console.warn('Failed to set up audio capture:', error);
     }
   }
 
@@ -459,8 +468,8 @@ export class WebRTCConnection extends BaseConnection {
   }
 
   public async setAudioOutputDevice(deviceId: string): Promise<void> {
-    if (!("setSinkId" in HTMLAudioElement.prototype)) {
-      throw new Error("setSinkId is not supported in this browser");
+    if (!('setSinkId' in HTMLAudioElement.prototype)) {
+      throw new Error('setSinkId is not supported in this browser');
     }
 
     // Set output device for all existing audio elements
@@ -468,7 +477,7 @@ export class WebRTCConnection extends BaseConnection {
       try {
         await element.setSinkId(deviceId);
       } catch (error) {
-        console.error("Failed to set sink ID for audio element:", error);
+        console.error('Failed to set sink ID for audio element:', error);
         throw error;
       }
     });
@@ -482,7 +491,7 @@ export class WebRTCConnection extends BaseConnection {
   public async setAudioInputDevice(deviceId: string): Promise<void> {
     if (!this.isConnected || !this.room.localParticipant) {
       throw new Error(
-        "Cannot change input device: room not connected or no local participant"
+        'Cannot change input device: room not connected or no local participant',
       );
     }
 
@@ -495,7 +504,7 @@ export class WebRTCConnection extends BaseConnection {
       if (currentMicTrackPublication?.track) {
         await currentMicTrackPublication.track.stop();
         await this.room.localParticipant.unpublishTrack(
-          currentMicTrackPublication.track
+          currentMicTrackPublication.track,
         );
       }
 
@@ -513,19 +522,19 @@ export class WebRTCConnection extends BaseConnection {
 
       // Publish the new microphone track
       await this.room.localParticipant.publishTrack(audioTrack, {
-        name: "microphone",
+        name: 'microphone',
         source: Track.Source.Microphone,
       });
     } catch (error) {
-      console.error("Failed to change input device:", error);
+      console.error('Failed to change input device:', error);
 
       // Try to re-enable default microphone on failure
       try {
         await this.room.localParticipant.setMicrophoneEnabled(true);
       } catch (recoveryError) {
         console.error(
-          "Failed to recover microphone after device switch error:",
-          recoveryError
+          'Failed to recover microphone after device switch error:',
+          recoveryError,
         );
       }
 
@@ -537,7 +546,7 @@ export class WebRTCConnection extends BaseConnection {
     if (!this.outputAnalyser) return null;
 
     this.outputFrequencyData ??= new Uint8Array(
-      this.outputAnalyser.frequencyBinCount
+      this.outputAnalyser.frequencyBinCount,
     ) as Uint8Array<ArrayBuffer>;
     this.outputAnalyser.getByteFrequencyData(this.outputFrequencyData);
     return this.outputFrequencyData;

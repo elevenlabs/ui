@@ -20,7 +20,17 @@ import { FeedbackScore } from './utils/events';
 
 export type Role = 'user' | 'ai';
 
-export type Mode = 'speaking' | 'listening';
+/**
+ * Represents the current state of the conversation.
+ *
+ * - `connecting`: Initial state when establishing connection to the agent
+ * - `initializing`: Setting up the conversation after connection is established
+ * - `listening`: Agent is ready and listening for user input
+ * - `speaking`: Agent is currently speaking/responding
+ *
+ * Typical flow: connecting → initializing → listening ↔ speaking
+ */
+export type Mode = 'speaking' | 'listening' | 'connecting' | 'initializing';
 
 export type Status =
   | 'connecting'
@@ -69,7 +79,7 @@ const EMPTY_FREQUENCY_DATA = new Uint8Array(0);
 
 export class BaseConversation {
   protected lastInterruptTimestamp = 0;
-  protected mode: Mode = 'listening';
+  protected mode: Mode = 'connecting';
   protected status: Status = 'connecting';
   protected volume = 1;
   protected currentEventId = 1;

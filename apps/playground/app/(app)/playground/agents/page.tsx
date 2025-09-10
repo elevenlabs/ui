@@ -1,8 +1,5 @@
-import { AgentPlaygroundConversation } from '@/components/agent-playground-conversation';
-import { AgentPlaygroundWrapper } from '@/components/agent-playground-wrapper';
-import { PageHeader } from '@/components/page-header';
-import { ViewLogsButton } from '@/components/view-logs-button';
 import { Metadata } from 'next';
+import { AgentPlaygroundConversation } from '@/components/agent-playground-conversation';
 
 const title = 'Agents';
 const description =
@@ -36,21 +33,5 @@ export const metadata: Metadata = {
 };
 
 export default function PlaygroundPage() {
-  return (
-    <div className="relative flex flex-col h-[calc(100vh-var(--header-height))]">
-      <div className="flex flex-col flex-1 bg-background md:rounded-xl md:overflow-hidden md:mb-2">
-        <PageHeader>
-          <h1 className="text-base font-medium">Agents</h1>
-          <div className="ml-auto flex items-center gap-2">
-            <ViewLogsButton />
-          </div>
-        </PageHeader>
-        <div className="flex flex-col flex-1 overflow-hidden">
-          <AgentPlaygroundWrapper>
-            <AgentPlaygroundConversation />
-          </AgentPlaygroundWrapper>
-        </div>
-      </div>
-    </div>
-  );
+  return <AgentPlaygroundConversation />;
 }

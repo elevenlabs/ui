@@ -1,19 +1,33 @@
+'use client';
 import { ConversationBar1 } from '@/components/audio-components-demo/demo-1';
 import {
   FooterStripTranscribing,
   InlineStatusChipLive,
-  PillMicButton,
 } from '@/components/audio-components-demo/variants';
+import { Demo2 } from '@/components/audio-components-demo/demo-2';
 
 export function AudioComponentsDemo() {
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      <div className="col-span-full">
-        <ConversationBar1 />
+    <div className="max-w-6xl mx-auto p-4 md:p-6">
+      <div className="space-y-4">
+        {/* Top row - ConversationBar1 */}
+        <div className="flex justify-center">
+          <ConversationBar1 />
+        </div>
+
+        {/* Middle row - Live and Transcribing */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="col-span-1">
+            <InlineStatusChipLive />
+          </div>
+          <div className="col-span-1 md:col-span-2">
+            <FooterStripTranscribing />
+          </div>
+        </div>
+
+        {/* Bar Visualizer States */}
+        <Demo2 />
       </div>
-      <PillMicButton />
-      <InlineStatusChipLive />
-      <FooterStripTranscribing />
     </div>
   );
 }

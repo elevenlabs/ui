@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from 'react';
 import {
   Conversation,
   type SessionConfig,
@@ -9,11 +9,11 @@ import {
   type Mode,
   type Status,
   type Callbacks,
-} from "@elevenlabs/client";
+} from '@elevenlabs/client';
 
 // Device configuration types for audio device switching
 export type DeviceFormatConfig = {
-  format: "pcm" | "ulaw";
+  format: 'pcm' | 'ulaw';
   sampleRate: number;
   outputDeviceId?: string;
 };
@@ -23,31 +23,31 @@ export type DeviceInputConfig = {
   inputDeviceId?: string;
 };
 
-import { PACKAGE_VERSION } from "./version";
+import { PACKAGE_VERSION } from './version';
 
-export type Location = "us" | "global" | "eu-residency" | "in-residency";
+export type Location = 'us' | 'global' | 'eu-residency' | 'in-residency';
 
-export function parseLocation(location: string = "us"): Location {
+export function parseLocation(location: string = 'us'): Location {
   switch (location) {
-    case "eu-residency":
-    case "in-residency":
-    case "us":
-    case "global":
+    case 'eu-residency':
+    case 'in-residency':
+    case 'us':
+    case 'global':
       return location;
     default:
       console.warn(
-        `[ConversationalAI] Invalid server-location: ${location}. Defaulting to "us"`
+        `[ConversationalAI] Invalid server-location: ${location}. Defaulting to "us"`,
       );
-      return "us";
+      return 'us';
   }
 }
 
 export function getOriginForLocation(location: Location): string {
   const originMap: Record<Location, string> = {
-    us: "wss://api.elevenlabs.io",
-    "eu-residency": "wss://api.eu.residency.elevenlabs.io",
-    "in-residency": "wss://api.in.residency.elevenlabs.io",
-    global: "wss://api.elevenlabs.io",
+    us: 'wss://api.elevenlabs.io',
+    'eu-residency': 'wss://api.eu.residency.elevenlabs.io',
+    'in-residency': 'wss://api.in.residency.elevenlabs.io',
+    global: 'wss://api.elevenlabs.io',
   };
 
   return originMap[location];
@@ -65,8 +65,8 @@ export type {
   FormatConfig,
   VoiceConversation,
   TextConversation,
-} from "@elevenlabs/client";
-export { postOverallFeedback } from "@elevenlabs/client";
+} from '@elevenlabs/client';
+export { postOverallFeedback } from '@elevenlabs/client';
 
 export type HookOptions = Partial<
   SessionConfig &
@@ -83,28 +83,28 @@ export type ControlledState = {
 };
 export type HookCallbacks = Pick<
   Callbacks,
-  | "onConnect"
-  | "onDisconnect"
-  | "onError"
-  | "onMessage"
-  | "onAudio"
-  | "onModeChange"
-  | "onStatusChange"
-  | "onCanSendFeedbackChange"
-  | "onDebug"
-  | "onUnhandledClientToolCall"
-  | "onVadScore"
+  | 'onConnect'
+  | 'onDisconnect'
+  | 'onError'
+  | 'onMessage'
+  | 'onAudio'
+  | 'onModeChange'
+  | 'onStatusChange'
+  | 'onCanSendFeedbackChange'
+  | 'onDebug'
+  | 'onUnhandledClientToolCall'
+  | 'onVadScore'
 >;
 
 export function useConversation<T extends HookOptions & ControlledState>(
-  props: T = {} as T
+  props: T = {} as T,
 ) {
   const { micMuted, volume, serverLocation, ...defaultOptions } = props;
   const conversationRef = useRef<Conversation | null>(null);
   const lockRef = useRef<Promise<Conversation> | null>(null);
-  const [status, setStatus] = useState<Status>("disconnected");
+  const [status, setStatus] = useState<Status>('disconnected');
   const [canSendFeedback, setCanSendFeedback] = useState(false);
-  const [mode, setMode] = useState<Mode>("listening");
+  const [mode, setMode] = useState<Mode>('listening');
 
   useEffect(() => {
     if (micMuted !== undefined) {
@@ -137,7 +137,7 @@ export function useConversation<T extends HookOptions & ControlledState>(
 
       try {
         const resolvedServerLocation = parseLocation(
-          options?.serverLocation || serverLocation
+          options?.serverLocation || serverLocation,
         );
         const origin = getOriginForLocation(resolvedServerLocation);
 
@@ -154,7 +154,7 @@ export function useConversation<T extends HookOptions & ControlledState>(
               source:
                 options?.overrides?.client?.source ||
                 defaultOptions?.overrides?.client?.source ||
-                "react_sdk",
+                'react_sdk',
               version:
                 options?.overrides?.client?.version ||
                 defaultOptions?.overrides?.client?.version ||
@@ -245,15 +245,15 @@ export function useConversation<T extends HookOptions & ControlledState>(
     sendMCPToolApprovalResult: (toolCallId: string, isApproved: boolean) => {
       conversationRef.current?.sendMCPToolApprovalResult(
         toolCallId,
-        isApproved
+        isApproved,
       );
     },
     changeInputDevice: async (
-      config: DeviceFormatConfig & DeviceInputConfig
+      config: DeviceFormatConfig & DeviceInputConfig,
     ) => {
       if (
         conversationRef.current &&
-        "changeInputDevice" in conversationRef.current
+        'changeInputDevice' in conversationRef.current
       ) {
         return await (
           conversationRef.current as unknown as {
@@ -262,13 +262,13 @@ export function useConversation<T extends HookOptions & ControlledState>(
         ).changeInputDevice(config);
       }
       throw new Error(
-        "Device switching is only available for voice conversations"
+        'Device switching is only available for voice conversations',
       );
     },
     changeOutputDevice: async (config: DeviceFormatConfig) => {
       if (
         conversationRef.current &&
-        "changeOutputDevice" in conversationRef.current
+        'changeOutputDevice' in conversationRef.current
       ) {
         return await (
           conversationRef.current as unknown as {
@@ -277,13 +277,13 @@ export function useConversation<T extends HookOptions & ControlledState>(
         ).changeOutputDevice(config);
       }
       throw new Error(
-        "Device switching is only available for voice conversations"
+        'Device switching is only available for voice conversations',
       );
     },
     status,
     canSendFeedback,
     micMuted,
-    isSpeaking: mode === "speaking",
+    isSpeaking: mode === 'speaking',
   };
 }
 

@@ -1,5 +1,6 @@
 'use client';
-import { cn } from '@elevenlabs/ui/lib/utils';
+
+import { cn } from '@/registry/audio-components/lib/utils';
 import * as React from 'react';
 
 export interface VisualizerBar {
@@ -26,9 +27,9 @@ export interface AudioVisualizerProps {
   micFftSize?: number;
   micSmoothing?: number;
   barWidth?: number;
-  sensitivity?: number; // scales mic amplitude
-  minUnit?: number; // minimum bar height unit (0..1)
-  useTextColor?: boolean; // if true, use wrapper's computed color
+  sensitivity?: number;
+  minUnit?: number;
+  useTextColor?: boolean;
 }
 
 const randomUnitHeight = () => 0.2 + Math.random() * 0.8;
@@ -269,7 +270,6 @@ export function AudioVisualizer({
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
         if (skipInitialReseedRef.current) {
-          // Start empty; let bars scroll in naturally
           skipInitialReseedRef.current = false;
         } else {
           regridDots(r.width);

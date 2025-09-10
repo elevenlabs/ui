@@ -1,10 +1,10 @@
 {
-  "name": "elevenlabs",
+  "name": "elevenlabs-agents",
   "private": true,
   "scripts": {
     "generate": "turbo run generate --filter=@elevenlabs/types",
-    "build": "turbo run build",
-    "dev": "turbo run dev",
+    "build": "turbo build",
+    "dev": "turbo dev",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types"
@@ -31,7 +31,7 @@
     "update-ts-references": "^3.6.0",
     "vitest": "2.1.4"
   },
-  "packageManager": "pnpm@10.11.0",
+  "packageManager": "pnpm@10.15.1",
   "engines": {
     "node": "^18.0.0 || ^20.0.0 || ^22.0.0"
   },

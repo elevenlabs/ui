@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
 export interface AudioDevice {
   deviceId: string;
@@ -12,51 +12,98 @@ export function useAudioDevices() {
   const [devices, setDevices] = useState<AudioDevice[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [hasPermission, setHasPermission] = useState(false);
 
-  useEffect(() => {
-    async function getAudioDevices() {
-      try {
-        setLoading(true);
-        setError(null);
+  const loadDevicesWithoutPermission = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
 
-        const tempStream = await navigator.mediaDevices.getUserMedia({
-          audio: true,
+      const deviceList = await navigator.mediaDevices.enumerateDevices();
+
+      const audioInputs = deviceList
+        .filter(device => device.kind === 'audioinput')
+        .map(device => {
+          let cleanLabel =
+            device.label || `Microphone ${device.deviceId.slice(0, 8)}`;
+
+          // Remove anything in parentheses
+          cleanLabel = cleanLabel.replace(/\s*\([^)]*\)/g, '').trim();
+
+          return {
+            deviceId: device.deviceId,
+            label: cleanLabel,
+            groupId: device.groupId,
+          };
         });
-        tempStream.getTracks().forEach(track => track.stop());
 
-        const deviceList = await navigator.mediaDevices.enumerateDevices();
-
-        const audioInputs = deviceList
-          .filter(device => device.kind === 'audioinput')
-          .map(device => {
-            let cleanLabel =
-              device.label || `Microphone ${device.deviceId.slice(0, 8)}`;
-
-            // Remove anything in parentheses
-            cleanLabel = cleanLabel.replace(/\s*\([^)]*\)/g, '').trim();
-
-            return {
-              deviceId: device.deviceId,
-              label: cleanLabel,
-              groupId: device.groupId,
-            };
-          });
-
-        setDevices(audioInputs);
-      } catch (err) {
-        setError(
-          err instanceof Error ? err.message : 'Failed to get audio devices',
-        );
-        console.error('Error getting audio devices:', err);
-      } finally {
-        setLoading(false);
-      }
+      setDevices(audioInputs);
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : 'Failed to get audio devices',
+      );
+      console.error('Error getting audio devices:', err);
+    } finally {
+      setLoading(false);
     }
+  }, []);
 
-    getAudioDevices();
+  const loadDevicesWithPermission = useCallback(async () => {
+    if (loading) return;
 
+    try {
+      setLoading(true);
+      setError(null);
+
+      // Request permission to get detailed device names
+      const tempStream = await navigator.mediaDevices.getUserMedia({
+        audio: true,
+      });
+      tempStream.getTracks().forEach(track => track.stop());
+
+      const deviceList = await navigator.mediaDevices.enumerateDevices();
+
+      const audioInputs = deviceList
+        .filter(device => device.kind === 'audioinput')
+        .map(device => {
+          let cleanLabel =
+            device.label || `Microphone ${device.deviceId.slice(0, 8)}`;
+
+          // Remove anything in parentheses
+          cleanLabel = cleanLabel.replace(/\s*\([^)]*\)/g, '').trim();
+
+          return {
+            deviceId: device.deviceId,
+            label: cleanLabel,
+            groupId: device.groupId,
+          };
+        });
+
+      setDevices(audioInputs);
+      setHasPermission(true);
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : 'Failed to get audio devices',
+      );
+      console.error('Error getting audio devices:', err);
+    } finally {
+      setLoading(false);
+    }
+  }, [loading]);
+
+  // Load devices without permission on mount
+  useEffect(() => {
+    loadDevicesWithoutPermission();
+  }, [loadDevicesWithoutPermission]);
+
+  // Listen for device changes
+  useEffect(() => {
     const handleDeviceChange = () => {
-      getAudioDevices();
+      if (hasPermission) {
+        loadDevicesWithPermission();
+      } else {
+        loadDevicesWithoutPermission();
+      }
     };
 
     navigator.mediaDevices.addEventListener('devicechange', handleDeviceChange);
@@ -67,7 +114,13 @@ export function useAudioDevices() {
         handleDeviceChange,
       );
     };
-  }, []);
+  }, [hasPermission, loadDevicesWithPermission, loadDevicesWithoutPermission]);
 
-  return { devices, loading, error };
+  return {
+    devices,
+    loading,
+    error,
+    hasPermission,
+    loadDevices: loadDevicesWithPermission,
+  };
 }

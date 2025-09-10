@@ -21,6 +21,8 @@
     "@dnd-kit/modifiers": "^9.0.0",
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
+    "@elevenlabs/elevenlabs-js": "^2.15.0",
+    "@elevenlabs/react": "workspace:*",
     "@elevenlabs/ui": "workspace:*",
     "@hookform/resolvers": "^3.10.0",
     "@rive-app/react-canvas": "^4.23.3",

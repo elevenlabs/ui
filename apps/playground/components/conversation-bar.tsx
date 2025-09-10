@@ -2,7 +2,6 @@
 
 import { Icons } from '@/components/icons';
 import { useAudioDevices } from '@/hooks/use-audio-devices';
-import { useMicrophone } from '@/hooks/use-microphone';
 import { Button } from '@elevenlabs/ui/components/button';
 import { Card } from '@elevenlabs/ui/components/card';
 import {
@@ -13,17 +12,128 @@ import {
   DropdownMenuTrigger,
 } from '@elevenlabs/ui/components/dropdown-menu';
 import { Check, ChevronsUpDown, Mic, MicOff } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
+
+interface AudioLevelBarProps {
+  isActive: boolean;
+  isMuted: boolean;
+  deviceId?: string;
+}
+
+function AudioLevelBar({ isActive, isMuted, deviceId }: AudioLevelBarProps) {
+  const [level, setLevel] = useState(0);
+  const animationFrameRef = useRef<number | undefined>(undefined);
+  const audioContextRef = useRef<AudioContext | undefined>(undefined);
+  const analyserRef = useRef<AnalyserNode | undefined>(undefined);
+  const streamRef = useRef<MediaStream | undefined>(undefined);
+
+  useEffect(() => {
+    if (!isActive || isMuted) {
+      setLevel(0);
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(track => track.stop());
+        streamRef.current = undefined;
+      }
+      if (
+        audioContextRef.current &&
+        audioContextRef.current.state !== 'closed'
+      ) {
+        audioContextRef.current.close();
+        audioContextRef.current = undefined;
+      }
+      return;
+    }
+
+    const setupAudioAnalysis = async () => {
+      try {
+        const constraints: MediaStreamConstraints = {
+          audio: deviceId ? { deviceId: { exact: deviceId } } : true,
+        };
+
+        const stream = await navigator.mediaDevices.getUserMedia(constraints);
+        streamRef.current = stream;
+
+        const audioContext = new (window.AudioContext ||
+          (window as any).webkitAudioContext)();
+        audioContextRef.current = audioContext;
+
+        const analyser = audioContext.createAnalyser();
+        analyser.fftSize = 256;
+        analyser.smoothingTimeConstant = 0.3;
+
+        const source = audioContext.createMediaStreamSource(stream);
+        source.connect(analyser);
+
+        analyserRef.current = analyser;
+
+        const dataArray = new Uint8Array(analyser.fftSize);
+
+        const updateLevel = () => {
+          if (!analyserRef.current) return;
+
+          analyserRef.current.getByteTimeDomainData(dataArray);
+
+          let sum = 0;
+          for (let i = 0; i < dataArray.length; i++) {
+            const normalized = (dataArray[i] - 128) / 128;
+            sum += normalized * normalized;
+          }
+          const rms = Math.sqrt(sum / dataArray.length);
+          const normalizedLevel = Math.min(100, Math.round(rms * 100 * 3));
+
+          setLevel(normalizedLevel);
+          animationFrameRef.current = requestAnimationFrame(updateLevel);
+        };
+
+        updateLevel();
+      } catch (error) {
+        console.error('Failed to setup audio analysis:', error);
+      }
+    };
+
+    setupAudioAnalysis();
+
+    return () => {
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(track => track.stop());
+      }
+      if (
+        audioContextRef.current &&
+        audioContextRef.current.state !== 'closed'
+      ) {
+        audioContextRef.current.close();
+      }
+    };
+  }, [isActive, isMuted, deviceId]);
+
+  return (
+    <div className="flex items-center gap-2 ml-auto">
+      <div className="w-20 h-2 bg-muted rounded-full overflow-hidden">
+        <div
+          className="h-full bg-primary transition-all duration-100 ease-out rounded-full"
+          style={{ width: `${level}%` }}
+        />
+      </div>
+      <span className="text-xs text-muted-foreground w-8 text-right">
+        {level}
+      </span>
+    </div>
+  );
+}
 
 export function ConversationBar() {
-  const { devices, loading, error } = useAudioDevices();
-  const { isActive, startMicrophone, stopMicrophone, switchDevice, setMuted } =
-    useMicrophone();
+  const { devices, loading, error, hasPermission, loadDevices } =
+    useAudioDevices();
   const [selectedDevice, setSelectedDevice] = useState<string>('');
   const [isMuted, setIsMuted] = useState(false);
   const [isStarting, setIsStarting] = useState(false);
+  const [isConversationActive, setIsConversationActive] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isPreviewActive, setIsPreviewActive] = useState(false);
 
-  // Set the default selected device to the first one when devices load
   const defaultDeviceId = devices[0]?.deviceId || '';
   if (!selectedDevice && defaultDeviceId) {
     setSelectedDevice(defaultDeviceId);
@@ -36,39 +146,52 @@ export function ConversationBar() {
 
   const handleDeviceSelect = async (deviceId: string) => {
     setSelectedDevice(deviceId);
-    if (isActive) {
-      await switchDevice(deviceId, isMuted);
-    }
   };
 
   const handleDropdownOpenChange = async (open: boolean) => {
-    if (open && !isActive) {
-      // Start microphone when dropdown opens with current mute state
-      await startMicrophone(selectedDevice || defaultDeviceId, isMuted);
-    } else if (!open && isActive) {
-      // Stop microphone when dropdown closes
-      stopMicrophone();
+    setIsDropdownOpen(open);
+
+    if (open) {
+      if (!hasPermission && !loading) {
+        await loadDevices();
+      }
+      if (!isConversationActive) {
+        setIsPreviewActive(true);
+      }
+    } else {
+      if (!isConversationActive) {
+        setIsPreviewActive(false);
+      }
     }
   };
 
   const toggleMute = () => {
-    const newMuteState = !isMuted;
-    setIsMuted(newMuteState);
-    setMuted(newMuteState);
+    setIsMuted(!isMuted);
+    if (!isConversationActive && isDropdownOpen) {
+      setIsPreviewActive(isMuted);
+    }
   };
 
   const handleStartConversation = async () => {
     try {
       setIsStarting(true);
-      if (!isActive) {
-        await startMicrophone(selectedDevice || defaultDeviceId, isMuted);
-      } else {
-        stopMicrophone();
+
+      if (!hasPermission && !loading) {
+        await loadDevices();
+      }
+
+      const newConversationState = !isConversationActive;
+      setIsConversationActive(newConversationState);
+
+      if (newConversationState) {
+        setIsPreviewActive(false);
       }
     } finally {
       setIsStarting(false);
     }
   };
+
+  const isAudioActive = isConversationActive || isPreviewActive;
 
   return (
     <div className="flex justify-center p-4">
@@ -82,7 +205,7 @@ export function ConversationBar() {
             disabled={isStarting}
           >
             <Icons.orb className="size-5" />
-            <span>{isActive ? 'Stop' : 'Start'} conversation</span>
+            <span>{isConversationActive ? 'Stop' : 'Start'} conversation</span>
           </Button>
 
           <DropdownMenu onOpenChange={handleDropdownOpenChange}>
@@ -139,6 +262,11 @@ export function ConversationBar() {
                       <Mic className="h-4 w-4" />
                     )}
                     <span>{isMuted ? 'Off' : 'On'}</span>
+                    <AudioLevelBar
+                      isActive={isAudioActive}
+                      isMuted={isMuted}
+                      deviceId={selectedDevice || defaultDeviceId}
+                    />
                   </DropdownMenuItem>
                 </>
               )}

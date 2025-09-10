@@ -9,4 +9,9 @@ export const registryCategories = [
     slug: 'music',
     hidden: false,
   },
+  {
+    name: 'Audio Visualization',
+    slug: 'audio-visualization',
+    hidden: false,
+  },
 ];
