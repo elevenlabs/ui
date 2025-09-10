@@ -23,6 +23,7 @@
     "@asyncapi/parser": "^3.4.0",
     "@elevenlabs/eslint-config": "workspace:*",
     "@elevenlabs/typescript-config": "workspace:*",
+    "@types/node": "^22.10.5",
     "eslint": "^9.20.0",
     "glob": "^11.0.3",
     "typescript": "^5.9.2"
