@@ -89,6 +89,7 @@ export const PlayerProvider = ({ children }: { children: ReactNode }) => {
     } else if (item?.id === activeItem?.id) {
       return audio.play();
     } else {
+      audio.pause();
       audio.src = item?.src || '';
       await audio.load();
       setActiveItem(item);
@@ -99,7 +100,7 @@ export const PlayerProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const pause = () => {
-    return audio.pause();
+    audio.pause();
   };
 
   const isActive = (id: string | number | null) => {
@@ -288,8 +289,6 @@ export const PlayerButton = ({
         {...otherProps}
         playing={player.isPlaying}
         onPlayingChange={shouldPlay => {
-          console.log(shouldPlay);
-
           if (shouldPlay) {
             player.play();
           } else {

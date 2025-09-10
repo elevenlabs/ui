@@ -52,13 +52,15 @@ const SongListItem = ({ song }: { song: Song }) => {
   return (
     <button
       onClick={() => {
-        if (player.isPlaying) {
-          player.play({
-            id: song.name,
-            src: song.url,
-          });
-        } else {
+        if (player.isPlaying && player.isActive(song.name)) {
           player.pause();
+        } else {
+          player.play({
+            item: {
+              id: song.name,
+              src: song.url,
+            },
+          });
         }
       }}
       className={cn(
@@ -78,6 +80,9 @@ const SongListItem = ({ song }: { song: Song }) => {
           item={{
             id: song.name,
             src: song.url,
+          }}
+          onClick={e => {
+            e.stopPropagation();
           }}
         />
       </div>
