@@ -50,6 +50,16 @@ export const usePlayer = () => {
   return api;
 };
 
+const PlayerTimeContext = createContext<number | null>(null);
+
+export const usePlayerTime = () => {
+  const time = useContext(PlayerTimeContext);
+  if (time === null) {
+    throw new Error('usePlayerTime cannot be called outside of PlayerProvider');
+  }
+  return time;
+};
+
 export const PlayerProvider = ({ children }: { children: ReactNode }) => {
   //   const [state, setState] = useState<PlayerState>({
   //     src: null,
@@ -115,10 +125,6 @@ export const PlayerProvider = ({ children }: { children: ReactNode }) => {
     setError(audio.error);
   });
 
-  useEffect(() => {
-    console.log({ audio });
-  }, [audio]);
-
   //   useEffect(() => {
   //     if (!activeItem) {
   //       audio.removeAttribute('src');
@@ -162,7 +168,11 @@ export const PlayerProvider = ({ children }: { children: ReactNode }) => {
   );
 
   return (
-    <PlayerContext.Provider value={api}>{children}</PlayerContext.Provider>
+    <PlayerContext.Provider value={api}>
+      <PlayerTimeContext.Provider value={time}>
+        {children}
+      </PlayerTimeContext.Provider>
+    </PlayerContext.Provider>
   );
 
   //   return (
@@ -186,11 +196,28 @@ export const PlayerProgress = () => {};
 
 export interface PlayerTimeProps {}
 
-export const PlayerTime = () => {};
-
 export interface PlayerDurationProps {}
 
-export const PlayerDuration = () => {};
+export const PlayerTime = () => {
+  const time = usePlayerTime();
+
+  return (
+    <span className="tabular-nums text-sm text-foreground/50">{time}</span>
+  );
+};
+
+// const PlayerDuration = () => {
+//   const player = usePlayer();
+//   const [time, setTime] = useState<string>('--:--');
+
+//   useEffect(() => {
+//     return autorun(() => {
+//       setTime(player.duration ? formatTime(player.duration) : '--:--');
+//     });
+//   }, [player]);
+
+//   return <span className="tabular-nums text-sm text-gray-500">{time}</span>;
+// };
 
 interface SpinnerProps {
   size?: 'sm' | 'md' | 'lg';
