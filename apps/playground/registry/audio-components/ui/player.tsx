@@ -122,27 +122,30 @@ export const PlayerProvider = ({
     }
   }, []);
 
-  const play = useCallback(async (item?: PlayerItem | null) => {
-    if (!audioRef.current) return;
+  const play = useCallback(
+    async (item?: PlayerItem | null) => {
+      if (!audioRef.current) return;
 
-    if (item === undefined) {
-      return audioRef.current.play();
-    } else if (item?.id === activeItem?.id) {
-      return audioRef.current.play();
-    } else {
-      itemRef.current = item;
-      audioRef.current.pause();
-      audioRef.current.currentTime = 0;
-      //   setTime(0);
-      if (item === null) {
-        audioRef.current.removeAttribute('src');
+      if (item === undefined) {
+        return audioRef.current.play();
+      } else if (item?.id === activeItem?.id) {
+        return audioRef.current.play();
       } else {
-        audioRef.current.src = item.src;
+        itemRef.current = item;
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0;
+        //   setTime(0);
+        if (item === null) {
+          audioRef.current.removeAttribute('src');
+        } else {
+          audioRef.current.src = item.src;
+        }
+        await audioRef.current.load();
+        return audioRef.current.play();
       }
-      await audioRef.current.load();
-      return audioRef.current.play();
-    }
-  }, []);
+    },
+    [activeItem],
+  );
 
   const pause = useCallback(() => {
     if (!audioRef.current) return;

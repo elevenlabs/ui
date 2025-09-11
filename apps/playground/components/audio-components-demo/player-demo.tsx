@@ -32,8 +32,6 @@ const PlayerDemo = () => {
 const Player = () => {
   const player = usePlayer();
 
-  console.log('here');
-
   return (
     <div className="bg-foreground/5 p-2 rounded-xl flex-1 flex gap-2">
       <PlayerButton
