@@ -1,5 +1,6 @@
 import {
   PlayerButton,
+  PlayerDuration,
   PlayerProvider,
   PlayerTime,
   usePlayer,
@@ -20,14 +21,18 @@ const PlayerDemo = () => {
     <div className="flex gap-2">
       <ul className="w-80 flex flex-col gap-2">
         {songs.map(song => (
-          <SongListItem key={song.name} song={song} />
+          <SongListItem key={song.id} song={song} />
         ))}
       </ul>
       <div className="bg-foreground/5 p-2 rounded-xl flex-1 flex gap-2">
         <PlayerButton variant="ghost" className="h-full w-14" />
-        <div className="flex flex-col justify-center gap-1">
-          <p>Title</p>
-          <PlayerTime />
+        <div className="flex flex-col justify-center w-full gap-1 pr-4">
+          <p>{player.activeItem ? player.activeItem?.data.name : '------'}</p>
+          <div className="flex items-center gap-4">
+            <PlayerTime />
+            <div className="flex-1 h-[3px] rounded-full bg-foreground/10" />
+            <PlayerDuration />
+          </div>
         </div>
       </div>
     </div>
@@ -35,6 +40,7 @@ const PlayerDemo = () => {
 };
 
 type Song = {
+  id: string;
   name: string;
   url: string;
   duration: number;
@@ -42,11 +48,13 @@ type Song = {
 
 const songs = [
   {
+    id: '1',
     name: 'Four Five Seconds',
     url: '/audio/rap.mp3',
     duration: 120,
   },
   {
+    id: '2',
     name: 'Alone',
     url: '/audio/jazz.mp3',
     duration: 120,
@@ -59,20 +67,19 @@ const SongListItem = ({ song }: { song: Song }) => {
   return (
     <li
       onClick={() => {
-        if (player.isPlaying && player.isActive(song.name)) {
+        if (player.isPlaying && player.isActive(song.id)) {
           player.pause();
         } else {
           player.play({
-            item: {
-              id: song.name,
-              src: song.url,
-            },
+            id: song.id,
+            src: song.url,
+            data: song,
           });
         }
       }}
       className={cn(
         'group flex items-center justify-between rounded-xl p-0 hover:bg-foreground/5',
-        player.activeItem?.id === song.name && 'bg-foreground/5',
+        player.isActive(song.id) && 'bg-foreground/5',
       )}
       tabIndex={0}
     >
@@ -80,14 +87,15 @@ const SongListItem = ({ song }: { song: Song }) => {
       <div
         className={cn(
           'opacity-0 group-hover:opacity-100',
-          player.isActive(song.name) && 'opacity-100',
+          player.isActive(song.id) && 'opacity-100',
         )}
       >
         <PlayerButton
           variant="ghost"
           item={{
-            id: song.name,
+            id: song.id,
             src: song.url,
+            data: song,
           }}
           onClick={e => {
             e.stopPropagation();

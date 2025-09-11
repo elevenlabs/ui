@@ -13,6 +13,19 @@ import {
   useState,
 } from 'react';
 
+function formatTime(seconds: number) {
+  const hrs = Math.floor(seconds / 3600);
+  const mins = Math.floor((seconds % 3600) / 60);
+  const secs = Math.floor(seconds % 60);
+
+  const formattedMins = mins < 10 ? `0${mins}` : mins;
+  const formattedSecs = secs < 10 ? `0${secs}` : secs;
+
+  return hrs > 0
+    ? `${hrs}:${formattedMins}:${formattedSecs}`
+    : `${mins}:${formattedSecs}`;
+}
+
 export interface PlayerProviderProps {}
 
 interface PlayerState {
@@ -36,7 +49,7 @@ interface PlayerApi {
   isPlaying: boolean;
   isBuffering: boolean;
   isActive: (id: string | number) => boolean;
-  play: (options?: { item?: PlayerItem | null }) => Promise<void>;
+  play: (item?: PlayerItem | null) => Promise<void>;
   pause: () => void;
 }
 
@@ -93,14 +106,17 @@ export const PlayerProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const play = async ({ item }: { item?: PlayerItem | null } = {}) => {
+  const play = async (item?: PlayerItem | null) => {
     if (item === undefined) {
       return audio.play();
     } else if (item?.id === activeItem?.id) {
       return audio.play();
     } else {
-      audio.pause();
-      audio.src = item?.src || '';
+      if (item === null) {
+        audio.removeAttribute('src');
+      } else {
+        audio.src = item.src;
+      }
       await audio.load();
       setActiveItem(item);
       setTime(0);
@@ -121,6 +137,7 @@ export const PlayerProvider = ({ children }: { children: ReactNode }) => {
     setReadyState(audio.readyState);
     setNetworkState(audio.networkState);
     setTime(audio.currentTime);
+    setDuration(audio.duration);
     setPaused(audio.paused);
     setError(audio.error);
   });
@@ -202,22 +219,22 @@ export const PlayerTime = () => {
   const time = usePlayerTime();
 
   return (
-    <span className="tabular-nums text-sm text-foreground/50">{time}</span>
+    <span className="tabular-nums text-sm text-foreground/50">
+      {formatTime(time)}
+    </span>
   );
 };
 
-// const PlayerDuration = () => {
-//   const player = usePlayer();
-//   const [time, setTime] = useState<string>('--:--');
-
-//   useEffect(() => {
-//     return autorun(() => {
-//       setTime(player.duration ? formatTime(player.duration) : '--:--');
-//     });
-//   }, [player]);
-
-//   return <span className="tabular-nums text-sm text-gray-500">{time}</span>;
-// };
+export const PlayerDuration = () => {
+  const player = usePlayer();
+  return (
+    <span className="tabular-nums text-sm text-foreground/50">
+      {player.duration != null && !Number.isNaN(player.duration)
+        ? formatTime(player.duration)
+        : '--:--'}
+    </span>
+  );
+};
 
 interface SpinnerProps {
   size?: 'sm' | 'md' | 'lg';
@@ -234,7 +251,7 @@ export function Spinner({ size = 'md', className }: SpinnerProps) {
   return (
     <div
       className={cn(
-        'animate-spin rounded-full border-2 border-muted border-t-primary',
+        'animate-spin rounded-full border-2 border-foreground/20 border-t-foreground',
         sizeClasses[size],
         className,
       )}
@@ -265,17 +282,16 @@ export const PlayButton = ({
         onPlayingChange(!playing);
         onClick?.(e);
       }}
-      size="lg"
-      className={cn('relative w-11 h-11 p-0 rounded-xl', className)}
+      className={cn('relative', className)}
       aria-label={playing ? 'Pause' : 'Play'}
     >
       {playing ? (
-        <PauseIcon className="w-5 h-5 scale-125" />
+        <PauseIcon className={cn('', loading && 'opacity-20')} />
       ) : (
-        <PlayIcon className="w-5 h-5 scale-125 translate-x-0.5" />
+        <PlayIcon className={cn('w-8 h-8', loading && 'opacity-20')} />
       )}
       {loading && (
-        <div className="absolute inset-0 rounded-[inherit] flex items-center justify-center backdrop-blur-md">
+        <div className="absolute inset-0 rounded-[inherit] flex items-center justify-center backdrop-blur-xs">
           <Spinner size="sm" />
         </div>
       )}
@@ -300,7 +316,7 @@ export const PlayerButton = ({
         playing={player.isActive(item.id) && player.isPlaying}
         onPlayingChange={shouldPlay => {
           if (shouldPlay) {
-            player.play({ item });
+            player.play(item);
           } else {
             player.pause();
           }
