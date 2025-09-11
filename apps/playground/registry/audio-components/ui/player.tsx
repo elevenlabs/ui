@@ -1,5 +1,3 @@
-'use client';
-
 import { cn } from '@/lib/utils';
 import { Button } from '@elevenlabs/ui/components/button';
 import { useAnimationFrame } from 'framer-motion';
@@ -10,8 +8,24 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react';
+
+enum ReadyState {
+  HAVE_NOTHING = 0,
+  HAVE_METADATA = 1,
+  HAVE_CURRENT_DATA = 2,
+  HAVE_FUTURE_DATA = 3,
+  HAVE_ENOUGH_DATA = 4,
+}
+
+enum NetworkState {
+  NETWORK_EMPTY = 0,
+  NETWORK_IDLE = 1,
+  NETWORK_LOADING = 2,
+  NETWORK_NO_SOURCE = 3,
+}
 
 function formatTime(seconds: number) {
   const hrs = Math.floor(seconds / 3600);
@@ -27,13 +41,6 @@ function formatTime(seconds: number) {
 }
 
 export interface PlayerProviderProps {}
-
-interface PlayerState {
-  src: string | null;
-  time: number;
-  readyState: number;
-  error: any;
-}
 
 interface PlayerItem {
   id: string | number;
@@ -74,14 +81,7 @@ export const usePlayerTime = () => {
 };
 
 export const PlayerProvider = ({ children }: { children: ReactNode }) => {
-  //   const [state, setState] = useState<PlayerState>({
-  //     src: null,
-  //     time: 0,
-  //     readyState: 0,
-  //     error: null,
-  //   });
-
-  const [audio] = useState(() => new Audio());
+  const audioRef = useRef<HTMLAudioElement>(null);
   const [readyState, setReadyState] = useState<number>(0);
   const [networkState, setNetworkState] = useState<number>(0);
   const [time, setTime] = useState<number>(0);
@@ -91,15 +91,17 @@ export const PlayerProvider = ({ children }: { children: ReactNode }) => {
   const [paused, setPaused] = useState(true);
 
   const setItem = async (item: PlayerItem | null) => {
+    if (!audioRef.current) return;
+
     if (item?.id === activeItem?.id) {
       return;
     } else {
       if (item === null) {
-        audio.removeAttribute('src');
+        audioRef.current.removeAttribute('src');
       } else {
-        audio.src = item.src;
+        audioRef.current.src = item.src;
       }
-      await audio.load();
+      await audioRef.current.load();
       setActiveItem(item);
       setTime(0);
       setDuration(undefined);
@@ -107,26 +109,30 @@ export const PlayerProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const play = async (item?: PlayerItem | null) => {
+    if (!audioRef.current) return;
+
     if (item === undefined) {
-      return audio.play();
+      return audioRef.current.play();
     } else if (item?.id === activeItem?.id) {
-      return audio.play();
+      return audioRef.current.play();
     } else {
       if (item === null) {
-        audio.removeAttribute('src');
+        audioRef.current.removeAttribute('src');
       } else {
-        audio.src = item.src;
+        audioRef.current.src = item.src;
       }
-      await audio.load();
+      await audioRef.current.load();
       setActiveItem(item);
       setTime(0);
       setDuration(undefined);
-      return audio.play();
+      return audioRef.current.play();
     }
   };
 
   const pause = () => {
-    audio.pause();
+    if (!audioRef.current) return;
+
+    audioRef.current.pause();
   };
 
   const isActive = (id: string | number | null) => {
@@ -134,32 +140,24 @@ export const PlayerProvider = ({ children }: { children: ReactNode }) => {
   };
 
   useAnimationFrame(() => {
-    setReadyState(audio.readyState);
-    setNetworkState(audio.networkState);
-    setTime(audio.currentTime);
-    setDuration(audio.duration);
-    setPaused(audio.paused);
-    setError(audio.error);
+    if (audioRef.current) {
+      setReadyState(audioRef.current.readyState);
+      setNetworkState(audioRef.current.networkState);
+      setTime(audioRef.current.currentTime);
+      setDuration(audioRef.current.duration);
+      setPaused(audioRef.current.paused);
+      setError(audioRef.current.error);
+    }
   });
-
-  //   useEffect(() => {
-  //     if (!activeItem) {
-  //       audio.removeAttribute('src');
-  //       audio.load();
-  //     } else {
-  //       audio.src = activeItem.src;
-  //       audio.load();
-  //     }
-  //   }, [activeItem]);
 
   const isPlaying = !paused;
   const isBuffering =
-    readyState < HTMLMediaElement.HAVE_FUTURE_DATA &&
-    networkState === HTMLMediaElement.NETWORK_LOADING;
+    readyState < ReadyState.HAVE_FUTURE_DATA &&
+    networkState === NetworkState.NETWORK_LOADING;
 
   const api = useMemo(
     () => ({
-      audio,
+      ref: audioRef,
       activeItem,
       readyState,
       duration,
@@ -171,7 +169,7 @@ export const PlayerProvider = ({ children }: { children: ReactNode }) => {
       pause,
     }),
     [
-      audio,
+      audioRef,
       activeItem,
       readyState,
       duration,
@@ -187,24 +185,11 @@ export const PlayerProvider = ({ children }: { children: ReactNode }) => {
   return (
     <PlayerContext.Provider value={api}>
       <PlayerTimeContext.Provider value={time}>
+        <audio ref={audioRef} className="hidden" />
         {children}
       </PlayerTimeContext.Provider>
     </PlayerContext.Provider>
   );
-
-  //   return (
-  //     <audio
-  //       ref={ref}
-  //       onDurationChange={e => {
-  //         setDuration(e.currentTarget.duration);
-  //       }}
-  //       onError={e => {
-  //         setError(e.currentTarget.error);
-  //       }}
-  //     >
-  //       {src && <source src={src} />}
-  //     </audio>
-  //   );
 };
 
 export interface PlayerProgressProps {}
@@ -286,9 +271,9 @@ export const PlayButton = ({
       aria-label={playing ? 'Pause' : 'Play'}
     >
       {playing ? (
-        <PauseIcon className={cn('', loading && 'opacity-20')} />
+        <PauseIcon className={cn('size-4.5', loading && 'opacity-0')} />
       ) : (
-        <PlayIcon className={cn('w-8 h-8', loading && 'opacity-20')} />
+        <PlayIcon className={cn('size-4.5', loading && 'opacity-0')} />
       )}
       {loading && (
         <div className="absolute inset-0 rounded-[inherit] flex items-center justify-center backdrop-blur-xs">
