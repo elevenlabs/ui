@@ -53,13 +53,13 @@ type Song = {
 const songs = [
   {
     id: '1',
-    name: 'Four Five Seconds',
+    name: 'Rise up rap',
     url: '/audio/rap.mp3',
     duration: 120,
   },
   {
     id: '2',
-    name: 'Alone',
+    name: 'Midnight swing',
     url: '/audio/jazz.mp3',
     duration: 120,
   },

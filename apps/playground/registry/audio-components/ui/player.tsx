@@ -5,7 +5,9 @@ import { PauseIcon, PlayIcon } from 'lucide-react';
 import {
   ComponentProps,
   createContext,
+  HTMLProps,
   ReactNode,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -93,60 +95,69 @@ export const PlayerProvider = ({ children }: { children: ReactNode }) => {
   const [activeItem, setActiveItem] = useState<PlayerItem | null>(null);
   const [paused, setPaused] = useState(true);
 
-  const setItem = async (item: PlayerItem | null) => {
-    if (!audioRef.current) return;
+  const setItem = useCallback(
+    async (item: PlayerItem | null) => {
+      if (!audioRef.current) return;
 
-    if (item?.id === activeItem?.id) {
-      return;
-    } else {
-      if (item === null) {
-        audioRef.current.removeAttribute('src');
+      if (item?.id === activeItem?.id) {
+        return;
       } else {
-        audioRef.current.src = item.src;
+        if (item === null) {
+          audioRef.current.removeAttribute('src');
+        } else {
+          audioRef.current.src = item.src;
+        }
+        await audioRef.current.load();
+        setActiveItem(item);
+        setTime(0);
+        setDuration(undefined);
       }
-      await audioRef.current.load();
-      setActiveItem(item);
-      setTime(0);
-      setDuration(undefined);
-    }
-  };
+    },
+    [activeItem],
+  );
 
-  const play = async (item?: PlayerItem | null) => {
-    if (!audioRef.current) return;
+  const play = useCallback(
+    async (item?: PlayerItem | null) => {
+      if (!audioRef.current) return;
 
-    if (item === undefined) {
-      return audioRef.current.play();
-    } else if (item?.id === activeItem?.id) {
-      return audioRef.current.play();
-    } else {
-      if (item === null) {
-        audioRef.current.removeAttribute('src');
+      if (item === undefined) {
+        return audioRef.current.play();
+      } else if (item?.id === activeItem?.id) {
+        return audioRef.current.play();
       } else {
-        audioRef.current.src = item.src;
+        if (item === null) {
+          audioRef.current.removeAttribute('src');
+        } else {
+          audioRef.current.src = item.src;
+        }
+        await audioRef.current.load();
+        setActiveItem(item);
+        setTime(0);
+        setDuration(undefined);
+        return audioRef.current.play();
       }
-      await audioRef.current.load();
-      setActiveItem(item);
-      setTime(0);
-      setDuration(undefined);
-      return audioRef.current.play();
-    }
-  };
+    },
+    [activeItem],
+  );
 
-  const pause = () => {
+  const pause = useCallback(() => {
     if (!audioRef.current) return;
 
     audioRef.current.pause();
-  };
+  }, []);
 
-  const seek = (time: number) => {
+  const seek = useCallback((time: number) => {
     if (!audioRef.current) return;
 
     audioRef.current.currentTime = time;
-  };
+  }, []);
 
-  const isItemActive = (id: string | number | null) => {
-    return activeItem?.id === id;
-  };
+  const isItemActive = useCallback(
+    (id: string | number | null) => {
+      return activeItem?.id === id;
+    },
+    [activeItem],
+  );
 
   useAnimationFrame(() => {
     if (audioRef.current) {
@@ -204,7 +215,10 @@ export const PlayerProvider = ({ children }: { children: ReactNode }) => {
 };
 
 export interface PlayerProgressProps
-  extends ComponentProps<typeof SliderPrimitive.Root> {}
+  extends Omit<
+    ComponentProps<typeof SliderPrimitive.Root>,
+    'min' | 'max' | 'value'
+  > {}
 
 export const PlayerProgress = ({ ...otherProps }: PlayerProgressProps) => {
   const player = usePlayer();
@@ -215,12 +229,13 @@ export const PlayerProgress = ({ ...otherProps }: PlayerProgressProps) => {
     <SliderPrimitive.Root
       {...otherProps}
       value={[time]}
-      onValueChange={([val]) => {
-        player.seek(val);
+      onValueChange={vals => {
+        player.seek(vals[0]);
+        otherProps.onValueChange?.(vals);
       }}
       min={0}
       max={player.duration ?? 0}
-      step={(player.duration ?? 0) < 60 ? 0.25 : 1}
+      step={otherProps.step || (player.duration ?? 0) < 60 ? 0.25 : 1}
       onPointerDown={e => {
         wasPlayingRef.current = player.isPlaying;
         player.pause();
@@ -245,6 +260,7 @@ export const PlayerProgress = ({ ...otherProps }: PlayerProgressProps) => {
             player.pause();
           }
         }
+        otherProps.onKeyDown?.(e);
       }}
     >
       <SliderPrimitive.Track className="bg-foreground/10 relative grow overflow-hidden rounded-full data-[orientation=horizontal]:h-[3px] data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-[3px]">
@@ -260,24 +276,32 @@ export const PlayerProgress = ({ ...otherProps }: PlayerProgressProps) => {
   );
 };
 
-export interface PlayerTimeProps {}
+interface PlayerTimeProps extends HTMLProps<HTMLSpanElement> {}
 
-export interface PlayerDurationProps {}
-
-export const PlayerTime = () => {
+export const PlayerTime = ({ className, ...otherProps }: PlayerTimeProps) => {
   const time = usePlayerTime();
-
   return (
-    <span className="tabular-nums text-sm text-foreground/50">
+    <span
+      {...otherProps}
+      className={cn('tabular-nums text-sm text-foreground/50', className)}
+    >
       {formatTime(time)}
     </span>
   );
 };
 
-export const PlayerDuration = () => {
+interface PlayerDurationProps extends HTMLProps<HTMLSpanElement> {}
+
+export const PlayerDuration = ({
+  className,
+  ...otherProps
+}: PlayerDurationProps) => {
   const player = usePlayer();
   return (
-    <span className="tabular-nums text-sm text-foreground/50">
+    <span
+      {...otherProps}
+      className={cn('tabular-nums text-sm text-foreground/50', className)}
+    >
       {player.duration != null && !Number.isNaN(player.duration)
         ? formatTime(player.duration)
         : '--:--'}
