@@ -233,7 +233,7 @@ export const PlayerProgress = ({ ...otherProps }: PlayerProgressProps) => {
       }}
       min={0}
       max={player.duration ?? 0}
-      step={otherProps.step || (player.duration ?? 0) < 60 ? 0.25 : 1}
+      step={otherProps.step || 0.25}
       onPointerDown={e => {
         wasPlayingRef.current = player.isPlaying;
         player.pause();
@@ -261,14 +261,14 @@ export const PlayerProgress = ({ ...otherProps }: PlayerProgressProps) => {
         otherProps.onKeyDown?.(e);
       }}
     >
-      <SliderPrimitive.Track className="bg-foreground/10 relative grow overflow-hidden rounded-full data-[orientation=horizontal]:h-[3px] data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-[3px]">
-        <SliderPrimitive.Range className="bg-primary absolute data-[orientation=horizontal]:h-full data-[orientation=vertical]:w-full" />
+      <SliderPrimitive.Track className="bg-foreground/10 relative grow overflow-hidden rounded-full h-[4px] w-full">
+        <SliderPrimitive.Range className="bg-primary absolute h-full" />
       </SliderPrimitive.Track>
       <SliderPrimitive.Thumb
         className="relative h-0 w-0 flex items-center justify-center opacity-0 group-hover/player:opacity-100 focus-visible:outline-none focus-visible:opacity-100 disabled:pointer-events-none disabled:opacity-50"
         data-slot="slider-thumb"
       >
-        <div className="absolute h-2.5 w-2.5 rounded-full bg-foreground" />
+        <div className="absolute size-3 rounded-full bg-foreground" />
       </SliderPrimitive.Thumb>
     </SliderPrimitive.Root>
   );
