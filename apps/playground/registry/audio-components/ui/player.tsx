@@ -3,6 +3,7 @@ import { Button } from '@elevenlabs/ui/components/button';
 import { useAnimationFrame } from 'framer-motion';
 import { PauseIcon, PlayIcon } from 'lucide-react';
 import {
+  ComponentProps,
   createContext,
   ReactNode,
   useContext,
@@ -11,6 +12,7 @@ import {
   useRef,
   useState,
 } from 'react';
+import * as SliderPrimitive from '@radix-ui/react-slider';
 
 enum ReadyState {
   HAVE_NOTHING = 0,
@@ -55,9 +57,10 @@ interface PlayerApi {
   error: MediaError | null;
   isPlaying: boolean;
   isBuffering: boolean;
-  isActive: (id: string | number) => boolean;
+  isItemActive: (id: string | number | null) => boolean;
   play: (item?: PlayerItem | null) => Promise<void>;
   pause: () => void;
+  seek: (time: number) => void;
 }
 
 const PlayerContext = createContext<PlayerApi | null>(null);
@@ -135,7 +138,13 @@ export const PlayerProvider = ({ children }: { children: ReactNode }) => {
     audioRef.current.pause();
   };
 
-  const isActive = (id: string | number | null) => {
+  const seek = (time: number) => {
+    if (!audioRef.current) return;
+
+    audioRef.current.currentTime = time;
+  };
+
+  const isItemActive = (id: string | number | null) => {
     return activeItem?.id === id;
   };
 
@@ -164,9 +173,10 @@ export const PlayerProvider = ({ children }: { children: ReactNode }) => {
       error,
       isPlaying,
       isBuffering,
-      isActive,
+      isItemActive,
       play,
       pause,
+      seek,
     }),
     [
       audioRef,
@@ -176,9 +186,10 @@ export const PlayerProvider = ({ children }: { children: ReactNode }) => {
       error,
       isPlaying,
       isBuffering,
-      isActive,
+      isItemActive,
       play,
       pause,
+      seek,
     ],
   );
 
@@ -192,9 +203,62 @@ export const PlayerProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
-export interface PlayerProgressProps {}
+export interface PlayerProgressProps
+  extends ComponentProps<typeof SliderPrimitive.Root> {}
 
-export const PlayerProgress = () => {};
+export const PlayerProgress = ({ ...otherProps }: PlayerProgressProps) => {
+  const player = usePlayer();
+  const time = usePlayerTime();
+  const wasPlayingRef = useRef(false);
+
+  return (
+    <SliderPrimitive.Root
+      {...otherProps}
+      value={[time]}
+      onValueChange={([val]) => {
+        player.seek(val);
+      }}
+      min={0}
+      max={player.duration ?? 0}
+      step={(player.duration ?? 0) < 60 ? 0.25 : 1}
+      onPointerDown={e => {
+        wasPlayingRef.current = player.isPlaying;
+        player.pause();
+        otherProps.onPointerDown?.(e);
+      }}
+      onPointerUp={e => {
+        if (wasPlayingRef.current) {
+          player.play();
+        }
+        otherProps.onPointerUp?.(e);
+      }}
+      className={cn(
+        'relative group/player flex h-4 touch-none items-center select-none data-[disabled]:opacity-50 data-[orientation=vertical]:h-full data-[orientation=vertical]:min-h-44 data-[orientation=vertical]:w-auto data-[orientation=vertical]:flex-col',
+        otherProps.className,
+      )}
+      onKeyDown={e => {
+        if (e.key === ' ') {
+          e.preventDefault();
+          if (!player.isPlaying) {
+            player.play();
+          } else {
+            player.pause();
+          }
+        }
+      }}
+    >
+      <SliderPrimitive.Track className="bg-foreground/10 relative grow overflow-hidden rounded-full data-[orientation=horizontal]:h-[3px] data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-[3px]">
+        <SliderPrimitive.Range className="bg-primary absolute data-[orientation=horizontal]:h-full data-[orientation=vertical]:w-full" />
+      </SliderPrimitive.Track>
+      <SliderPrimitive.Thumb
+        className="relative h-0 w-0 flex items-center justify-center opacity-0 group-hover/player:opacity-100 focus-visible:outline-none focus-visible:opacity-100 disabled:pointer-events-none disabled:opacity-50"
+        data-slot="slider-thumb"
+      >
+        <div className="absolute h-2.5 w-2.5 rounded-full bg-foreground" />
+      </SliderPrimitive.Thumb>
+    </SliderPrimitive.Root>
+  );
+};
 
 export interface PlayerTimeProps {}
 
@@ -248,6 +312,12 @@ export function Spinner({ size = 'md', className }: SpinnerProps) {
   );
 }
 
+interface PlayButtonProps extends React.ComponentProps<typeof Button> {
+  playing: boolean;
+  onPlayingChange: (playing: boolean) => void;
+  loading?: boolean;
+}
+
 export const PlayButton = ({
   playing,
   onPlayingChange,
@@ -255,11 +325,7 @@ export const PlayButton = ({
   onClick,
   loading,
   ...otherProps
-}: {
-  playing: boolean;
-  onPlayingChange: (playing: boolean) => void;
-  loading?: boolean;
-} & React.ComponentProps<typeof Button>) => {
+}: PlayButtonProps) => {
   return (
     <Button
       {...otherProps}
@@ -271,9 +337,9 @@ export const PlayButton = ({
       aria-label={playing ? 'Pause' : 'Play'}
     >
       {playing ? (
-        <PauseIcon className={cn('size-4.5', loading && 'opacity-0')} />
+        <PauseIcon className={cn('size-4', loading && 'opacity-0')} />
       ) : (
-        <PlayIcon className={cn('size-4.5', loading && 'opacity-0')} />
+        <PlayIcon className={cn('size-4', loading && 'opacity-0')} />
       )}
       {loading && (
         <div className="absolute inset-0 rounded-[inherit] flex items-center justify-center backdrop-blur-xs">
@@ -284,21 +350,18 @@ export const PlayButton = ({
   );
 };
 
-export interface PlayerButtonProps {}
-
-export const PlayerButton = ({
-  item,
-  ...otherProps
-}: {
+export interface PlayerButtonProps extends React.ComponentProps<typeof Button> {
   item?: PlayerItem;
-} & React.ComponentProps<typeof Button>) => {
+}
+
+export const PlayerButton = ({ item, ...otherProps }: PlayerButtonProps) => {
   const player = usePlayer();
 
   if (item) {
     return (
       <PlayButton
         {...otherProps}
-        playing={player.isActive(item.id) && player.isPlaying}
+        playing={player.isItemActive(item.id) && player.isPlaying}
         onPlayingChange={shouldPlay => {
           if (shouldPlay) {
             player.play(item);
@@ -307,7 +370,7 @@ export const PlayerButton = ({
           }
         }}
         loading={
-          player.isActive(item.id) && player.isBuffering && player.isPlaying
+          player.isItemActive(item.id) && player.isBuffering && player.isPlaying
         }
       />
     );

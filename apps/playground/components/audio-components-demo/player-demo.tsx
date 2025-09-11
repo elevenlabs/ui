@@ -1,6 +1,7 @@
 import {
   PlayerButton,
   PlayerDuration,
+  PlayerProgress,
   PlayerProvider,
   PlayerTime,
   usePlayer,
@@ -25,12 +26,15 @@ const PlayerDemo = () => {
         ))}
       </ul>
       <div className="bg-foreground/5 p-2 rounded-xl flex-1 flex gap-2">
-        <PlayerButton variant="ghost" className="h-full w-16" />
+        <PlayerButton
+          variant="ghost"
+          className="h-full w-16 hover:!bg-foreground/5"
+        />
         <div className="flex flex-col justify-center w-full gap-1.5 pr-4">
-          <p>{player.activeItem ? player.activeItem?.data.name : '------'}</p>
+          <p>{player.activeItem ? player.activeItem?.data.name : '-------'}</p>
           <div className="flex items-center gap-4">
             <PlayerTime />
-            <div className="flex-1 h-[3px] rounded-full bg-foreground/10" />
+            <PlayerProgress className="flex-1" />
             <PlayerDuration />
           </div>
         </div>
@@ -67,7 +71,7 @@ const SongListItem = ({ song }: { song: Song }) => {
   return (
     <li
       onClick={() => {
-        if (player.isPlaying && player.isActive(song.id)) {
+        if (player.isPlaying && player.isItemActive(song.id)) {
           player.pause();
         } else {
           player.play({
@@ -79,7 +83,7 @@ const SongListItem = ({ song }: { song: Song }) => {
       }}
       className={cn(
         'group flex items-center justify-between rounded-xl p-2 hover:bg-foreground/5 cursor-pointer',
-        player.isActive(song.id) && 'bg-foreground/5',
+        player.isItemActive(song.id) && 'bg-foreground/5',
       )}
       tabIndex={0}
     >
@@ -87,11 +91,12 @@ const SongListItem = ({ song }: { song: Song }) => {
       <div
         className={cn(
           'opacity-0 group-hover:opacity-100',
-          player.isActive(song.id) && 'opacity-100',
+          player.isItemActive(song.id) && 'opacity-100',
         )}
       >
         <PlayerButton
           variant="ghost"
+          className="hover:!bg-foreground/5 w-9"
           item={{
             id: song.id,
             src: song.url,
