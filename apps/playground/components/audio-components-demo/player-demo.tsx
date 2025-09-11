@@ -26,7 +26,7 @@ const PlayerDemo = () => {
       </ul>
       <div className="bg-foreground/5 p-2 rounded-xl flex-1 flex gap-2">
         <PlayerButton variant="ghost" className="h-full w-16" />
-        <div className="flex flex-col justify-center w-full gap-1 pr-4">
+        <div className="flex flex-col justify-center w-full gap-1.5 pr-4">
           <p>{player.activeItem ? player.activeItem?.data.name : '------'}</p>
           <div className="flex items-center gap-4">
             <PlayerTime />
