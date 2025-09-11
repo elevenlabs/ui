@@ -17,7 +17,6 @@ export const PlayerDemoWrapper = () => {
 };
 
 const PlayerDemo = () => {
-  const player = usePlayer();
   return (
     <div className="flex gap-2">
       <ul className="w-80 flex flex-col gap-2">
@@ -25,18 +24,28 @@ const PlayerDemo = () => {
           <SongListItem key={song.id} song={song} />
         ))}
       </ul>
-      <div className="bg-foreground/5 p-2 rounded-xl flex-1 flex gap-2">
-        <PlayerButton
-          variant="ghost"
-          className="h-full w-16 hover:!bg-foreground/5"
-        />
-        <div className="flex flex-col justify-center w-full gap-1.5 pr-4">
-          <p>{player.activeItem ? player.activeItem?.data.name : '-------'}</p>
-          <div className="flex items-center gap-4">
-            <PlayerTime />
-            <PlayerProgress className="flex-1" />
-            <PlayerDuration />
-          </div>
+      <Player />
+    </div>
+  );
+};
+
+const Player = () => {
+  const player = usePlayer();
+
+  console.log('here');
+
+  return (
+    <div className="bg-foreground/5 p-2 rounded-xl flex-1 flex gap-2">
+      <PlayerButton
+        variant="ghost"
+        className="h-full w-16 hover:!bg-foreground/5"
+      />
+      <div className="flex flex-col justify-center w-full gap-1.5 pr-4">
+        <p>{player.activeItem ? player.activeItem?.data.name : '-------'}</p>
+        <div className="flex items-center gap-4">
+          <PlayerTime />
+          <PlayerProgress className="flex-1" />
+          <PlayerDuration />
         </div>
       </div>
     </div>
@@ -47,7 +56,6 @@ type Song = {
   id: string;
   name: string;
   url: string;
-  duration: number;
 };
 
 const songs = [
@@ -55,13 +63,11 @@ const songs = [
     id: '1',
     name: 'Rise up rap',
     url: '/audio/rap.mp3',
-    duration: 120,
   },
   {
     id: '2',
     name: 'Midnight swing',
     url: '/audio/jazz.mp3',
-    duration: 120,
   },
 ];
 

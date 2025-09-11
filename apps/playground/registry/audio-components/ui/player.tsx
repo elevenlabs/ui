@@ -7,6 +7,7 @@ import {
   createContext,
   HTMLProps,
   ReactNode,
+  RefObject,
   useCallback,
   useContext,
   useEffect,
@@ -53,13 +54,14 @@ interface PlayerItem {
 }
 
 interface PlayerApi {
+  ref: RefObject<HTMLAudioElement | null>;
   activeItem: PlayerItem | null;
-  readyState: number;
   duration: number | undefined;
   error: MediaError | null;
   isPlaying: boolean;
   isBuffering: boolean;
   isItemActive: (id: string | number | null) => boolean;
+  setItem: (item: PlayerItem | null) => Promise<void>;
   play: (item?: PlayerItem | null) => Promise<void>;
   pause: () => void;
   seek: (time: number) => void;
@@ -102,18 +104,17 @@ export const PlayerProvider = ({ children }: { children: ReactNode }) => {
       if (item?.id === activeItem?.id) {
         return;
       } else {
+        setActiveItem(item);
+        setTime(0);
         if (item === null) {
           audioRef.current.removeAttribute('src');
         } else {
           audioRef.current.src = item.src;
         }
         await audioRef.current.load();
-        setActiveItem(item);
-        setTime(0);
-        setDuration(undefined);
       }
     },
-    [activeItem],
+    [activeItem, setActiveItem],
   );
 
   const play = useCallback(
@@ -125,19 +126,18 @@ export const PlayerProvider = ({ children }: { children: ReactNode }) => {
       } else if (item?.id === activeItem?.id) {
         return audioRef.current.play();
       } else {
+        setActiveItem(item);
+        setTime(0);
         if (item === null) {
           audioRef.current.removeAttribute('src');
         } else {
           audioRef.current.src = item.src;
         }
         await audioRef.current.load();
-        setActiveItem(item);
-        setTime(0);
-        setDuration(undefined);
         return audioRef.current.play();
       }
     },
-    [activeItem],
+    [activeItem, setActiveItem],
   );
 
   const pause = useCallback(() => {
@@ -178,26 +178,26 @@ export const PlayerProvider = ({ children }: { children: ReactNode }) => {
   const api = useMemo(
     () => ({
       ref: audioRef,
-      activeItem,
-      readyState,
       duration,
       error,
       isPlaying,
       isBuffering,
+      activeItem,
       isItemActive,
+      setItem,
       play,
       pause,
       seek,
     }),
     [
       audioRef,
-      activeItem,
-      readyState,
       duration,
       error,
       isPlaying,
       isBuffering,
+      activeItem,
       isItemActive,
+      setItem,
       play,
       pause,
       seek,
@@ -310,22 +310,14 @@ export const PlayerDuration = ({
 };
 
 interface SpinnerProps {
-  size?: 'sm' | 'md' | 'lg';
   className?: string;
 }
 
-export function Spinner({ size = 'md', className }: SpinnerProps) {
-  const sizeClasses = {
-    sm: 'h-4 w-4',
-    md: 'h-6 w-6',
-    lg: 'h-8 w-8',
-  };
-
+function Spinner({ className }: SpinnerProps) {
   return (
     <div
       className={cn(
-        'animate-spin rounded-full border-2 border-foreground/20 border-t-foreground',
-        sizeClasses[size],
+        'animate-spin rounded-full border-2 border-foreground/20 border-t-foreground size-3.5',
         className,
       )}
       role="status"
@@ -342,7 +334,7 @@ interface PlayButtonProps extends React.ComponentProps<typeof Button> {
   loading?: boolean;
 }
 
-export const PlayButton = ({
+const PlayButton = ({
   playing,
   onPlayingChange,
   className,
@@ -367,7 +359,7 @@ export const PlayButton = ({
       )}
       {loading && (
         <div className="absolute inset-0 rounded-[inherit] flex items-center justify-center backdrop-blur-xs">
-          <Spinner size="sm" />
+          <Spinner />
         </div>
       )}
     </Button>
