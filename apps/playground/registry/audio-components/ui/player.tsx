@@ -86,8 +86,15 @@ export const usePlayerTime = () => {
   return time;
 };
 
-export const PlayerProvider = ({ children }: { children: ReactNode }) => {
+export const PlayerProvider = ({
+  children,
+  defaultItem = null,
+}: {
+  children: ReactNode;
+  defaultItem: PlayerItem | null;
+}) => {
   const audioRef = useRef<HTMLAudioElement>(null);
+  const itemRef = useRef<PlayerItem | null>(defaultItem);
   const [readyState, setReadyState] = useState<number>(0);
   const [networkState, setNetworkState] = useState<number>(0);
   const [time, setTime] = useState<number>(0);
@@ -96,58 +103,54 @@ export const PlayerProvider = ({ children }: { children: ReactNode }) => {
   const [activeItem, setActiveItem] = useState<PlayerItem | null>(null);
   const [paused, setPaused] = useState(true);
 
-  const setItem = useCallback(
-    async (item: PlayerItem | null) => {
-      if (!audioRef.current) return;
+  const setItem = useCallback(async (item: PlayerItem | null) => {
+    if (!audioRef.current) return;
 
-      if (item?.id === activeItem?.id) {
-        return;
+    if (item?.id === itemRef.current?.id) {
+      return;
+    } else {
+      itemRef.current = item;
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+      //   setTime(0);
+      if (item === null) {
+        audioRef.current.removeAttribute('src');
       } else {
-        setActiveItem(item);
-        setTime(0);
-        if (item === null) {
-          audioRef.current.removeAttribute('src');
-        } else {
-          audioRef.current.src = item.src;
-        }
-        await audioRef.current.load();
+        audioRef.current.src = item.src;
       }
-    },
-    [activeItem, setActiveItem],
-  );
+      await audioRef.current.load();
+    }
+  }, []);
 
-  const play = useCallback(
-    async (item?: PlayerItem | null) => {
-      if (!audioRef.current) return;
+  const play = useCallback(async (item?: PlayerItem | null) => {
+    if (!audioRef.current) return;
 
-      if (item === undefined) {
-        return audioRef.current.play();
-      } else if (item?.id === activeItem?.id) {
-        return audioRef.current.play();
+    if (item === undefined) {
+      return audioRef.current.play();
+    } else if (item?.id === activeItem?.id) {
+      return audioRef.current.play();
+    } else {
+      itemRef.current = item;
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+      //   setTime(0);
+      if (item === null) {
+        audioRef.current.removeAttribute('src');
       } else {
-        setActiveItem(item);
-        setTime(0);
-        if (item === null) {
-          audioRef.current.removeAttribute('src');
-        } else {
-          audioRef.current.src = item.src;
-        }
-        await audioRef.current.load();
-        return audioRef.current.play();
+        audioRef.current.src = item.src;
       }
-    },
-    [activeItem, setActiveItem],
-  );
+      await audioRef.current.load();
+      return audioRef.current.play();
+    }
+  }, []);
 
   const pause = useCallback(() => {
     if (!audioRef.current) return;
-
     audioRef.current.pause();
   }, []);
 
   const seek = useCallback((time: number) => {
     if (!audioRef.current) return;
-
     audioRef.current.currentTime = time;
   }, []);
 
@@ -160,6 +163,7 @@ export const PlayerProvider = ({ children }: { children: ReactNode }) => {
 
   useAnimationFrame(() => {
     if (audioRef.current) {
+      setActiveItem(itemRef.current);
       setReadyState(audioRef.current.readyState);
       setNetworkState(audioRef.current.networkState);
       setTime(audioRef.current.currentTime);
