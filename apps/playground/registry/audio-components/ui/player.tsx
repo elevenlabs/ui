@@ -86,15 +86,9 @@ export const usePlayerTime = () => {
   return time;
 };
 
-export const PlayerProvider = ({
-  children,
-  defaultItem = null,
-}: {
-  children: ReactNode;
-  defaultItem: PlayerItem | null;
-}) => {
+export const PlayerProvider = ({ children }: { children: ReactNode }) => {
   const audioRef = useRef<HTMLAudioElement>(null);
-  const itemRef = useRef<PlayerItem | null>(defaultItem);
+  const itemRef = useRef<PlayerItem | null>(null);
   const [readyState, setReadyState] = useState<number>(0);
   const [networkState, setNetworkState] = useState<number>(0);
   const [time, setTime] = useState<number>(0);
@@ -112,7 +106,6 @@ export const PlayerProvider = ({
       itemRef.current = item;
       audioRef.current.pause();
       audioRef.current.currentTime = 0;
-      //   setTime(0);
       if (item === null) {
         audioRef.current.removeAttribute('src');
       } else {
@@ -134,7 +127,6 @@ export const PlayerProvider = ({
         itemRef.current = item;
         audioRef.current.pause();
         audioRef.current.currentTime = 0;
-        //   setTime(0);
         if (item === null) {
           audioRef.current.removeAttribute('src');
         } else {
