@@ -260,6 +260,11 @@ export const PlayerProgress = ({ ...otherProps }: PlayerProgressProps) => {
         }
         otherProps.onKeyDown?.(e);
       }}
+      disabled={
+        player.duration === undefined ||
+        !Number.isFinite(player.duration) ||
+        Number.isNaN(player.duration)
+      }
     >
       <SliderPrimitive.Track className="bg-foreground/10 relative grow overflow-hidden rounded-full h-[4px] w-full">
         <SliderPrimitive.Range className="bg-primary absolute h-full" />
