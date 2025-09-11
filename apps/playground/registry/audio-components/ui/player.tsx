@@ -60,7 +60,7 @@ interface PlayerApi {
   isPlaying: boolean;
   isBuffering: boolean;
   isItemActive: (id: string | number | null) => boolean;
-  setItem: (item: PlayerItem | null) => Promise<void>;
+  setActiveItem: (item: PlayerItem | null) => Promise<void>;
   play: (item?: PlayerItem | null) => Promise<void>;
   pause: () => void;
   seek: (time: number) => void;
@@ -100,10 +100,10 @@ export const PlayerProvider = ({
   const [time, setTime] = useState<number>(0);
   const [duration, setDuration] = useState<number | undefined>(undefined);
   const [error, setError] = useState<MediaError | null>(null);
-  const [activeItem, setActiveItem] = useState<PlayerItem | null>(null);
+  const [activeItem, _setActiveItem] = useState<PlayerItem | null>(null);
   const [paused, setPaused] = useState(true);
 
-  const setItem = useCallback(async (item: PlayerItem | null) => {
+  const setActiveItem = useCallback(async (item: PlayerItem | null) => {
     if (!audioRef.current) return;
 
     if (item?.id === itemRef.current?.id) {
@@ -163,7 +163,7 @@ export const PlayerProvider = ({
 
   useAnimationFrame(() => {
     if (audioRef.current) {
-      setActiveItem(itemRef.current);
+      _setActiveItem(itemRef.current);
       setReadyState(audioRef.current.readyState);
       setNetworkState(audioRef.current.networkState);
       setTime(audioRef.current.currentTime);
@@ -187,7 +187,7 @@ export const PlayerProvider = ({
       isBuffering,
       activeItem,
       isItemActive,
-      setItem,
+      setActiveItem,
       play,
       pause,
       seek,
@@ -200,7 +200,7 @@ export const PlayerProvider = ({
       isBuffering,
       activeItem,
       isItemActive,
-      setItem,
+      setActiveItem,
       play,
       pause,
       seek,
