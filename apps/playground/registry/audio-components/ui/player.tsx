@@ -1,6 +1,5 @@
 import { cn } from '@/lib/utils';
 import { Button } from '@elevenlabs/ui/components/button';
-import { useAnimationFrame } from 'framer-motion';
 import { PauseIcon, PlayIcon } from 'lucide-react';
 import {
   ComponentProps,
@@ -10,6 +9,7 @@ import {
   RefObject,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useRef,
   useState,
@@ -410,3 +410,34 @@ export const PlayerButton = ({ item, ...otherProps }: PlayerButtonProps) => {
     );
   }
 };
+
+type Callback = (delta: number) => void;
+
+function useAnimationFrame(callback: Callback) {
+  const requestRef = useRef<number | null>(null);
+  const previousTimeRef = useRef<number | null>(null);
+  const callbackRef = useRef<Callback>(callback);
+
+  // Keep callback ref always up to date
+  useEffect(() => {
+    callbackRef.current = callback;
+  }, [callback]);
+
+  useEffect(() => {
+    const animate = (time: number) => {
+      if (previousTimeRef.current != null) {
+        const delta = time - previousTimeRef.current;
+        callbackRef.current(delta);
+      }
+      previousTimeRef.current = time;
+      requestRef.current = requestAnimationFrame(animate);
+    };
+
+    requestRef.current = requestAnimationFrame(animate);
+
+    return () => {
+      if (requestRef.current) cancelAnimationFrame(requestRef.current);
+      previousTimeRef.current = null;
+    };
+  }, []);
+}
