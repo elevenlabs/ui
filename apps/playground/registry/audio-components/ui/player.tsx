@@ -1,4 +1,3 @@
-import { cn } from '@/lib/utils';
 import { Button } from '@elevenlabs/ui/components/button';
 import { PauseIcon, PlayIcon } from 'lucide-react';
 import {
@@ -15,6 +14,7 @@ import {
   useState,
 } from 'react';
 import * as SliderPrimitive from '@radix-ui/react-slider';
+import { cn } from '../lib/utils';
 
 enum ReadyState {
   HAVE_NOTHING = 0,
