@@ -187,8 +187,7 @@ const ConversationDemo = () => {
       const message = allMessages[currentMessageIndex]
       const part = message.parts[0]
 
-      if (message.role === "assistant" && part.tokens) {
-        // Stream assistant messages using tokens
+      if (message.role === "assistant" && "tokens" in part && part.tokens) {
         setStreamingMessageIndex(currentMessageIndex)
         setStreamingContent("")
 
