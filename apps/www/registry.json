@@ -70,8 +70,11 @@
     {
       "name": "audio-player",
       "type": "registry:ui",
-      "dependencies": ["@radix-ui/react-slider"],
-      "registryDependencies": ["button"],
+      "dependencies": [
+        "@radix-ui/react-slider",
+        "@radix-ui/react-dropdown-menu"
+      ],
+      "registryDependencies": ["button", "dropdown-menu"],
       "files": [
         {
           "path": "registry/elevenlabs-ui/ui/audio-player.tsx",

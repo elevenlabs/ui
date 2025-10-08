@@ -51,8 +51,8 @@ export const ui: Registry["items"] = [
   {
     name: "audio-player",
     type: "registry:ui",
-    dependencies: ["@radix-ui/react-slider"],
-    registryDependencies: ["button"],
+    dependencies: ["@radix-ui/react-slider", "@radix-ui/react-dropdown-menu"],
+    registryDependencies: ["button", "dropdown-menu"],
     files: [
       {
         path: "ui/audio-player.tsx",

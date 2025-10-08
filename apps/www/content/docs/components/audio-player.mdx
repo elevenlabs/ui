@@ -53,6 +53,8 @@ import {
   AudioPlayerDuration,
   AudioPlayerProgress,
   AudioPlayerProvider,
+  AudioPlayerSpeed,
+  AudioPlayerSpeedButtonGroup,
   AudioPlayerTime,
   useAudioPlayer,
   useAudioPlayerTime,
@@ -178,6 +180,43 @@ Displays the total duration of the current track or "--:--" when unavailable.
 | className | `string`          | Optional CSS classes            |
 | ...props  | `HTMLSpanElement` | All standard span element props |
 
+### AudioPlayerSpeed
+
+A dropdown menu button (with settings icon) for controlling playback speed. Displays "Normal" for 1x speed and shows other speeds with "x" suffix (e.g., "0.5x", "1.5x").
+
+#### Props
+
+| Prop     | Type                | Default                                    | Description                         |
+| -------- | ------------------- | ------------------------------------------ | ----------------------------------- |
+| speeds   | `readonly number[]` | `[0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2]` | Available playback speeds           |
+| variant  | `ButtonVariant`     | `"ghost"`                                  | Button variant                      |
+| size     | `ButtonSize`        | `"icon"`                                   | Button size                         |
+| ...props | `ButtonProps`       | -                                          | All standard Button component props |
+
+#### Example
+
+```tsx
+<AudioPlayerSpeed variant="ghost" size="icon" />
+```
+
+### AudioPlayerSpeedButtonGroup
+
+A button group component for quick playback speed selection.
+
+#### Props
+
+| Prop      | Type                | Default            | Description                    |
+| --------- | ------------------- | ------------------ | ------------------------------ |
+| speeds    | `readonly number[]` | `[0.5, 1, 1.5, 2]` | Available playback speeds      |
+| className | `string`            | -                  | Optional CSS classes           |
+| ...props  | `HTMLDivElement`    | -                  | All standard div element props |
+
+#### Example
+
+```tsx
+<AudioPlayerSpeedButtonGroup speeds={[0.5, 0.75, 1, 1.5, 2]} />
+```
+
 ### useAudioPlayer Hook
 
 Access the audio player context to control playback programmatically.
@@ -190,11 +229,13 @@ const {
   error, // MediaError if any
   isPlaying, // Playing state
   isBuffering, // Buffering state
+  playbackRate, // Current playback speed
   isItemActive, // Check if an item is active
   setActiveItem, // Set the active item
   play, // Play audio
   pause, // Pause audio
   seek, // Seek to time
+  setPlaybackRate, // Change playback speed
 } = useAudioPlayer<TData>()
 ```
 
@@ -238,11 +279,30 @@ function CustomTimeDisplay() {
 
 ## Advanced Examples
 
+### Player with Speed Control
+
+```tsx showLineNumbers
+function AudioPlayerWithSpeed() {
+  return (
+    <AudioPlayerProvider>
+      <div className="flex items-center gap-4">
+        <AudioPlayerButton />
+        <AudioPlayerTime />
+        <AudioPlayerProgress className="flex-1" />
+        <AudioPlayerDuration />
+        <AudioPlayerSpeed />
+      </div>
+    </AudioPlayerProvider>
+  )
+}
+```
+
 ### Custom Controls
 
 ```tsx showLineNumbers
 function CustomAudioPlayer() {
-  const { play, pause, isPlaying, seek, duration } = useAudioPlayer()
+  const { play, pause, isPlaying, seek, duration, setPlaybackRate } =
+    useAudioPlayer()
 
   return (
     <div className="space-y-4">
@@ -255,6 +315,8 @@ function CustomAudioPlayer() {
       <button onClick={() => duration && seek(duration * 0.5)}>
         Jump to 50%
       </button>
+
+      <button onClick={() => setPlaybackRate(1.5)}>Speed 1.5x</button>
     </div>
   )
 }
@@ -288,3 +350,5 @@ function AudioPlayerWithError() {
 - Space bar triggers play/pause when the progress slider is focused
 - The component includes TypeScript support with generic data types
 - Audio state is managed globally within the provider context
+- Playback speed displays "Normal" for 1x speed and numerical values (e.g., "0.5x", "1.5x") for other speeds
+- Playback speed is preserved when switching between tracks

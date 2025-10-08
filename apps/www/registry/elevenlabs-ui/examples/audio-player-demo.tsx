@@ -8,6 +8,7 @@ import {
   AudioPlayerDuration,
   AudioPlayerProgress,
   AudioPlayerProvider,
+  AudioPlayerSpeed,
   AudioPlayerTime,
   exampleTracks,
   useAudioPlayer,
@@ -75,6 +76,7 @@ const Player = () => {
             <AudioPlayerTime className="text-xs tabular-nums" />
             <AudioPlayerProgress className="flex-1" />
             <AudioPlayerDuration className="text-xs tabular-nums" />
+            <AudioPlayerSpeed variant="ghost" size="icon" />
           </div>
         </div>
       </div>

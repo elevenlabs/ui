@@ -102,7 +102,7 @@ export const Index: Record<string, any> = {
     name: "audio-player",
     description: "",
     type: "registry:ui",
-    registryDependencies: ["button"],
+    registryDependencies: ["button","dropdown-menu"],
     files: [{
       path: "registry/elevenlabs-ui/ui/audio-player.tsx",
       type: "registry:ui",

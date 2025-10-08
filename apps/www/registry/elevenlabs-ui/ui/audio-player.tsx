@@ -14,10 +14,16 @@ import {
   useState,
 } from "react"
 import * as SliderPrimitive from "@radix-ui/react-slider"
-import { PauseIcon, PlayIcon } from "lucide-react"
+import { Check, PauseIcon, PlayIcon, Settings } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/registry/elevenlabs-ui/ui/button"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/registry/elevenlabs-ui/ui/dropdown-menu"
 
 enum ReadyState {
   HAVE_NOTHING = 0,
@@ -60,11 +66,13 @@ interface AudioPlayerApi<TData = unknown> {
   error: MediaError | null
   isPlaying: boolean
   isBuffering: boolean
+  playbackRate: number
   isItemActive: (id: string | number | null) => boolean
   setActiveItem: (item: AudioPlayerItem<TData> | null) => Promise<void>
   play: (item?: AudioPlayerItem<TData> | null) => Promise<void>
   pause: () => void
   seek: (time: number) => void
+  setPlaybackRate: (rate: number) => void
 }
 
 const AudioPlayerContext = createContext<AudioPlayerApi<unknown> | null>(null)
@@ -108,6 +116,7 @@ export function AudioPlayerProvider<TData = unknown>({
     null
   )
   const [paused, setPaused] = useState(true)
+  const [playbackRate, setPlaybackRateState] = useState<number>(1)
 
   const setActiveItem = useCallback(
     async (item: AudioPlayerItem<TData> | null) => {
@@ -190,6 +199,12 @@ export function AudioPlayerProvider<TData = unknown>({
     audioRef.current.currentTime = time
   }, [])
 
+  const setPlaybackRate = useCallback((rate: number) => {
+    if (!audioRef.current) return
+    audioRef.current.playbackRate = rate
+    setPlaybackRateState(rate)
+  }, [])
+
   const isItemActive = useCallback(
     (id: string | number | null) => {
       return activeItem?.id === id
@@ -206,6 +221,7 @@ export function AudioPlayerProvider<TData = unknown>({
       setDuration(audioRef.current.duration)
       setPaused(audioRef.current.paused)
       setError(audioRef.current.error)
+      setPlaybackRateState(audioRef.current.playbackRate)
     }
   })
 
@@ -222,11 +238,13 @@ export function AudioPlayerProvider<TData = unknown>({
       isPlaying,
       isBuffering,
       activeItem,
+      playbackRate,
       isItemActive,
       setActiveItem,
       play,
       pause,
       seek,
+      setPlaybackRate,
     }),
     [
       audioRef,
@@ -235,11 +253,13 @@ export function AudioPlayerProvider<TData = unknown>({
       isPlaying,
       isBuffering,
       activeItem,
+      playbackRate,
       isItemActive,
       setActiveItem,
       play,
       pause,
       seek,
+      setPlaybackRate,
     ]
   )
 
@@ -491,6 +511,89 @@ function useAnimationFrame(callback: Callback) {
       previousTimeRef.current = null
     }
   }, [])
+}
+
+const PLAYBACK_SPEEDS = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2] as const
+
+export interface AudioPlayerSpeedProps
+  extends React.ComponentProps<typeof Button> {
+  speeds?: readonly number[]
+}
+
+export function AudioPlayerSpeed({
+  speeds = PLAYBACK_SPEEDS,
+  className,
+  variant = "ghost",
+  size = "icon",
+  ...props
+}: AudioPlayerSpeedProps) {
+  const player = useAudioPlayer()
+  const currentSpeed = player.playbackRate
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant={variant}
+          size={size}
+          className={cn(className)}
+          aria-label="Playback speed"
+          {...props}
+        >
+          <Settings className="size-4" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="min-w-[120px]">
+        {speeds.map((speed) => (
+          <DropdownMenuItem
+            key={speed}
+            onClick={() => player.setPlaybackRate(speed)}
+            className="flex items-center justify-between"
+          >
+            <span className={speed === 1 ? "" : "font-mono"}>
+              {speed === 1 ? "Normal" : `${speed}x`}
+            </span>
+            {currentSpeed === speed && <Check className="size-4" />}
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )
+}
+
+export interface AudioPlayerSpeedButtonGroupProps
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, "children"> {
+  speeds?: readonly number[]
+}
+
+export function AudioPlayerSpeedButtonGroup({
+  speeds = [0.5, 1, 1.5, 2],
+  className,
+  ...props
+}: AudioPlayerSpeedButtonGroupProps) {
+  const player = useAudioPlayer()
+  const currentSpeed = player.playbackRate
+
+  return (
+    <div
+      className={cn("flex items-center gap-1", className)}
+      role="group"
+      aria-label="Playback speed controls"
+      {...props}
+    >
+      {speeds.map((speed) => (
+        <Button
+          key={speed}
+          variant={currentSpeed === speed ? "default" : "outline"}
+          size="sm"
+          onClick={() => player.setPlaybackRate(speed)}
+          className="min-w-[50px] font-mono text-xs"
+        >
+          {speed}x
+        </Button>
+      ))}
+    </div>
+  )
 }
 
 export const exampleTracks = [

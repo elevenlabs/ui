@@ -87,10 +87,12 @@
       "name": "audio-player",
       "type": "registry:ui",
       "dependencies": [
-        "@radix-ui/react-slider"
+        "@radix-ui/react-slider",
+        "@radix-ui/react-dropdown-menu"
       ],
       "registryDependencies": [
-        "button"
+        "button",
+        "dropdown-menu"
       ],
       "files": [
         {
