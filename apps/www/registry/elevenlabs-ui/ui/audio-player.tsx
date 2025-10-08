@@ -126,6 +126,7 @@ export function AudioPlayerProvider<TData = unknown>({
         return
       }
       itemRef.current = item
+      const currentRate = audioRef.current.playbackRate
       audioRef.current.pause()
       audioRef.current.currentTime = 0
       if (item === null) {
@@ -134,6 +135,7 @@ export function AudioPlayerProvider<TData = unknown>({
         audioRef.current.src = item.src
       }
       audioRef.current.load()
+      audioRef.current.playbackRate = currentRate
     },
     []
   )
@@ -162,6 +164,7 @@ export function AudioPlayerProvider<TData = unknown>({
       }
 
       itemRef.current = item
+      const currentRate = audioRef.current.playbackRate
       if (!audioRef.current.paused) {
         audioRef.current.pause()
       }
@@ -172,6 +175,7 @@ export function AudioPlayerProvider<TData = unknown>({
         audioRef.current.src = item.src
       }
       audioRef.current.load()
+      audioRef.current.playbackRate = currentRate
       const playPromise = audioRef.current.play()
       playPromiseRef.current = playPromise
       return playPromise
