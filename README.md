@@ -27,7 +27,7 @@ Before using ElevenLabs UI, ensure your Next.js project meets these requirements
 
 ## Usage
 
-### Install All Components
+### Install All Components
 Install all available ElevenLabs UI components at once:
 ```bash
 npx @elevenlabs/agents-cli@latest components add
@@ -37,7 +37,7 @@ This command will:
 - Install all ElevenLabs UI components to your configured components directory
 - Add necessary dependencies to your project
 
-### Install Specific Components
+### Install Specific Components
 Install individual components using the `add` command:
 ```bash
 npx @elevenlabs/agents-cli@latest add <component-name>
@@ -48,7 +48,7 @@ Examples:
 npx @elevenlabs/agents-cli@latest add orb
 ```
 
-### Alternative: Use with shadcn CLI
+### Alternative: Use with shadcn CLI
 You can also install components using the standard shadcn/ui CLI:
 ```bash
 # Install all components
