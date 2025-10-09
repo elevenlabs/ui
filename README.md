@@ -37,15 +37,15 @@ This command will:
 - Install all ElevenLabs UI components to your configured components directory
 - Add necessary dependencies to your project
 
-### Install Specific Components
-Install individual components using the `add` command:
+### Install Specific Components
+Install individual components using the `components add` command:
 ```bash
-npx @elevenlabs/agents-cli@latest add <component-name>
+npx @elevenlabs/agents-cli@latest components add <component-name>
 ```
 Examples:
 ```bash
 # Install the orb component
-npx @elevenlabs/agents-cli@latest add orb
+npx @elevenlabs/agents-cli@latest components add orb
 ```
 
 ### Alternative: Use with shadcn CLI
