@@ -612,11 +612,47 @@ const PlayButton = ({
   )
 }
 
+/**
+ * Props for the AudioPlayerButton component - a play/pause button for audio items.
+ * 
+ * @template TData - Type of additional data associated with audio items
+ * 
+ * @example
+ * ```tsx
+ * <AudioPlayerButton
+ *   item={{ id: "track-1", src: "/audio.mp3", data: { title: "My Song" } }}
+ *   variant="outline"
+ *   size="icon"
+ * />
+ * ```
+ */
 export interface AudioPlayerButtonProps<TData = unknown>
   extends React.ComponentProps<typeof Button> {
+  /**
+   * Audio item to control playback for.
+   * If not provided, controls the currently active item.
+   */
   item?: AudioPlayerItem<TData>
 }
 
+/**
+ * A button component that controls audio playback for a specific audio item.
+ * 
+ * Displays play/pause icons and handles audio item playback automatically.
+ * Must be used within an AudioPlayerProvider context.
+ * 
+ * @template TData - Type of additional data associated with audio items
+ * 
+ * @example
+ * ```tsx
+ * <AudioPlayerButton
+ *   item={{ id: "track-1", src: "/audio.mp3" }}
+ *   variant="outline"
+ *   size="icon"
+ *   aria-label="Play track"
+ * />
+ * ```
+ */
 export function AudioPlayerButton<TData = unknown>({
   item,
   ...otherProps
@@ -690,11 +726,43 @@ function useAnimationFrame(callback: Callback) {
 
 const PLAYBACK_SPEEDS = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2] as const
 
+/**
+ * Props for the AudioPlayerSpeed component - a dropdown for changing playback speed.
+ * 
+ * @example
+ * ```tsx
+ * <AudioPlayerSpeed
+ *   speeds={[0.5, 1, 1.5, 2]}
+ *   variant="ghost"
+ *   size="icon"
+ * />
+ * ```
+ */
 export interface AudioPlayerSpeedProps
   extends React.ComponentProps<typeof Button> {
+  /**
+   * Array of available playback speeds.
+   * @default [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2]
+   */
   speeds?: readonly number[]
 }
 
+/**
+ * A dropdown button component for changing audio playback speed.
+ * 
+ * Displays available speed options and updates the audio player's playback rate.
+ * Must be used within an AudioPlayerProvider context.
+ * 
+ * @example
+ * ```tsx
+ * <AudioPlayerSpeed
+ *   speeds={[0.5, 1, 1.5, 2]}
+ *   variant="ghost"
+ *   size="icon"
+ *   aria-label="Change playback speed"
+ * />
+ * ```
+ */
 export function AudioPlayerSpeed({
   speeds = PLAYBACK_SPEEDS,
   className,
@@ -736,11 +804,40 @@ export function AudioPlayerSpeed({
   )
 }
 
+/**
+ * Props for the AudioPlayerSpeedButtonGroup component - a group of speed control buttons.
+ * 
+ * @example
+ * ```tsx
+ * <AudioPlayerSpeedButtonGroup
+ *   speeds={[0.5, 1, 1.5, 2]}
+ *   className="flex gap-2"
+ * />
+ * ```
+ */
 export interface AudioPlayerSpeedButtonGroupProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, "children"> {
+  /**
+   * Array of available playback speeds to display as buttons.
+   * @default [0.5, 1, 1.5, 2]
+   */
   speeds?: readonly number[]
 }
 
+/**
+ * A group of buttons for changing audio playback speed.
+ * 
+ * Displays multiple speed options as individual buttons with the current
+ * speed highlighted. Must be used within an AudioPlayerProvider context.
+ * 
+ * @example
+ * ```tsx
+ * <AudioPlayerSpeedButtonGroup
+ *   speeds={[0.5, 1, 1.5, 2]}
+ *   className="flex gap-2"
+ * />
+ * ```
+ */
 export function AudioPlayerSpeedButtonGroup({
   speeds = [0.5, 1, 1.5, 2],
   className,

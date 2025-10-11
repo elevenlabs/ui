@@ -25,13 +25,77 @@ import {
   PopoverTrigger,
 } from "@/registry/elevenlabs-ui/ui/popover"
 
+/**
+ * Props for the VoicePicker component - a voice selection dropdown with audio previews.
+ * 
+ * Displays a list of ElevenLabs voices with interactive orb previews and
+ * audio playback capabilities for voice selection.
+ * 
+ * @example
+ * ```tsx
+ * <VoicePicker
+ *   voices={availableVoices}
+ *   value={selectedVoiceId}
+ *   onValueChange={(voiceId) => setSelectedVoice(voiceId)}
+ *   placeholder="Select a voice..."
+ * />
+ * ```
+ */
 interface VoicePickerProps {
+  /**
+   * Array of ElevenLabs voice objects to display in the picker.
+   * Each voice should have voiceId, name, and previewUrl properties.
+   */
   voices: ElevenLabs.Voice[]
+
+  /**
+   * Currently selected voice ID.
+   * Should match the voiceId of one of the voices in the voices array.
+   */
   value?: string
+
+  /**
+   * Callback fired when a voice is selected.
+   * @param value - The voiceId of the selected voice
+   * 
+   * @example
+   * ```tsx
+   * onValueChange={(voiceId) => {
+   *   setSelectedVoice(voiceId);
+   *   console.log(`Selected voice: ${voiceId}`);
+   * }}
+   * ```
+   */
   onValueChange?: (value: string) => void
+
+  /**
+   * Placeholder text shown when no voice is selected.
+   * @default "Select a voice..."
+   */
   placeholder?: string
+
+  /**
+   * Additional CSS classes for the picker container.
+   */
   className?: string
+
+  /**
+   * Whether the picker dropdown is open (controlled mode).
+   * If not provided, the picker manages its own open state.
+   */
   open?: boolean
+
+  /**
+   * Callback fired when the picker open state changes.
+   * @param open - Whether the picker is now open
+   * 
+   * @example
+   * ```tsx
+   * onOpenChange={(open) => {
+   *   console.log(`Picker ${open ? 'opened' : 'closed'}`);
+   * }}
+   * ```
+   */
   onOpenChange?: (open: boolean) => void
 }
 
@@ -99,9 +163,36 @@ function VoicePicker({
   )
 }
 
+/**
+ * Props for the VoicePickerItem component - an individual voice option in the picker.
+ * 
+ * Displays voice information with an interactive orb preview and audio playback.
+ * 
+ * @example
+ * ```tsx
+ * <VoicePickerItem
+ *   voice={voiceObject}
+ *   isSelected={selectedVoiceId === voiceObject.voiceId}
+ *   onSelect={() => setSelectedVoice(voiceObject.voiceId)}
+ * />
+ * ```
+ */
 interface VoicePickerItemProps {
+  /**
+   * ElevenLabs voice object containing voice metadata.
+   * Should include voiceId, name, previewUrl, and optional labels.
+   */
   voice: ElevenLabs.Voice
+
+  /**
+   * Whether this voice item is currently selected.
+   */
   isSelected: boolean
+
+  /**
+   * Callback fired when this voice item is selected.
+   * Typically updates the parent component's selected voice state.
+   */
   onSelect: () => void
 }
 

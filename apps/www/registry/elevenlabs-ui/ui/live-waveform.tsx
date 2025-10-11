@@ -4,24 +4,166 @@ import { useEffect, useRef, type HTMLAttributes } from "react"
 
 import { cn } from "@/lib/utils"
 
+/**
+ * Props for the LiveWaveform component - a real-time audio waveform visualizer.
+ * 
+ * Displays live microphone input as an animated waveform with two modes:
+ * - "scrolling": Bars scroll from right to left (like traditional waveforms)
+ * - "static": Bars animate in fixed positions (like equalizer bars)
+ * 
+ * @example
+ * ```tsx
+ * <LiveWaveform
+ *   active={isRecording}
+ *   processing={isProcessing}
+ *   mode="static"
+ *   sensitivity={1.5}
+ *   height={64}
+ *   onError={(error) => console.error('Audio error:', error)}
+ * />
+ * ```
+ */
 export type LiveWaveformProps = HTMLAttributes<HTMLDivElement> & {
+  /**
+   * Whether the microphone is actively recording audio.
+   * @default false
+   */
   active?: boolean
+
+  /**
+   * Whether audio is being processed (shows animated state).
+   * Used for loading states or when processing recorded audio.
+   * @default false
+   */
   processing?: boolean
+
+  /**
+   * Width of each bar in pixels.
+   * @default 3
+   */
   barWidth?: number
+
+  /**
+   * Gap between bars in pixels.
+   * @default 1
+   */
   barGap?: number
+
+  /**
+   * Border radius for rounded bar corners in pixels.
+   * Set to 0 for square bars.
+   * @default 1.5
+   */
   barRadius?: number
+
+  /**
+   * Color of the waveform bars.
+   * If not provided, uses the CSS `--foreground` variable.
+   * @example "#3b82f6"
+   */
   barColor?: string
+
+  /**
+   * Whether to fade the edges of the waveform for a softer look.
+   * @default true
+   */
   fadeEdges?: boolean
+
+  /**
+   * Width of the fade effect on each edge in pixels.
+   * Only applies when fadeEdges is true.
+   * @default 24
+   */
   fadeWidth?: number
+
+  /**
+   * Height of the waveform container.
+   * Can be a number (pixels) or CSS string.
+   * @default 64
+   * @example 128 or "8rem"
+   */
   height?: string | number
+
+  /**
+   * Audio sensitivity multiplier (0-10).
+   * Higher values make the waveform more responsive to quiet sounds.
+   * @default 1
+   */
   sensitivity?: number
+
+  /**
+   * Smoothing time constant for audio analysis (0-1).
+   * Higher values create smoother animations but slower response.
+   * @default 0.8
+   */
   smoothingTimeConstant?: number
+
+  /**
+   * FFT (Fast Fourier Transform) size for audio analysis.
+   * Higher values provide more frequency detail but use more CPU.
+   * Must be a power of 2 (256, 512, 1024, etc.).
+   * @default 256
+   */
   fftSize?: number
+
+  /**
+   * Maximum number of audio samples to keep in history.
+   * Only applies to "scrolling" mode. Larger values allow longer recordings.
+   * @default 60
+   */
   historySize?: number
+
+  /**
+   * Update rate for audio visualization in milliseconds.
+   * Lower values provide smoother animation but use more CPU.
+   * @default 30
+   */
   updateRate?: number
+
+  /**
+   * Waveform display mode.
+   * - "scrolling": Bars scroll from right to left (traditional waveform)
+   * - "static": Bars animate in fixed positions (equalizer style)
+   * @default "static"
+   */
   mode?: "scrolling" | "static"
+
+  /**
+   * Callback fired when microphone access fails or other errors occur.
+   * @example
+   * ```tsx
+   * onError={(error) => {
+   *   console.error('Audio error:', error);
+   *   showErrorMessage('Microphone access denied');
+   * }}
+   * ```
+   */
   onError?: (error: Error) => void
+
+  /**
+   * Callback fired when microphone stream is successfully obtained.
+   * Provides the MediaStream object for advanced audio processing.
+   * @example
+   * ```tsx
+   * onStreamReady={(stream) => {
+   *   console.log('Microphone stream ready');
+   *   // Additional audio processing setup
+   * }}
+   * ```
+   */
   onStreamReady?: (stream: MediaStream) => void
+
+  /**
+   * Callback fired when microphone stream is ended.
+   * Useful for cleanup or state management.
+   * @example
+   * ```tsx
+   * onStreamEnd={() => {
+   *   console.log('Microphone stream ended');
+   *   setIsRecording(false);
+   * }}
+   * ```
+   */
   onStreamEnd?: () => void
 }
 
