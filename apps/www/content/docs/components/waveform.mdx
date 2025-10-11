@@ -61,14 +61,14 @@ import {
 ```tsx showLineNumbers
 const data = Array.from({ length: 50 }, () => Math.random())
 
-;<Waveform data={data} height={100} barWidth={4} barGap={2} />
+<Waveform data={data} height={100} barWidth={4} barGap={2} />
 ```
 
 ### Scrolling Animation
 
 ```tsx showLineNumbers
 <ScrollingWaveform
-  height={80}
+  height={80} 
   speed={50}
   barCount={60}
   barColor="hsl(var(--primary))"
@@ -81,7 +81,7 @@ const data = Array.from({ length: 50 }, () => Math.random())
 ```tsx showLineNumbers
 const [isRecording, setIsRecording] = useState(false)
 
-;<MicrophoneWaveform
+<MicrophoneWaveform
   active={isRecording}
   height={100}
   sensitivity={1.5}
