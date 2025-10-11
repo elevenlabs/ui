@@ -53,25 +53,173 @@ function formatTime(seconds: number) {
     : `${mins}:${formattedSecs}`
 }
 
+/**
+ * Represents an audio item in the audio player.
+ * 
+ * @template TData - Optional additional data associated with the audio item
+ * 
+ * @example
+ * ```tsx
+ * const audioItem: AudioPlayerItem = {
+ *   id: "track-1",
+ *   src: "https://example.com/audio.mp3",
+ *   data: { title: "My Track", artist: "Artist Name" }
+ * };
+ * ```
+ */
 interface AudioPlayerItem<TData = unknown> {
+  /**
+   * Unique identifier for the audio item.
+   * Can be a string or number.
+   */
   id: string | number
+
+  /**
+   * URL or path to the audio file.
+   * Supports various audio formats (MP3, WAV, OGG, etc.).
+   */
   src: string
+
+  /**
+   * Optional additional data associated with this audio item.
+   * Useful for storing metadata like title, artist, album, etc.
+   */
   data?: TData
 }
 
+/**
+ * Audio player API interface providing control over audio playback.
+ * 
+ * @template TData - Type of additional data associated with audio items
+ * 
+ * @example
+ * ```tsx
+ * const player = useAudioPlayer<{ title: string }>();
+ * 
+ * // Play an audio item
+ * await player.play({ id: "track-1", src: "/audio.mp3", data: { title: "My Song" } });
+ * 
+ * // Check if playing
+ * if (player.isPlaying) {
+ *   console.log(`Playing: ${player.activeItem?.data?.title}`);
+ * }
+ * ```
+ */
 interface AudioPlayerApi<TData = unknown> {
+  /**
+   * Reference to the underlying HTMLAudioElement.
+   * Useful for advanced audio manipulation or debugging.
+   */
   ref: RefObject<HTMLAudioElement | null>
+
+  /**
+   * Currently active audio item being played or loaded.
+   * null if no item is active.
+   */
   activeItem: AudioPlayerItem<TData> | null
+
+  /**
+   * Duration of the current audio item in seconds.
+   * undefined if no item is loaded or duration is unknown.
+   */
   duration: number | undefined
+
+  /**
+   * Current playback error, if any.
+   * null if no error has occurred.
+   */
   error: MediaError | null
+
+  /**
+   * Whether audio is currently playing.
+   * false if paused, stopped, or no item is loaded.
+   */
   isPlaying: boolean
+
+  /**
+   * Whether audio is currently buffering.
+   * true when loading or seeking through audio.
+   */
   isBuffering: boolean
+
+  /**
+   * Current playback rate multiplier.
+   * 1.0 is normal speed, 2.0 is double speed, 0.5 is half speed.
+   */
   playbackRate: number
+
+  /**
+   * Check if a specific item is currently active.
+   * @param id - The ID of the item to check
+   * @returns true if the item is active, false otherwise
+   * 
+   * @example
+   * ```tsx
+   * const isActive = player.isItemActive("track-1");
+   * ```
+   */
   isItemActive: (id: string | number | null) => boolean
+
+  /**
+   * Set the active audio item without playing it.
+   * @param item - The audio item to set as active, or null to clear
+   * @returns Promise that resolves when the item is loaded
+   * 
+   * @example
+   * ```tsx
+   * await player.setActiveItem({ id: "track-1", src: "/audio.mp3" });
+   * ```
+   */
   setActiveItem: (item: AudioPlayerItem<TData> | null) => Promise<void>
+
+  /**
+   * Play audio, optionally setting a new active item.
+   * @param item - Optional audio item to play. If not provided, plays/resumes current item
+   * @returns Promise that resolves when playback starts
+   * 
+   * @example
+   * ```tsx
+   * // Play current item or resume if paused
+   * await player.play();
+   * 
+   * // Play a specific item
+   * await player.play({ id: "track-1", src: "/audio.mp3" });
+   * ```
+   */
   play: (item?: AudioPlayerItem<TData> | null) => Promise<void>
+
+  /**
+   * Pause the current audio playback.
+   * 
+   * @example
+   * ```tsx
+   * player.pause();
+   * ```
+   */
   pause: () => void
+
+  /**
+   * Seek to a specific time position in the current audio.
+   * @param time - Time in seconds to seek to
+   * 
+   * @example
+   * ```tsx
+   * // Seek to 30 seconds
+   * player.seek(30);
+   * ```
+   */
   seek: (time: number) => void
+
+  /**
+   * Set the playback rate for the current audio.
+   * @param rate - Playback rate multiplier (1.0 = normal, 2.0 = double speed, 0.5 = half speed)
+   * 
+   * @example
+   * ```tsx
+   * // Set to double speed
+   * player.setPlaybackRate(2.0);
+   * ```
+   */
   setPlaybackRate: (rate: number) => void
 }
 
@@ -99,9 +247,32 @@ export const useAudioPlayerTime = () => {
   return time
 }
 
+/**
+ * Audio player context provider that manages audio playback state.
+ * 
+ * Wraps your application or component tree to provide audio player functionality
+ * to child components via the useAudioPlayer hook.
+ * 
+ * @template TData - Type of additional data associated with audio items
+ * 
+ * @example
+ * ```tsx
+ * function App() {
+ *   return (
+ *     <AudioPlayerProvider>
+ *       <AudioPlayerButton item={{ id: "track-1", src: "/audio.mp3" }} />
+ *       <AudioPlayerProgress />
+ *     </AudioPlayerProvider>
+ *   );
+ * }
+ * ```
+ */
 export function AudioPlayerProvider<TData = unknown>({
   children,
 }: {
+  /**
+   * Child components that will have access to the audio player context.
+   */
   children: ReactNode
 }) {
   const audioRef = useRef<HTMLAudioElement>(null)

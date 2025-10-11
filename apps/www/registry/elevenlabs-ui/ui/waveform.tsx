@@ -1642,17 +1642,90 @@ export const LiveMicrophoneWaveform = ({
   )
 }
 
+/**
+ * Props for the RecordingWaveform component - a recording interface with timeline scrubbing.
+ * 
+ * Records audio from the microphone and displays it as a waveform with
+ * interactive scrubbing capabilities. Perfect for voice recording apps.
+ * 
+ * @example
+ * ```tsx
+ * <RecordingWaveform
+ *   recording={isRecording}
+ *   onRecordingComplete={(data) => setRecordedAudio(data)}
+ *   showHandle={true}
+ *   sensitivity={1.5}
+ * />
+ * ```
+ */
 export type RecordingWaveformProps = Omit<
   WaveformProps,
   "data" | "onBarClick"
 > & {
+  /**
+   * Whether the component is currently recording audio.
+   * @default false
+   */
   recording?: boolean
+
+  /**
+   * FFT (Fast Fourier Transform) size for audio analysis.
+   * Higher values provide more frequency detail but use more CPU.
+   * Must be a power of 2 (256, 512, 1024, etc.).
+   * @default 256
+   */
   fftSize?: number
+
+  /**
+   * Smoothing time constant for audio analysis (0-1).
+   * Higher values create smoother animations but slower response.
+   * @default 0.8
+   */
   smoothingTimeConstant?: number
+
+  /**
+   * Audio sensitivity multiplier (0-10).
+   * Higher values make the waveform more responsive to quiet sounds.
+   * @default 1
+   */
   sensitivity?: number
+
+  /**
+   * Callback fired when microphone access fails or other errors occur.
+   * @example
+   * ```tsx
+   * onError={(error) => {
+   *   console.error('Recording error:', error);
+   *   showErrorNotification('Microphone access denied');
+   * }}
+   * ```
+   */
   onError?: (error: Error) => void
+
+  /**
+   * Callback fired when recording is completed.
+   * Provides the recorded audio data as an array of amplitude values.
+   * @example
+   * ```tsx
+   * onRecordingComplete={(data) => {
+   *   console.log(`Recorded ${data.length} audio samples`);
+   *   setRecordedAudio(data);
+   * }}
+   * ```
+   */
   onRecordingComplete?: (data: number[]) => void
+
+  /**
+   * Update rate for audio visualization in milliseconds.
+   * Lower values provide smoother animation but use more CPU.
+   * @default 50
+   */
   updateRate?: number
+
+  /**
+   * Whether to show a draggable handle for timeline scrubbing.
+   * @default true
+   */
   showHandle?: boolean
 }
 
