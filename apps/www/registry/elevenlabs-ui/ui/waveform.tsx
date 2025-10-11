@@ -11,16 +11,94 @@ import {
 
 import { cn } from "@/lib/utils"
 
+/**
+ * Props for the Waveform component - a static audio waveform visualizer.
+ * 
+ * Displays audio data as vertical bars with customizable styling and interactivity.
+ * Perfect for showing pre-recorded audio or static audio data.
+ * 
+ * @example
+ * ```tsx
+ * <Waveform
+ *   data={[0.2, 0.5, 0.8, 0.3, 0.6]}
+ *   barWidth={4}
+ *   barGap={2}
+ *   height={128}
+ *   onBarClick={(index, value) => console.log(`Bar ${index}: ${value}`)}
+ * />
+ * ```
+ */
 export type WaveformProps = HTMLAttributes<HTMLDivElement> & {
+  /**
+   * Array of audio amplitude values (0-1) to display as bars.
+   * Each value represents the height of a corresponding bar.
+   * @example [0.2, 0.5, 0.8, 0.3, 0.6]
+   */
   data?: number[]
+
+  /**
+   * Width of each bar in pixels.
+   * @default 4
+   */
   barWidth?: number
+
+  /**
+   * Gap between bars in pixels.
+   * @default 2
+   */
   barGap?: number
+
+  /**
+   * Border radius for rounded bar corners in pixels.
+   * Set to 0 for square bars.
+   * @default 2
+   */
   barRadius?: number
+
+  /**
+   * Color of the waveform bars.
+   * If not provided, uses the CSS `--foreground` variable.
+   * @example "#3b82f6"
+   */
   barColor?: string
+
+  /**
+   * Whether to fade the edges of the waveform for a softer look.
+   * @default true
+   */
   fadeEdges?: boolean
+
+  /**
+   * Width of the fade effect on each edge in pixels.
+   * Only applies when fadeEdges is true.
+   * @default 24
+   */
   fadeWidth?: number
+
+  /**
+   * Height of the waveform container.
+   * Can be a number (pixels) or CSS string.
+   * @default 128
+   * @example 200 or "12rem"
+   */
   height?: string | number
+
+  /**
+   * Whether the waveform is in an active state (affects styling).
+   * @default false
+   */
   active?: boolean
+
+  /**
+   * Callback fired when a bar is clicked.
+   * Provides the bar index and its value.
+   * @example
+   * ```tsx
+   * onBarClick={(index, value) => {
+   *   console.log(`Clicked bar ${index} with value ${value}`);
+   * }}
+   * ```
+   */
   onBarClick?: (index: number, value: number) => void
 }
 
@@ -153,12 +231,45 @@ export const Waveform = ({
   )
 }
 
+/**
+ * Props for the ScrollingWaveform component - an animated scrolling waveform.
+ * 
+ * Creates a continuous scrolling effect with animated bars moving from right to left.
+ * Perfect for real-time audio visualization or loading states.
+ * 
+ * @example
+ * ```tsx
+ * <ScrollingWaveform
+ *   speed={50}
+ *   barCount={60}
+ *   data={[0.2, 0.5, 0.8]}
+ *   height={64}
+ * />
+ * ```
+ */
 export type ScrollingWaveformProps = Omit<
   WaveformProps,
   "data" | "onBarClick"
 > & {
+  /**
+   * Scroll speed in pixels per second.
+   * Higher values create faster scrolling animation.
+   * @default 50
+   */
   speed?: number
+
+  /**
+   * Maximum number of bars to display simultaneously.
+   * More bars provide smoother animation but use more memory.
+   * @default 60
+   */
   barCount?: number
+
+  /**
+   * Optional audio data array to drive the animation.
+   * If not provided, generates random animated data.
+   * @example [0.2, 0.5, 0.8, 0.3, 0.6]
+   */
   data?: number[]
 }
 
@@ -360,10 +471,51 @@ export const ScrollingWaveform = ({
   )
 }
 
+/**
+ * Props for the AudioScrubber component - an interactive audio timeline scrubber.
+ * 
+ * Combines a waveform display with seek functionality, allowing users to
+ * click and drag to navigate through audio content.
+ * 
+ * @example
+ * ```tsx
+ * <AudioScrubber
+ *   data={waveformData}
+ *   currentTime={45}
+ *   duration={180}
+ *   onSeek={(time) => audio.currentTime = time}
+ *   showHandle={true}
+ * />
+ * ```
+ */
 export type AudioScrubberProps = WaveformProps & {
+  /**
+   * Current playback position in seconds.
+   * @default 0
+   */
   currentTime?: number
+
+  /**
+   * Total duration of the audio in seconds.
+   * @default 100
+   */
   duration?: number
+
+  /**
+   * Callback fired when user seeks to a new position.
+   * @example
+   * ```tsx
+   * onSeek={(time) => {
+   *   audioElement.currentTime = time;
+   * }}
+   * ```
+   */
   onSeek?: (time: number) => void
+
+  /**
+   * Whether to show a draggable handle on the progress indicator.
+   * @default true
+   */
   showHandle?: boolean
 }
 
@@ -483,12 +635,67 @@ export const AudioScrubber = ({
   )
 }
 
+/**
+ * Props for the MicrophoneWaveform component - a live microphone audio visualizer.
+ * 
+ * Connects to the user's microphone and displays real-time audio levels
+ * as an animated waveform. Perfect for voice recording interfaces.
+ * 
+ * @example
+ * ```tsx
+ * <MicrophoneWaveform
+ *   active={isRecording}
+ *   processing={isProcessing}
+ *   sensitivity={1.5}
+ *   onError={(error) => console.error('Microphone error:', error)}
+ * />
+ * ```
+ */
 export type MicrophoneWaveformProps = WaveformProps & {
+  /**
+   * Whether the microphone is actively recording.
+   * @default false
+   */
   active?: boolean
+
+  /**
+   * Whether audio is being processed (shows animated state).
+   * @default false
+   */
   processing?: boolean
+
+  /**
+   * FFT (Fast Fourier Transform) size for audio analysis.
+   * Higher values provide more frequency detail but use more CPU.
+   * Must be a power of 2 (256, 512, 1024, etc.).
+   * @default 256
+   */
   fftSize?: number
+
+  /**
+   * Smoothing time constant for audio analysis (0-1).
+   * Higher values create smoother animations but slower response.
+   * @default 0.8
+   */
   smoothingTimeConstant?: number
+
+  /**
+   * Audio sensitivity multiplier (0-10).
+   * Higher values make the waveform more responsive to quiet sounds.
+   * @default 1
+   */
   sensitivity?: number
+
+  /**
+   * Callback fired when microphone access fails or other errors occur.
+   * @example
+   * ```tsx
+   * onError={(error) => {
+   *   console.error('Microphone error:', error);
+   *   showErrorMessage('Microphone access denied');
+   * }}
+   * ```
+   */
   onError?: (error: Error) => void
 }
 
@@ -677,8 +884,34 @@ export const MicrophoneWaveform = ({
   return <Waveform data={data} {...props} />
 }
 
+/**
+ * Props for the StaticWaveform component - a deterministic waveform generator.
+ * 
+ * Generates a consistent waveform pattern using a seed value, perfect for
+ * placeholders or demo content that needs to look the same across renders.
+ * 
+ * @example
+ * ```tsx
+ * <StaticWaveform
+ *   bars={40}
+ *   seed={42}
+ *   height={64}
+ *   barWidth={3}
+ * />
+ * ```
+ */
 export type StaticWaveformProps = WaveformProps & {
+  /**
+   * Number of bars to generate in the waveform.
+   * @default 40
+   */
   bars?: number
+
+  /**
+   * Seed value for deterministic random generation.
+   * Same seed will always produce identical waveform patterns.
+   * @default 42
+   */
   seed?: number
 }
 
@@ -699,21 +932,123 @@ export const StaticWaveform = ({
   return <Waveform data={data} {...props} />
 }
 
+/**
+ * Props for the LiveMicrophoneWaveform component - an advanced live audio visualizer with playback.
+ * 
+ * Combines real-time microphone input with scrolling waveform visualization,
+ * audio recording, and playback scrubbing capabilities. Perfect for voice
+ * recording applications with timeline navigation.
+ * 
+ * @example
+ * ```tsx
+ * <LiveMicrophoneWaveform
+ *   active={isRecording}
+ *   fftSize={512}
+ *   historySize={200}
+ *   enableAudioPlayback={true}
+ *   onError={(error) => console.error(error)}
+ * />
+ * ```
+ */
 export type LiveMicrophoneWaveformProps = Omit<
   ScrollingWaveformProps,
   "barCount"
 > & {
+  /**
+   * Whether the microphone is actively recording.
+   * @default false
+   */
   active?: boolean
+
+  /**
+   * FFT (Fast Fourier Transform) size for audio analysis.
+   * Higher values provide more frequency detail but use more CPU.
+   * Must be a power of 2 (256, 512, 1024, etc.).
+   * @default 256
+   */
   fftSize?: number
+
+  /**
+   * Smoothing time constant for audio analysis (0-1).
+   * Higher values create smoother animations but slower response.
+   * @default 0.8
+   */
   smoothingTimeConstant?: number
+
+  /**
+   * Audio sensitivity multiplier (0-10).
+   * Higher values make the waveform more responsive to quiet sounds.
+   * @default 1
+   */
   sensitivity?: number
+
+  /**
+   * Callback fired when microphone access fails or other errors occur.
+   * @example
+   * ```tsx
+   * onError={(error) => {
+   *   console.error('Audio error:', error);
+   *   setErrorState(true);
+   * }}
+   * ```
+   */
   onError?: (error: Error) => void
+
+  /**
+   * Maximum number of audio samples to keep in history.
+   * Larger values allow longer recordings but use more memory.
+   * @default 150
+   */
   historySize?: number
+
+  /**
+   * Update rate for audio visualization in milliseconds.
+   * Lower values provide smoother animation but use more CPU.
+   * @default 50
+   */
   updateRate?: number
+
+  /**
+   * External reference to store audio history data.
+   * Useful for persisting recording data across component unmounts.
+   * @example
+   * ```tsx
+   * const historyRef = useRef<number[]>([]);
+   * <LiveMicrophoneWaveform savedHistoryRef={historyRef} />
+   * ```
+   */
   savedHistoryRef?: React.MutableRefObject<number[]>
+
+  /**
+   * External drag offset state for timeline scrubbing.
+   * Used with setDragOffset to control playback position.
+   * @example 0
+   */
   dragOffset?: number
+
+  /**
+   * Function to update drag offset for timeline scrubbing.
+   * Called when user drags to scrub through recorded audio.
+   * @example
+   * ```tsx
+   * const [dragOffset, setDragOffset] = useState(0);
+   * <LiveMicrophoneWaveform dragOffset={dragOffset} setDragOffset={setDragOffset} />
+   * ```
+   */
   setDragOffset?: (offset: number) => void
+
+  /**
+   * Whether to enable audio recording and playback functionality.
+   * When true, records audio during active state and allows playback scrubbing.
+   * @default true
+   */
   enableAudioPlayback?: boolean
+
+  /**
+   * Playback rate multiplier for audio playback.
+   * 1.0 is normal speed, 2.0 is double speed, 0.5 is half speed.
+   * @default 1
+   */
   playbackRate?: number
 }
 

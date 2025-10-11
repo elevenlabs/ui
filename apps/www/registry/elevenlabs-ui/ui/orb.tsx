@@ -5,21 +5,144 @@ import { useTexture } from "@react-three/drei"
 import { Canvas, useFrame, useThree } from "@react-three/fiber"
 import * as THREE from "three"
 
+/**
+ * State of the voice agent that controls orb animation behavior.
+ * - `null`: idle pulsing animation
+ * - `"thinking"`: gentle breathing animation while processing
+ * - `"listening"`: active input response visualization
+ * - `"talking"`: dynamic output visualization
+ */
 export type AgentState = null | "thinking" | "listening" | "talking"
 
+/**
+ * Props for the Orb component - a 3D animated orb visualization for voice agents.
+ * 
+ * The orb responds to audio input/output and agent states with fluid animations,
+ * providing visual feedback for voice interactions.
+ * 
+ * @example
+ * ```tsx
+ * <Orb
+ *   agentState="talking"
+ *   colors={["#CADCFC", "#A0B9D1"]}
+ *   volumeMode="auto"
+ *   className="h-32 w-32"
+ * />
+ * ```
+ */
 type OrbProps = {
+  /**
+   * Color palette for the orb gradient.
+   * First color is darker, second is lighter.
+   * @default ["#CADCFC", "#A0B9D1"]
+   */
   colors?: [string, string]
+
+  /**
+   * Reference to dynamically update colors at runtime.
+   * When provided, colors will be updated from this ref instead of the static colors prop.
+   * Useful for real-time color changes or theme switching.
+   * @example
+   * ```tsx
+   * const colorsRef = useRef<[string, string]>(["#FF0000", "#00FF00"]);
+   * <Orb colorsRef={colorsRef} />
+   * ```
+   */
   colorsRef?: React.RefObject<[string, string]>
+
+  /**
+   * Debounce delay for canvas resize events in milliseconds.
+   * Higher values reduce resize event frequency but may cause visual lag.
+   * @default 100
+   */
   resizeDebounce?: number
+
+  /**
+   * Seed value for deterministic random animations.
+   * Same seed will produce identical animation patterns.
+   * Useful for consistent visual behavior across renders.
+   * @example 42
+   */
   seed?: number
+
+  /**
+   * Current state of the voice agent controlling orb behavior.
+   * @default null
+   */
   agentState?: AgentState
+
+  /**
+   * Volume input mode for orb animations.
+   * - `"auto"`: Uses predefined animations based on agentState
+   * - `"manual"`: Uses manualInput/manualOutput values or refs
+   * @default "auto"
+   */
   volumeMode?: "auto" | "manual"
+
+  /**
+   * Manual input volume level (0-1) when volumeMode is "manual".
+   * Takes precedence over inputVolumeRef and getInputVolume.
+   * @example 0.5
+   */
   manualInput?: number
+
+  /**
+   * Manual output volume level (0-1) when volumeMode is "manual".
+   * Takes precedence over outputVolumeRef and getOutputVolume.
+   * @example 0.7
+   */
   manualOutput?: number
+
+  /**
+   * Reference to input volume value for real-time updates.
+   * Used when volumeMode is "manual" and manualInput is not provided.
+   * @example
+   * ```tsx
+   * const inputVolumeRef = useRef(0);
+   * // Update ref.current based on microphone input
+   * <Orb inputVolumeRef={inputVolumeRef} volumeMode="manual" />
+   * ```
+   */
   inputVolumeRef?: React.RefObject<number>
+
+  /**
+   * Reference to output volume value for real-time updates.
+   * Used when volumeMode is "manual" and manualOutput is not provided.
+   * @example
+   * ```tsx
+   * const outputVolumeRef = useRef(0);
+   * // Update ref.current based on audio output
+   * <Orb outputVolumeRef={outputVolumeRef} volumeMode="manual" />
+   * ```
+   */
   outputVolumeRef?: React.RefObject<number>
+
+  /**
+   * Function to get current input volume level (0-1).
+   * Called on each frame when volumeMode is "manual" and no refs are provided.
+   * @example
+   * ```tsx
+   * const getInputVolume = () => microphone.volume;
+   * <Orb getInputVolume={getInputVolume} volumeMode="manual" />
+   * ```
+   */
   getInputVolume?: () => number
+
+  /**
+   * Function to get current output volume level (0-1).
+   * Called on each frame when volumeMode is "manual" and no refs are provided.
+   * @example
+   * ```tsx
+   * const getOutputVolume = () => speaker.volume;
+   * <Orb getOutputVolume={getOutputVolume} volumeMode="manual" />
+   * ```
+   */
   getOutputVolume?: () => number
+
+  /**
+   * Additional CSS classes for the orb container.
+   * @example "h-32 w-32 rounded-full"
+   */
   className?: string
 }
 
