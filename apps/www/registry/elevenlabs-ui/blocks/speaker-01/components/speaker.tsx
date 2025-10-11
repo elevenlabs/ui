@@ -2,7 +2,16 @@
 
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react"
 import Link from "next/link"
-import { Music, SkipBack, SkipForward, Sparkles, Volume2 } from "lucide-react"
+import {
+  Music,
+  SkipBack,
+  SkipForward,
+  Sparkles,
+  Volume,
+  Volume1,
+  Volume2,
+  VolumeX,
+} from "lucide-react"
 
 import { cn } from "@/registry/elevenlabs-ui/lib/utils"
 import {
@@ -217,13 +226,24 @@ const VolumeSlider = memo(
     volume: number
     setVolume: (value: number | ((prev: number) => number)) => void
   }) => {
+    const [isDragging, setIsDragging] = useState(false)
+
+    const getVolumeIcon = () => {
+      if (volume === 0) return VolumeX
+      if (volume <= 0.33) return Volume
+      if (volume <= 0.66) return Volume1
+      return Volume2
+    }
+
+    const VolumeIcon = getVolumeIcon()
+
     return (
       <div className="flex items-center justify-center gap-4 pt-4">
         <button
           onClick={() => setVolume((prev: number) => (prev > 0 ? 0 : 0.7))}
           className="text-muted-foreground hover:text-foreground transition-colors"
         >
-          <Volume2
+          <VolumeIcon
             className={cn(
               "h-4 w-4 transition-all",
               volume === 0 && "text-muted-foreground/50"
@@ -233,6 +253,7 @@ const VolumeSlider = memo(
         <div
           className="volume-slider bg-foreground/10 group relative h-1 w-48 cursor-pointer rounded-full"
           onClick={(e) => {
+            if (isDragging) return
             const rect = e.currentTarget.getBoundingClientRect()
             const x = Math.max(
               0,
@@ -241,7 +262,17 @@ const VolumeSlider = memo(
             setVolume(x)
           }}
           onMouseDown={(e) => {
+            e.preventDefault()
+            setIsDragging(true)
             const sliderRect = e.currentTarget.getBoundingClientRect()
+
+            // Set initial volume immediately
+            const initialX = Math.max(
+              0,
+              Math.min(1, (e.clientX - sliderRect.left) / sliderRect.width)
+            )
+            setVolume(initialX)
+
             const handleMove = (e: MouseEvent) => {
               const x = Math.max(
                 0,
@@ -250,6 +281,7 @@ const VolumeSlider = memo(
               setVolume(x)
             }
             const handleUp = () => {
+              setIsDragging(false)
               document.removeEventListener("mousemove", handleMove)
               document.removeEventListener("mouseup", handleUp)
             }
@@ -258,7 +290,10 @@ const VolumeSlider = memo(
           }}
         >
           <div
-            className="bg-primary absolute top-0 left-0 h-full rounded-full transition-all"
+            className={cn(
+              "bg-primary absolute top-0 left-0 h-full rounded-full",
+              !isDragging && "transition-all duration-150"
+            )}
             style={{ width: `${volume * 100}%` }}
           />
         </div>
