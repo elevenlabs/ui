@@ -241,10 +241,10 @@ export default function Page() {
       setTextInput("")
       setAgentState("connecting")
 
-      setMessages([userMessage])
-
       try {
         await startConversation(true, true)
+        // Add message once converstation started
+        setMessages([userMessage])
         // Send message after connection is established
         conversation.sendUserMessage(messageToSend)
       } catch (error) {
