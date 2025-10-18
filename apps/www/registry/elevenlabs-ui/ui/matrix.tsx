@@ -517,9 +517,9 @@ export const Matrix = React.forwardRef<HTMLDivElement, MatrixProps>(
         >
           <defs>
             <radialGradient id="matrix-pixel-on" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stopColor="currentColor" stopOpacity="1" />
-              <stop offset="70%" stopColor="currentColor" stopOpacity="0.85" />
-              <stop offset="100%" stopColor="currentColor" stopOpacity="0.6" />
+              <stop offset="0%" stopColor="var(--matrix-on)" stopOpacity="1" />
+              <stop offset="70%" stopColor="var(--matrix-on)" stopOpacity="0.85" />
+              <stop offset="100%" stopColor="var(--matrix-on)" stopOpacity="0.6" />
             </radialGradient>
 
             <radialGradient id="matrix-pixel-off" cx="50%" cy="50%" r="50%">
