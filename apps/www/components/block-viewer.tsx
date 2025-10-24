@@ -215,9 +215,7 @@ function BlockViewerToolbar() {
           }}
         >
           {isCopied ? <Check /> : <Terminal />}
-          <span>
-            npx @elevenlabs/cli@latest components add {item.name}
-          </span>
+          <span>npx @elevenlabs/cli@latest components add {item.name}</span>
         </Button>
         <Separator orientation="vertical" className="mx-1 !h-4" />
         <OpenInV0Button name={item.name} />
