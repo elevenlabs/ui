@@ -165,7 +165,7 @@ export const VoiceButton = React.forwardRef<
 
         <div
           className={cn(
-            "relative flex shrink-0 items-center justify-center overflow-hidden transition-all duration-300",
+            "relative box-content flex shrink-0 items-center justify-center overflow-hidden transition-all duration-300",
             size === "icon"
               ? "absolute inset-0 rounded-sm border-0"
               : "h-5 w-24 rounded-sm border",
