@@ -322,6 +322,24 @@ export const Index: Record<string, any> = {
     categories: ["audio"],
     meta: {"iframeHeight":"600px","container":"w-full bg-surface min-h-svh flex px-4 py-12 items-center md:py-20 justify-center min-w-0","mobile":"component"},
   },
+  "realtime-transcriber-01": {
+    name: "realtime-transcriber-01",
+    description: "Scribe V2 Realtime Transcriber",
+    type: "registry:block",
+    registryDependencies: ["https://ui.elevenlabs.io/r/voice-button.json","button","scroll-area"],
+    files: [{
+      path: "registry/elevenlabs-ui/blocks/realtime-transcriber-01/page.tsx",
+      type: "registry:page",
+      target: "app/realtime-transcriber-01/page.tsx"
+    }],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/elevenlabs-ui/blocks/realtime-transcriber-01/page.tsx")
+      const exportName = Object.keys(mod).find(key => typeof mod[key] === 'function' || typeof mod[key] === 'object') || item.name
+      return { default: mod.default || mod[exportName] }
+    }),
+    categories: ["audio"],
+    meta: {"iframeHeight":"800px","container":"w-full bg-surface min-h-svh flex px-4 py-12 items-center md:py-20 justify-center min-w-0","mobile":"component"},
+  },
   "voice-chat-01": {
     name: "voice-chat-01",
     description: "Voice chat 1",

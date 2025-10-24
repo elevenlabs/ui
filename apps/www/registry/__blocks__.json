@@ -10,6 +10,11 @@
     "categories": ["audio"]
   },
   {
+    "name": "realtime-transcriber-01",
+    "description": "Scribe V2 Realtime Transcriber",
+    "categories": ["audio"]
+  },
+  {
     "name": "voice-chat-01",
     "description": "Voice chat 1",
     "categories": ["agents"]

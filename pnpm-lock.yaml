@@ -130,8 +130,8 @@ importers:
         specifier: ^3.2.2
         version: 3.2.2(react@19.1.0)
       '@elevenlabs/elevenlabs-js':
-        specifier: ^2.16.0
-        version: 2.16.0
+        specifier: ^2.20.1
+        version: 2.20.1
       '@elevenlabs/react':
         specifier: ^0.8.0
         version: 0.8.0(@types/dom-mediacapture-record@1.0.22)(react@19.1.0)
@@ -817,8 +817,8 @@ packages:
   '@elevenlabs/client@0.8.0':
     resolution: {integrity: sha512-QjBvC0fdCS58TCcnIEz34ZXjxdzRW272lRR61dYZIHW0TR4nISFFlQLuPWHIpHA7Aw4yB/zzKYX7JVg4ms3/CQ==}
 
-  '@elevenlabs/elevenlabs-js@2.16.0':
-    resolution: {integrity: sha512-XJGZ1nBkZCBJd9EJs8Pjdc9DidMysgY+KP9Ik1pGCNBkYEZ39P67YaXVNwIUkNS474AbezaAfNsueUWs1DPs/g==}
+  '@elevenlabs/elevenlabs-js@2.20.1':
+    resolution: {integrity: sha512-0CY9EbBtzFiDw/FrsVFSRNgLTJoDbbw4HM51AgMYODweqZFpkMrUi0fCPHIeb6nJOrwg20aS4xj4GsTXCs3nTw==}
     engines: {node: '>=18.0.0'}
 
   '@elevenlabs/react@0.8.0':
@@ -8749,12 +8749,15 @@ snapshots:
     transitivePeerDependencies:
       - '@types/dom-mediacapture-record'
 
-  '@elevenlabs/elevenlabs-js@2.16.0':
+  '@elevenlabs/elevenlabs-js@2.20.1':
     dependencies:
       command-exists: 1.2.9
       node-fetch: 2.7.0
+      ws: 8.18.3
     transitivePeerDependencies:
+      - bufferutil
       - encoding
+      - utf-8-validate
 
   '@elevenlabs/react@0.8.0(@types/dom-mediacapture-record@1.0.22)(react@19.1.0)':
     dependencies:

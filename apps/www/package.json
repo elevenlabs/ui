@@ -22,7 +22,7 @@
     "@dnd-kit/modifiers": "^9.0.0",
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
-    "@elevenlabs/elevenlabs-js": "^2.16.0",
+    "@elevenlabs/elevenlabs-js": "^2.20.1",
     "@elevenlabs/react": "^0.8.0",
     "@faker-js/faker": "^8.2.0",
     "@hookform/resolvers": "^3.10.0",

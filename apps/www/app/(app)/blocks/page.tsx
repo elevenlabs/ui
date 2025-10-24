@@ -5,6 +5,7 @@ export const revalidate = false
 
 const FEATURED_BLOCKS = [
   "voice-chat-01",
+  "realtime-transcriber-01",
   "pong-01",
   "transcriber-01",
   "speaker-01",

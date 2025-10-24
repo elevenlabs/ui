@@ -65,6 +65,32 @@ export const blocks: Registry["items"] = [
     categories: ["audio"],
   },
   {
+    name: "realtime-transcriber-01",
+    description: "Scribe V2 Realtime Transcriber",
+    type: "registry:block",
+    registryDependencies: [
+      "https://ui.elevenlabs.io/r/voice-button.json",
+      "button",
+      "scroll-area",
+      "https://ui.elevenlabs.io/r/shimmering-text.json",
+    ],
+    dependencies: ["streamdown"],
+    files: [
+      {
+        path: "blocks/realtime-transcriber-01/page.tsx",
+        type: "registry:page",
+        target: "app/realtime-transcriber-01/page.tsx",
+      },
+    ],
+    meta: {
+      iframeHeight: "800px",
+      container:
+        "w-full bg-surface min-h-svh flex px-4 py-12 items-center md:py-20 justify-center min-w-0",
+      mobile: "component",
+    },
+    categories: ["audio"],
+  },
+  {
     name: "voice-chat-01",
     description: "Voice chat 1",
     type: "registry:block",
