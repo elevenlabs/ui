@@ -64,8 +64,18 @@ function TranscriptViewerProvider({
   )
 }
 
-export type TranscriptViewerContainerProps = {
+type AudioType =
+  | "audio/mpeg"
+  | "audio/wav"
+  | "audio/ogg"
+  | "audio/mp3"
+  | "audio/m4a"
+  | "audio/aac"
+  | "audio/webm"
+
+type TranscriptViewerContainerProps = {
   audioSrc: string
+  audioType: AudioType
   alignment: CharacterAlignmentResponseModel
   segmentComposer?: SegmentComposer
   hideAudioTags?: boolean
@@ -78,6 +88,7 @@ export type TranscriptViewerContainerProps = {
 
 function TranscriptViewerContainer({
   audioSrc,
+  audioType = "audio/mpeg",
   alignment,
   segmentComposer,
   hideAudioTags = true,
@@ -107,7 +118,9 @@ function TranscriptViewerContainer({
     () => ({
       ref: audioRef,
       controls: false,
-      children: <source src={audioSrc} type="audio/mpeg" />,
+      preload: "metadata" as const,
+      src: audioSrc,
+      children: <source src={audioSrc} type={audioType} />,
     }),
     [audioRef, audioSrc]
   )
@@ -290,9 +303,14 @@ function TranscriptViewerAudio({
   )
 }
 
-export type TranscriptViewerPlayPauseButtonProps = ComponentPropsWithoutRef<
-  typeof Button
->
+type RenderChildren = (state: { isPlaying: boolean }) => ReactNode
+
+type TranscriptViewerPlayPauseButtonProps = Omit<
+  ComponentPropsWithoutRef<typeof Button>,
+  "children"
+> & {
+  children?: ReactNode | RenderChildren
+}
 
 function TranscriptViewerPlayPauseButton({
   className,
@@ -309,6 +327,11 @@ function TranscriptViewerPlayPauseButton({
     onClick?.(event)
   }
 
+  const content =
+    typeof children === "function"
+      ? (children as RenderChildren)({ isPlaying })
+      : children
+
   return (
     <Button
       data-slot="transcript-play-pause-button"
@@ -321,7 +344,7 @@ function TranscriptViewerPlayPauseButton({
       onClick={handleClick}
       {...props}
     >
-      {children || <Icon className="size-5" />}
+      {content ?? <Icon className="size-5" />}
     </Button>
   )
 }
