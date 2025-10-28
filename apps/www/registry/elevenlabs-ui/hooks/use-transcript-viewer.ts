@@ -502,7 +502,7 @@ function useTranscriptViewer({
   }
 }
 
-export { composeSegments, useTranscriptViewer }
+export { useTranscriptViewer }
 export type {
   UseTranscriptViewerProps,
   UseTranscriptViewerResult,
