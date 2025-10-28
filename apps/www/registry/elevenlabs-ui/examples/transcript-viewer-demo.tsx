@@ -1,71 +1,86 @@
-import { cn } from "@/lib/utils"
-import {
-  ScrubBarContainer,
-  ScrubBarProgress,
-  ScrubBarThumb,
-  ScrubBarTrack,
-} from "@/registry/elevenlabs-ui/ui/scrub-bar"
+"use client"
+
+import { useEffect, useState } from "react"
+import { PauseIcon, PlayIcon } from "lucide-react"
+
 import {
   TranscriptViewerAudio,
   TranscriptViewerContainer,
   TranscriptViewerPlayPauseButton,
+  TranscriptViewerScrubBar,
   TranscriptViewerWords,
-  useTranscriptViewerContext,
   type CharacterAlignmentResponseModel,
 } from "@/registry/elevenlabs-ui/ui/transcript-viewer"
 
-type Props = {
-  audioSrc: string
-  alignment: CharacterAlignmentResponseModel
-}
+import { Skeleton } from "../ui/skeleton"
 
-export function Example({ audioSrc, alignment }: Props) {
-  return (
-    <TranscriptViewerContainer
-      className="max-w-2xl rounded-xl border bg-white p-4"
-      audioSrc={audioSrc}
-      alignment={alignment}
-    >
-      <TranscriptViewerAudio className="sr-only" />
-      <TranscriptViewerWords />
-      <div className="flex items-center gap-3">
-        <TranscriptViewerPlayPauseButton />
-        <CustomScrubBar />
-      </div>
-    </TranscriptViewerContainer>
-  )
-}
+const TranscriptViewerDemo = () => {
+  const audioSrc = "/sounds/transcript-viewer/transcript-viewer-audio.mp3"
+  const [alignment, setAlignment] = useState<
+    CharacterAlignmentResponseModel | undefined
+  >(undefined)
 
-// Note that the custom scrub bar is a separate component, this is intentional to ensure the context is defined.
-function CustomScrubBar() {
-  const {
-    duration,
-    currentTime,
-    seekToTime,
-    startScrubbing,
-    endScrubbing,
-    isScrubbing,
-  } = useTranscriptViewerContext()
+  useEffect(() => {
+    fetch("/sounds/transcript-viewer/transcript-viewer-alignment.json")
+      .then((res) => res.json())
+      .then((data) => setAlignment(data))
+  }, [])
 
   return (
-    <ScrubBarContainer
-      duration={duration}
-      value={currentTime}
-      onScrub={seekToTime}
-      onScrubStart={startScrubbing}
-      onScrubEnd={endScrubbing}
-    >
-      <ScrubBarTrack className="group/scrub-bar">
-        <ScrubBarProgress />
-        <ScrubBarThumb
-          className={cn(
-            "bg-black opacity-0 transition-opacity duration-75 group-hover/scrub-bar:opacity-100",
-            isScrubbing && "opacity-100"
+    <div className="flex w-full flex-col gap-4">
+      <TranscriptViewerContainer
+        key={audioSrc}
+        className="bg-card w-full rounded-xl border p-4"
+        audioSrc={audioSrc}
+        audioType="audio/mpeg"
+        alignment={
+          alignment ?? {
+            characters: [],
+            characterStartTimesSeconds: [],
+            characterEndTimesSeconds: [],
+          }
+        }
+      >
+        <TranscriptViewerAudio className="sr-only" />
+        {alignment ? (
+          <>
+            <TranscriptViewerWords />
+            <div className="flex items-center gap-3">
+              <TranscriptViewerScrubBar />
+            </div>
+          </>
+        ) : (
+          <div className="flex w-full flex-col gap-3">
+            <Skeleton className="h-5 w-full" />
+            <Skeleton className="mb-4 h-5 w-1/2" />
+            <Skeleton className="h-2 w-full" />
+            <div className="-mt-1 flex items-center justify-between">
+              <Skeleton className="h-2 w-6" />
+              <Skeleton className="h-2 w-6" />
+            </div>
+          </div>
+        )}
+        <TranscriptViewerPlayPauseButton
+          className="w-full cursor-pointer"
+          size="default"
+          disabled={!alignment}
+        >
+          {({ isPlaying }) => (
+            <>
+              {isPlaying ? (
+                <>
+                  <PauseIcon className="size-4" /> Pause
+                </>
+              ) : (
+                <>
+                  <PlayIcon className="size-4" /> Play
+                </>
+              )}
+            </>
           )}
-        />
-      </ScrubBarTrack>
-    </ScrubBarContainer>
+        </TranscriptViewerPlayPauseButton>
+      </TranscriptViewerContainer>
+    </div>
   )
 }
-
-export default Example
+export default TranscriptViewerDemo
