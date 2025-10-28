@@ -182,4 +182,30 @@ export const ui: Registry["items"] = [
       },
     ],
   },
+  {
+    name: "transcript-viewer",
+    type: "registry:ui",
+    registryDependencies: [
+      "button",
+      "https://ui.elevenlabs.io/r/scrub-bar.json",
+    ],
+    devDependencies: ["@elevenlabs/elevenlabs-js"],
+    files: [
+      {
+        path: "ui/transcript-viewer.tsx",
+        type: "registry:ui",
+      },
+    ],
+  },
+  {
+    name: "scrub-bar",
+    type: "registry:ui",
+    registryDependencies: ["progress"],
+    files: [
+      {
+        path: "ui/scrub-bar.tsx",
+        type: "registry:ui",
+      },
+    ],
+  },
 ]
