@@ -48,7 +48,8 @@ Examples:
 npx @elevenlabs/cli@latest components add orb
 ```
 
-### Alternative: Use with shadcn CLI
+### Alternative: Use with shadcn/ui CLI
+
 You can also install components using the standard shadcn/ui CLI:
 ```bash
 # Install all components
