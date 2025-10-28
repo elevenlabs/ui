@@ -21,7 +21,13 @@ import {
   type UseTranscriptViewerResult,
 } from "@/registry/elevenlabs-ui/hooks/use-transcript-viewer"
 import { Button } from "@/registry/elevenlabs-ui/ui/button"
-import ScrubBar from "@/registry/elevenlabs-ui/ui/scrub-bar"
+import {
+  ScrubBarContainer,
+  ScrubBarProgress,
+  ScrubBarThumb,
+  ScrubBarTimeLabel,
+  ScrubBarTrack,
+} from "@/registry/elevenlabs-ui/ui/scrub-bar"
 
 type TranscriptGap = Extract<TranscriptSegment, { kind: "gap" }>
 
@@ -320,7 +326,7 @@ function TranscriptViewerPlayPauseButton({
 }
 
 type TranscriptViewerScrubBarProps = Omit<
-  ComponentPropsWithoutRef<typeof ScrubBar.Root>,
+  ComponentPropsWithoutRef<typeof ScrubBarContainer>,
   "duration" | "value" | "onScrub" | "onScrubStart" | "onScrubEnd"
 > & {
   showTimeLabels?: boolean
@@ -345,7 +351,7 @@ function TranscriptViewerScrubBar({
   const { duration, currentTime, seekToTime, startScrubbing, endScrubbing } =
     useTranscriptViewerContext()
   return (
-    <ScrubBar.Root
+    <ScrubBarContainer
       data-slot="transcript-scrub-bar"
       duration={duration}
       value={currentTime}
@@ -356,10 +362,10 @@ function TranscriptViewerScrubBar({
       {...props}
     >
       <div className="flex flex-1 flex-col gap-1">
-        <ScrubBar.Track className={trackClassName}>
-          <ScrubBar.Progress className={progressClassName} />
-          <ScrubBar.Thumb className={thumbClassName} />
-        </ScrubBar.Track>
+        <ScrubBarTrack className={trackClassName}>
+          <ScrubBarProgress className={progressClassName} />
+          <ScrubBarThumb className={thumbClassName} />
+        </ScrubBarTrack>
         {showTimeLabels && (
           <div
             className={cn(
@@ -367,12 +373,12 @@ function TranscriptViewerScrubBar({
               labelsClassName
             )}
           >
-            <ScrubBar.TimeLabel time={currentTime} />
-            <ScrubBar.TimeLabel time={duration - currentTime} />
+            <ScrubBarTimeLabel time={currentTime} />
+            <ScrubBarTimeLabel time={duration - currentTime} />
           </div>
         )}
       </div>
-    </ScrubBar.Root>
+    </ScrubBarContainer>
   )
 }
 
