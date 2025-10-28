@@ -58,7 +58,7 @@ function TranscriptViewerProvider({
   )
 }
 
-export type TranscriptViewerRootProps = {
+export type TranscriptViewerContainerProps = {
   audioSrc: string
   alignment: CharacterAlignmentResponseModel
   segmentComposer?: SegmentComposer
@@ -70,7 +70,7 @@ export type TranscriptViewerRootProps = {
     "onPlay" | "onPause" | "onTimeUpdate" | "onEnded" | "onDurationChange"
   >
 
-function TranscriptViewerRoot({
+function TranscriptViewerContainer({
   audioSrc,
   alignment,
   segmentComposer,
@@ -83,7 +83,7 @@ function TranscriptViewerRoot({
   onEnded,
   onDurationChange,
   ...props
-}: TranscriptViewerRootProps) {
+}: TranscriptViewerContainerProps) {
   const viewerState = useTranscriptViewer({
     alignment,
     hideAudioTags,
@@ -127,22 +127,21 @@ function TranscriptViewerRoot({
   )
 }
 
-export type TranscriptWordStatus = "spoken" | "unspoken" | "current"
-
-export interface TranscriptWordProps
+type TranscriptViewerWordStatus = "spoken" | "unspoken" | "current"
+interface TranscriptViewerWordProps
   extends Omit<HTMLAttributes<HTMLSpanElement>, "children"> {
   word: TranscriptWordType
-  status: TranscriptWordStatus
+  status: TranscriptViewerWordStatus
   children?: ReactNode
 }
 
-function TranscriptWord({
+function TranscriptViewerWord({
   word,
   status,
   className,
   children,
   ...props
-}: TranscriptWordProps) {
+}: TranscriptViewerWordProps) {
   return (
     <span
       data-slot="transcript-word"
@@ -162,27 +161,27 @@ function TranscriptWord({
   )
 }
 
-export interface TranscriptWordsProps extends HTMLAttributes<HTMLDivElement> {
+interface TranscriptViewerWordsProps extends HTMLAttributes<HTMLDivElement> {
   renderWord?: (props: {
     word: TranscriptWordType
-    status: TranscriptWordStatus
+    status: TranscriptViewerWordStatus
   }) => ReactNode
   renderGap?: (props: {
     segment: TranscriptGap
-    status: TranscriptWordStatus
+    status: TranscriptViewerWordStatus
   }) => ReactNode
   wordClassNames?: string
   gapClassNames?: string
 }
 
-function TranscriptWords({
+function TranscriptViewerWords({
   className,
   renderWord,
   renderGap,
   wordClassNames,
   gapClassNames,
   ...props
-}: TranscriptWordsProps) {
+}: TranscriptViewerWordsProps) {
   const {
     spokenSegments,
     unspokenSegments,
@@ -204,7 +203,7 @@ function TranscriptWords({
 
     const entries: Array<{
       segment: TranscriptSegment
-      status: TranscriptWordStatus
+      status: TranscriptViewerWordStatus
     }> = []
 
     for (const segment of spokenSegments) {
@@ -259,7 +258,7 @@ function TranscriptWords({
         }
 
         return (
-          <TranscriptWord
+          <TranscriptViewerWord
             key={`word-${segment.segmentIndex}`}
             word={segment}
             status={status}
@@ -271,7 +270,9 @@ function TranscriptWords({
   )
 }
 
-function TranscriptAudio(props: ComponentPropsWithoutRef<"audio">) {
+function TranscriptViewerAudio({
+  ...props
+}: ComponentPropsWithoutRef<"audio">) {
   const { audioProps } = useTranscriptViewerContext()
   return (
     <audio
@@ -283,16 +284,16 @@ function TranscriptAudio(props: ComponentPropsWithoutRef<"audio">) {
   )
 }
 
-export type TranscriptPlayPauseButtonProps = ComponentPropsWithoutRef<
+export type TranscriptViewerPlayPauseButtonProps = ComponentPropsWithoutRef<
   typeof Button
 >
 
-function TranscriptPlayPauseButton({
+function TranscriptViewerPlayPauseButton({
   className,
   children,
   onClick,
   ...props
-}: TranscriptPlayPauseButtonProps) {
+}: TranscriptViewerPlayPauseButtonProps) {
   const { isPlaying, play, pause } = useTranscriptViewerContext()
   const Icon = isPlaying ? Pause : Play
 
@@ -318,7 +319,7 @@ function TranscriptPlayPauseButton({
   )
 }
 
-type TranscriptScrubBarProps = Omit<
+type TranscriptViewerScrubBarProps = Omit<
   ComponentPropsWithoutRef<typeof ScrubBar.Root>,
   "duration" | "value" | "onScrub" | "onScrubStart" | "onScrubEnd"
 > & {
@@ -332,7 +333,7 @@ type TranscriptScrubBarProps = Omit<
 /**
  * A context-aware implementation of the scrub bar specific to the transcript viewer.
  */
-function TranscriptScrubBar({
+function TranscriptViewerScrubBar({
   className,
   showTimeLabels = true,
   labelsClassName,
@@ -340,7 +341,7 @@ function TranscriptScrubBar({
   progressClassName,
   thumbClassName,
   ...props
-}: TranscriptScrubBarProps) {
+}: TranscriptViewerScrubBarProps) {
   const { duration, currentTime, seekToTime, startScrubbing, endScrubbing } =
     useTranscriptViewerContext()
   return (
@@ -375,15 +376,13 @@ function TranscriptScrubBar({
   )
 }
 
-const TranscriptViewer = {
-  Root: TranscriptViewerRoot,
-  Words: TranscriptWords,
-  Word: TranscriptWord,
-  Audio: TranscriptAudio,
-  PlayPauseButton: TranscriptPlayPauseButton,
-  ScrubBar: TranscriptScrubBar,
-  Provider: TranscriptViewerProvider,
+export {
+  TranscriptViewerContainer,
+  TranscriptViewerWords,
+  TranscriptViewerWord,
+  TranscriptViewerAudio,
+  TranscriptViewerPlayPauseButton,
+  TranscriptViewerScrubBar,
+  TranscriptViewerProvider,
+  useTranscriptViewerContext,
 }
-
-export default TranscriptViewer
-export { useTranscriptViewerContext }

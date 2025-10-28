@@ -38,7 +38,7 @@ function useScrubBarContext() {
   return context
 }
 
-interface ScrubBarProps extends HTMLAttributes<HTMLDivElement> {
+interface ScrubBarContainerProps extends HTMLAttributes<HTMLDivElement> {
   duration: number
   value: number
   onScrub?: (time: number) => void
@@ -46,7 +46,7 @@ interface ScrubBarProps extends HTMLAttributes<HTMLDivElement> {
   onScrubEnd?: () => void
 }
 
-function ScrubBarRoot({
+function ScrubBarContainer({
   duration,
   value,
   onScrub,
@@ -55,7 +55,7 @@ function ScrubBarRoot({
   children,
   className,
   ...props
-}: ScrubBarProps) {
+}: ScrubBarContainerProps) {
   const progress = duration > 0 ? (value / duration) * 100 : 0
 
   const contextValue: ScrubBarContextValue = {
@@ -79,7 +79,7 @@ function ScrubBarRoot({
     </ScrubBarContext.Provider>
   )
 }
-ScrubBarRoot.displayName = "ScrubBar"
+ScrubBarContainer.displayName = "ScrubBarContainer"
 
 type ScrubBarTrackProps = HTMLAttributes<HTMLDivElement>
 
@@ -207,12 +207,10 @@ function ScrubBarTimeLabel({
 }
 ScrubBarTimeLabel.displayName = "ScrubBarTimeLabel"
 
-const ScrubBar = {
-  Root: ScrubBarRoot,
-  Track: ScrubBarTrack,
-  Progress: ScrubBarProgress,
-  Thumb: ScrubBarThumb,
-  TimeLabel: ScrubBarTimeLabel,
+export {
+  ScrubBarContainer,
+  ScrubBarTrack,
+  ScrubBarProgress,
+  ScrubBarThumb,
+  ScrubBarTimeLabel,
 }
-
-export default ScrubBar
