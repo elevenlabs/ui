@@ -29,7 +29,12 @@ const TOP_LEVEL_SECTIONS = [
 const EXCLUDED_SECTIONS = ["installation", "dark-mode", "(root)"]
 const EXCLUDED_PAGES: string[] = []
 
-const NEW_COMPONENTS = ["components/matrix.mdx", "components/mic-selector.mdx"]
+const NEW_COMPONENTS = [
+  "components/matrix.mdx",
+  "components/mic-selector.mdx",
+  "components/transcript-viewer.mdx",
+  "components/scrub-bar.mdx",
+]
 
 export function DocsSidebar({
   tree,
