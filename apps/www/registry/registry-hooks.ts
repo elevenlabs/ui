@@ -11,4 +11,15 @@ export const hooks: Registry["items"] = [
       },
     ],
   },
+  {
+    name: "use-transcript-viewer",
+    type: "registry:hook",
+    files: [
+      {
+        path: "hooks/use-transcript-viewer.ts",
+        type: "registry:hook",
+      },
+    ],
+    devDependencies: ["@elevenlabs/elevenlabs-js"],
+  },
 ]
