@@ -179,6 +179,7 @@ function useTranscriptViewer({
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const rafRef = useRef<number | null>(null)
   const handleTimeUpdateRef = useRef<(time: number) => void>(() => {})
+  const onDurationChangeRef = useRef<(duration: number) => void>(() => {})
 
   const [isPlaying, setIsPlaying] = useState(false)
   const [isScrubbing, setIsScrubbing] = useState(false)
@@ -192,16 +193,30 @@ function useTranscriptViewer({
     return composeSegments(alignment, { hideAudioTags })
   }, [segmentComposer, alignment, hideAudioTags])
 
+  // Best-effort duration guess from alignment data while metadata loads
+  const guessedDuration = useMemo(() => {
+    const ends = alignment?.characterEndTimesSeconds
+    if (Array.isArray(ends) && ends.length) {
+      const last = ends[ends.length - 1]
+      return Number.isFinite(last) ? last : 0
+    }
+    if (words.length) {
+      const lastWord = words[words.length - 1]
+      return Number.isFinite(lastWord.endTime) ? lastWord.endTime : 0
+    }
+    return 0
+  }, [alignment, words])
+
   const [currentWordIndex, setCurrentWordIndex] = useState<number>(() =>
     words.length ? 0 : -1
   )
 
   useEffect(() => {
     setCurrentTime(0)
-    setDuration(0)
+    setDuration(guessedDuration)
     setIsPlaying(false)
     setCurrentWordIndex(words.length ? 0 : -1)
-  }, [words.length, alignment])
+  }, [words.length, alignment, guessedDuration])
 
   const findWordIndex = useCallback(
     (time: number) => {
@@ -282,6 +297,10 @@ function useTranscriptViewer({
     handleTimeUpdateRef.current = handleTimeUpdate
   }, [handleTimeUpdate])
 
+  useEffect(() => {
+    onDurationChangeRef.current = onDurationChange ?? (() => {})
+  }, [onDurationChange])
+
   const stopRaf = useCallback(() => {
     if (rafRef.current != null) {
       cancelAnimationFrame(rafRef.current)
@@ -300,6 +319,17 @@ function useTranscriptViewer({
       const time = node.currentTime
       setCurrentTime(time)
       handleTimeUpdateRef.current(time)
+      // Opportunistically pick up duration when metadata arrives, even if
+      // duration events were missed or coalesced by the browser.
+      if (Number.isFinite(node.duration) && node.duration > 0) {
+        setDuration((prev) => {
+          if (!prev) {
+            onDurationChangeRef.current(node.duration)
+            return node.duration
+          }
+          return prev
+        })
+      }
       rafRef.current = requestAnimationFrame(tick)
     }
     rafRef.current = requestAnimationFrame(tick)
@@ -347,8 +377,11 @@ function useTranscriptViewer({
     syncPlayback()
     syncTime()
     syncDuration()
-    if (!audio.paused) startRaf()
-    else stopRaf()
+    if (!audio.paused) {
+      startRaf()
+    } else {
+      stopRaf()
+    }
 
     audio.addEventListener("play", handlePlay)
     audio.addEventListener("pause", handlePause)
