@@ -386,3 +386,4 @@ export {
   TranscriptViewerProvider,
   useTranscriptViewerContext,
 }
+export type { CharacterAlignmentResponseModel }

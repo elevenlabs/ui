@@ -476,4 +476,5 @@ export type {
   SegmentComposer,
   TranscriptSegment,
   TranscriptWord,
+  CharacterAlignmentResponseModel,
 }
