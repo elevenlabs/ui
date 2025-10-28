@@ -196,4 +196,15 @@ export const examples: Registry["items"] = [
       },
     ],
   },
+  {
+    name: "scrub-bar-demo",
+    type: "registry:example",
+    registryDependencies: ["https://ui.elevenlabs.io/r/scrub-bar.json"],
+    files: [
+      {
+        path: "examples/scrub-bar-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
 ]

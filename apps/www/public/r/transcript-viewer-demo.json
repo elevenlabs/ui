@@ -1,0 +1,16 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "transcript-viewer-demo",
+  "type": "registry:example",
+  "registryDependencies": [
+    "https://ui.elevenlabs.io/r/transcript-viewer.json",
+    "https://ui.elevenlabs.io/r/scrub-bar.json"
+  ],
+  "files": [
+    {
+      "path": "examples/transcript-viewer-demo.tsx",
+      "content": "import { cn } from \"@/lib/utils\"\nimport {\n  ScrubBarContainer,\n  ScrubBarProgress,\n  ScrubBarThumb,\n  ScrubBarTrack,\n} from \"@/components/ui/scrub-bar\"\nimport {\n  TranscriptViewerAudio,\n  TranscriptViewerContainer,\n  TranscriptViewerPlayPauseButton,\n  TranscriptViewerWords,\n  useTranscriptViewerContext,\n  type CharacterAlignmentResponseModel,\n} from \"@/components/ui/transcript-viewer\"\n\ntype Props = {\n  audioSrc: string\n  alignment: CharacterAlignmentResponseModel\n}\n\nexport function Example({ audioSrc, alignment }: Props) {\n  return (\n    <TranscriptViewerContainer\n      className=\"max-w-2xl rounded-xl border bg-white p-4\"\n      audioSrc={audioSrc}\n      alignment={alignment}\n    >\n      <TranscriptViewerAudio className=\"sr-only\" />\n      <TranscriptViewerWords />\n      <div className=\"flex items-center gap-3\">\n        <TranscriptViewerPlayPauseButton />\n        <CustomScrubBar />\n      </div>\n    </TranscriptViewerContainer>\n  )\n}\n\n// Note that the custom scrub bar is a separate component, this is intentional to ensure the context is defined.\nfunction CustomScrubBar() {\n  const {\n    duration,\n    currentTime,\n    seekToTime,\n    startScrubbing,\n    endScrubbing,\n    isScrubbing,\n  } = useTranscriptViewerContext()\n\n  return (\n    <ScrubBarContainer\n      duration={duration}\n      value={currentTime}\n      onScrub={seekToTime}\n      onScrubStart={startScrubbing}\n      onScrubEnd={endScrubbing}\n    >\n      <ScrubBarTrack className=\"group/scrub-bar\">\n        <ScrubBarProgress />\n        <ScrubBarThumb\n          className={cn(\n            \"bg-black opacity-0 transition-opacity duration-75 group-hover/scrub-bar:opacity-100\",\n            isScrubbing && \"opacity-100\"\n          )}\n        />\n      </ScrubBarTrack>\n    </ScrubBarContainer>\n  )\n}\n\nexport default Example\n",
+      "type": "registry:example"
+    }
+  ]
+}

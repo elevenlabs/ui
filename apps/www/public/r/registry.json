@@ -238,6 +238,36 @@
       ]
     },
     {
+      "name": "transcript-viewer",
+      "type": "registry:ui",
+      "devDependencies": [
+        "@elevenlabs/elevenlabs-js"
+      ],
+      "registryDependencies": [
+        "button",
+        "https://ui.elevenlabs.io/r/scrub-bar.json"
+      ],
+      "files": [
+        {
+          "path": "registry/elevenlabs-ui/ui/transcript-viewer.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "scrub-bar",
+      "type": "registry:ui",
+      "registryDependencies": [
+        "progress"
+      ],
+      "files": [
+        {
+          "path": "registry/elevenlabs-ui/ui/scrub-bar.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "speaker-01",
       "type": "registry:block",
       "description": "EL-01 Speaker",
@@ -591,6 +621,19 @@
       ]
     },
     {
+      "name": "use-transcript-viewer",
+      "type": "registry:hook",
+      "devDependencies": [
+        "@elevenlabs/elevenlabs-js"
+      ],
+      "files": [
+        {
+          "path": "registry/elevenlabs-ui/hooks/use-transcript-viewer.ts",
+          "type": "registry:hook"
+        }
+      ]
+    },
+    {
       "name": "audio-player-demo",
       "type": "registry:example",
       "registryDependencies": [
@@ -782,6 +825,33 @@
       "files": [
         {
           "path": "registry/elevenlabs-ui/examples/conversation-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "transcript-viewer-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "https://ui.elevenlabs.io/r/transcript-viewer.json",
+        "https://ui.elevenlabs.io/r/scrub-bar.json"
+      ],
+      "files": [
+        {
+          "path": "registry/elevenlabs-ui/examples/transcript-viewer-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "scrub-bar-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "https://ui.elevenlabs.io/r/scrub-bar.json"
+      ],
+      "files": [
+        {
+          "path": "registry/elevenlabs-ui/examples/scrub-bar-demo.tsx",
           "type": "registry:example"
         }
       ]

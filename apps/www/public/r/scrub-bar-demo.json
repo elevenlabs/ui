@@ -1,0 +1,15 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "scrub-bar-demo",
+  "type": "registry:example",
+  "registryDependencies": [
+    "https://ui.elevenlabs.io/r/scrub-bar.json"
+  ],
+  "files": [
+    {
+      "path": "examples/scrub-bar-demo.tsx",
+      "content": "import * as React from \"react\"\n\nimport {\n  ScrubBarContainer,\n  ScrubBarProgress,\n  ScrubBarThumb,\n  ScrubBarTimeLabel,\n  ScrubBarTrack,\n} from \"@/components/ui/scrub-bar\"\n\nexport default function ScrubBarDemo() {\n  const [value, setValue] = React.useState(30)\n  const [isScrubbing, setIsScrubbing] = React.useState(false)\n  const duration = 100\n\n  return (\n    <div className=\"flex w-full max-w-sm flex-col items-center gap-4 p-4\">\n      <ScrubBarContainer\n        duration={duration}\n        value={value}\n        onScrub={setValue}\n        onScrubStart={() => setIsScrubbing(true)}\n        onScrubEnd={() => setIsScrubbing(false)}\n        className=\"w-full\"\n      >\n        <ScrubBarTimeLabel time={value} className=\"w-10 text-center\" />\n        <ScrubBarTrack className=\"group/scrub-bar mx-2\">\n          <ScrubBarProgress />\n          <ScrubBarThumb\n            className=\"bg-black opacity-0 transition-opacity duration-75 group-hover/scrub-bar:opacity-100 data-[scrubbing=true]:opacity-100\"\n            data-scrubbing={isScrubbing}\n          />\n        </ScrubBarTrack>\n        <ScrubBarTimeLabel time={duration} className=\"w-10 text-center\" />\n      </ScrubBarContainer>\n    </div>\n  )\n}\n",
+      "type": "registry:example"
+    }
+  ]
+}
