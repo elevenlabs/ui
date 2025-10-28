@@ -182,4 +182,18 @@ export const examples: Registry["items"] = [
       },
     ],
   },
+  {
+    name: "transcript-viewer-demo",
+    type: "registry:example",
+    registryDependencies: [
+      "https://ui.elevenlabs.io/r/transcript-viewer.json",
+      "https://ui.elevenlabs.io/r/scrub-bar.json",
+    ],
+    files: [
+      {
+        path: "examples/transcript-viewer-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
 ]
