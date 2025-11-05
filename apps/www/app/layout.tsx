@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     default: siteConfig.name,
     template: `%s | ${siteConfig.name}`,
   },
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL!),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://ui.elevenlabs.io/"),
   description: siteConfig.description,
   keywords: ["ElevenLabs", "UI", "shadcn", "Components", "audio", "agents"],
   authors: [
