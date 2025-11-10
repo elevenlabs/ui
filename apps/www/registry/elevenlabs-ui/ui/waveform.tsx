@@ -390,6 +390,7 @@ export const AudioScrubber = ({
   onSeek,
   showHandle = true,
   barWidth = 3,
+  barHeight,
   barGap = 1,
   barRadius = 1,
   barColor,
@@ -475,6 +476,7 @@ export const AudioScrubber = ({
         barGap={barGap}
         barRadius={barRadius}
         barWidth={barWidth}
+        barHeight={barHeight}
         data={waveformData}
         fadeEdges={false}
       />
