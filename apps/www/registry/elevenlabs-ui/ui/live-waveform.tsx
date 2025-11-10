@@ -9,6 +9,7 @@ export type LiveWaveformProps = HTMLAttributes<HTMLDivElement> & {
   processing?: boolean
   deviceId?: string
   barWidth?: number
+  barHeight?: number
   barGap?: number
   barRadius?: number
   barColor?: string
@@ -36,6 +37,7 @@ export const LiveWaveform = ({
   barColor,
   fadeEdges = true,
   fadeWidth = 24,
+  barHeight: baseBarHeight = 4,
   height = 64,
   sensitivity = 1,
   smoothingTimeConstant = 0.8,
@@ -439,7 +441,7 @@ export const LiveWaveform = ({
         for (let i = 0; i < barCount && i < dataToRender.length; i++) {
           const value = dataToRender[i] || 0.1
           const x = i * step
-          const barHeight = Math.max(4, value * rect.height * 0.8)
+          const barHeight = Math.max(baseBarHeight, value * rect.height * 0.8)
           const y = centerY - barHeight / 2
 
           ctx.fillStyle = computedBarColor
@@ -459,7 +461,7 @@ export const LiveWaveform = ({
           const dataIndex = historyRef.current.length - 1 - i
           const value = historyRef.current[dataIndex] || 0.1
           const x = rect.width - (i + 1) * step
-          const barHeight = Math.max(4, value * rect.height * 0.8)
+          const barHeight = Math.max(baseBarHeight, value * rect.height * 0.8)
           const y = centerY - barHeight / 2
 
           ctx.fillStyle = computedBarColor
@@ -521,6 +523,7 @@ export const LiveWaveform = ({
     updateRate,
     historySize,
     barWidth,
+    baseBarHeight,
     barGap,
     barRadius,
     barColor,
