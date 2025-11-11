@@ -14,6 +14,7 @@ import { cn } from "@/lib/utils"
 export type WaveformProps = HTMLAttributes<HTMLDivElement> & {
   data?: number[]
   barWidth?: number
+  barHeight?: number
   barGap?: number
   barRadius?: number
   barColor?: string
@@ -27,6 +28,7 @@ export type WaveformProps = HTMLAttributes<HTMLDivElement> & {
 export const Waveform = ({
   data = [],
   barWidth = 4,
+  barHeight: baseBarHeight = 4,
   barGap = 2,
   barRadius = 2,
   barColor,
@@ -80,7 +82,7 @@ export const Waveform = ({
       for (let i = 0; i < barCount; i++) {
         const dataIndex = Math.floor((i / barCount) * data.length)
         const value = data[dataIndex] || 0
-        const barHeight = Math.max(4, value * rect.height * 0.8)
+        const barHeight = Math.max(baseBarHeight, value * rect.height * 0.8)
         const x = i * (barWidth + barGap)
         const y = centerY - barHeight / 2
 
@@ -118,7 +120,16 @@ export const Waveform = ({
     renderWaveform()
 
     return () => resizeObserver.disconnect()
-  }, [data, barWidth, barGap, barRadius, barColor, fadeEdges, fadeWidth])
+  }, [
+    data,
+    barWidth,
+    baseBarHeight,
+    barGap,
+    barRadius,
+    barColor,
+    fadeEdges,
+    fadeWidth,
+  ])
 
   const handleClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
     if (!onBarClick) return
@@ -166,6 +177,7 @@ export const ScrollingWaveform = ({
   speed = 50,
   barCount = 60,
   barWidth = 4,
+  barHeight: baseBarHeight = 4,
   barGap = 2,
   barRadius = 2,
   barColor,
@@ -293,7 +305,10 @@ export const ScrollingWaveform = ({
       const centerY = rect.height / 2
       for (const bar of barsRef.current) {
         if (bar.x < rect.width && bar.x + barWidth > 0) {
-          const barHeight = Math.max(4, bar.height * rect.height * 0.6)
+          const barHeight = Math.max(
+            baseBarHeight,
+            bar.height * rect.height * 0.6
+          )
           const y = centerY - barHeight / 2
 
           ctx.fillStyle = computedBarColor
@@ -340,6 +355,7 @@ export const ScrollingWaveform = ({
     speed,
     barCount,
     barWidth,
+    baseBarHeight,
     barGap,
     barRadius,
     barColor,
@@ -374,6 +390,7 @@ export const AudioScrubber = ({
   onSeek,
   showHandle = true,
   barWidth = 3,
+  barHeight,
   barGap = 1,
   barRadius = 1,
   barColor,
@@ -459,6 +476,7 @@ export const AudioScrubber = ({
         barGap={barGap}
         barRadius={barRadius}
         barWidth={barWidth}
+        barHeight={barHeight}
         data={waveformData}
         fadeEdges={false}
       />
@@ -726,6 +744,7 @@ export const LiveMicrophoneWaveform = ({
   historySize = 150,
   updateRate = 50,
   barWidth = 3,
+  barHeight: baseBarHeight = 4,
   barGap = 1,
   barRadius = 1,
   barColor,
@@ -1033,6 +1052,7 @@ export const LiveMicrophoneWaveform = ({
     playbackPosition,
     playbackRate,
     barWidth,
+    baseBarHeight,
     barGap,
     setDragOffset,
     historyRef,
@@ -1107,7 +1127,10 @@ export const LiveMicrophoneWaveform = ({
             const value = dataToRender[dataIndex]
             if (value !== undefined) {
               const x = rect.width - (i + 1) * step
-              const barHeight = Math.max(4, value * rect.height * 0.7)
+              const barHeight = Math.max(
+                baseBarHeight,
+                value * rect.height * 0.7
+              )
               const y = centerY - barHeight / 2
 
               ctx.fillStyle = computedBarColor
@@ -1160,6 +1183,7 @@ export const LiveMicrophoneWaveform = ({
     updateRate,
     historySize,
     barWidth,
+    baseBarHeight,
     barGap,
     barRadius,
     barColor,
@@ -1331,6 +1355,7 @@ export const RecordingWaveform = ({
   updateRate = 50,
   showHandle = true,
   barWidth = 3,
+  barHeight: baseBarHeight = 4,
   barGap = 1,
   barRadius = 1,
   barColor,
@@ -1501,7 +1526,7 @@ export const RecordingWaveform = ({
         ) {
           const value = dataToRender[startIndex + i] || 0.1
           const x = i * step
-          const barHeight = Math.max(4, value * rect.height * 0.7)
+          const barHeight = Math.max(baseBarHeight, value * rect.height * 0.7)
           const y = centerY - barHeight / 2
 
           ctx.fillStyle = computedBarColor
@@ -1555,6 +1580,7 @@ export const RecordingWaveform = ({
     updateRate,
     showHandle,
     barWidth,
+    baseBarHeight,
     barGap,
     barRadius,
     barColor,
