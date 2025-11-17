@@ -202,7 +202,11 @@ function ScrubBarTimeLabel({
   ...props
 }: ScrubBarTimeLabelProps) {
   return (
-    <span data-slot="scrub-bar-time-label" {...props} className={cn("tabular-nums", className)}>
+    <span
+      data-slot="scrub-bar-time-label"
+      {...props}
+      className={cn("tabular-nums", className)}
+    >
       {format(time)}
     </span>
   )
