@@ -207,4 +207,15 @@ export const examples: Registry["items"] = [
       },
     ],
   },
+  {
+    name: "speech-input-demo",
+    type: "registry:example",
+    registryDependencies: ["https://ui.elevenlabs.io/r/speech-input.json"],
+    files: [
+      {
+        path: "examples/speech-input-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
 ]

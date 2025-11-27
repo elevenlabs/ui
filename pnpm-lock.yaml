@@ -133,8 +133,8 @@ importers:
         specifier: ^2.20.1
         version: 2.20.1
       '@elevenlabs/react':
-        specifier: ^0.9.0
-        version: 0.9.0(@types/dom-mediacapture-record@1.0.22)(react@19.1.0)
+        specifier: ^0.12.0
+        version: 0.12.0(@types/dom-mediacapture-record@1.0.22)(react@19.1.0)
       '@faker-js/faker':
         specifier: ^8.2.0
         version: 8.4.1
@@ -817,20 +817,20 @@ packages:
     peerDependencies:
       '@noble/ciphers': ^1.0.0
 
-  '@elevenlabs/client@0.9.0':
-    resolution: {integrity: sha512-RACPtvhc/oSTB/KYxZ6G9HObNnxfIHpGyF9KDf2VI2l+Q1kUmQlrhBRGbq0vqRL0pt3zAoyZdKsVeAgnMsCF9A==}
+  '@elevenlabs/client@0.12.0':
+    resolution: {integrity: sha512-iMpDqvte8ozXT/jWcD4eKiik4yLigTMpmyMGCiuKsKajbS5ebSja/8T+qc/ZXmI1iRUy+wLTUJRGGYns1Tqj+g==}
 
   '@elevenlabs/elevenlabs-js@2.20.1':
     resolution: {integrity: sha512-0CY9EbBtzFiDw/FrsVFSRNgLTJoDbbw4HM51AgMYODweqZFpkMrUi0fCPHIeb6nJOrwg20aS4xj4GsTXCs3nTw==}
     engines: {node: '>=18.0.0'}
 
-  '@elevenlabs/react@0.9.0':
-    resolution: {integrity: sha512-0TFL9XePJXP7wM4Pog25XSvn5ctjtsSRcSL4IDNmwugh1iiWXz/MDC7HEqhbpdHteTCE9ai65Jw2heFiKtfYqA==}
+  '@elevenlabs/react@0.12.0':
+    resolution: {integrity: sha512-74vSF302Blak2l1QohzFHfV+4GG37/pcRKHmZ07t1TmitM5h3MCEmp38ds1p/V3/XOlAFToLBFucfxabRpZygg==}
     peerDependencies:
       react: '>=16.8.0'
 
-  '@elevenlabs/types@0.1.0':
-    resolution: {integrity: sha512-QkT3OMhr20HeXQ638jftWJUjmBB2e0YebGkMx3LelwW/O663gT3MxptBWJYpuQ317vbmqii6odemeDwoTna+Ww==}
+  '@elevenlabs/types@0.4.0':
+    resolution: {integrity: sha512-6CQb4r9DjepILhLybDxW0h8rvbsR8jPAp74HvFGYuvYdXcQRTkYTD9BQ4PV6VcuC1iqx0UljzJj8js3ADQ8EXw==}
 
   '@emnapi/core@1.4.5':
     resolution: {integrity: sha512-XsLw1dEOpkSX/WucdqUhPWP7hDxSvZiY+fsUC14h+FtQ2Ifni4znbBt8punRX+Uj2JG/uDb8nEHVKvrVlvdZ5Q==}
@@ -8734,9 +8734,9 @@ snapshots:
     dependencies:
       '@noble/ciphers': 1.3.0
 
-  '@elevenlabs/client@0.9.0(@types/dom-mediacapture-record@1.0.22)':
+  '@elevenlabs/client@0.12.0(@types/dom-mediacapture-record@1.0.22)':
     dependencies:
-      '@elevenlabs/types': 0.1.0
+      '@elevenlabs/types': 0.4.0
       livekit-client: 2.15.7(@types/dom-mediacapture-record@1.0.22)
     transitivePeerDependencies:
       - '@types/dom-mediacapture-record'
@@ -8751,14 +8751,14 @@ snapshots:
       - encoding
       - utf-8-validate
 
-  '@elevenlabs/react@0.9.0(@types/dom-mediacapture-record@1.0.22)(react@19.1.0)':
+  '@elevenlabs/react@0.12.0(@types/dom-mediacapture-record@1.0.22)(react@19.1.0)':
     dependencies:
-      '@elevenlabs/client': 0.9.0(@types/dom-mediacapture-record@1.0.22)
+      '@elevenlabs/client': 0.12.0(@types/dom-mediacapture-record@1.0.22)
       react: 19.1.0
     transitivePeerDependencies:
       - '@types/dom-mediacapture-record'
 
-  '@elevenlabs/types@0.1.0': {}
+  '@elevenlabs/types@0.4.0': {}
 
   '@emnapi/core@1.4.5':
     dependencies:

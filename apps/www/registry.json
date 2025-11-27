@@ -231,6 +231,18 @@
       ]
     },
     {
+      "name": "speech-input",
+      "type": "registry:ui",
+      "dependencies": ["motion", "lucide-react"],
+      "registryDependencies": ["https://ui.elevenlabs.io/r/use-scribe.json"],
+      "files": [
+        {
+          "path": "registry/elevenlabs-ui/ui/speech-input.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "speaker-01",
       "type": "registry:block",
       "description": "EL-01 Speaker",
@@ -590,6 +602,17 @@
       ]
     },
     {
+      "name": "use-scribe",
+      "type": "registry:hook",
+      "dependencies": ["@elevenlabs/react"],
+      "files": [
+        {
+          "path": "registry/elevenlabs-ui/hooks/use-scribe.ts",
+          "type": "registry:hook"
+        }
+      ]
+    },
+    {
       "name": "audio-player-demo",
       "type": "registry:example",
       "registryDependencies": [
@@ -795,6 +818,17 @@
       "files": [
         {
           "path": "registry/elevenlabs-ui/examples/scrub-bar-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "speech-input-demo",
+      "type": "registry:example",
+      "registryDependencies": ["https://ui.elevenlabs.io/r/speech-input.json"],
+      "files": [
+        {
+          "path": "registry/elevenlabs-ui/examples/speech-input-demo.tsx",
           "type": "registry:example"
         }
       ]

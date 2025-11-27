@@ -22,4 +22,15 @@ export const hooks: Registry["items"] = [
     ],
     devDependencies: ["@elevenlabs/elevenlabs-js"],
   },
+  {
+    name: "use-scribe",
+    type: "registry:hook",
+    files: [
+      {
+        path: "hooks/use-scribe.ts",
+        type: "registry:hook",
+      },
+    ],
+    dependencies: ["@elevenlabs/react"],
+  },
 ]

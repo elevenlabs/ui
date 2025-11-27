@@ -314,6 +314,24 @@ export const Index: Record<string, any> = {
     categories: undefined,
     meta: undefined,
   },
+  "speech-input": {
+    name: "speech-input",
+    description: "",
+    type: "registry:ui",
+    registryDependencies: ["https://ui.elevenlabs.io/r/use-scribe.json"],
+    files: [{
+      path: "registry/elevenlabs-ui/ui/speech-input.tsx",
+      type: "registry:ui",
+      target: ""
+    }],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/elevenlabs-ui/ui/speech-input.tsx")
+      const exportName = Object.keys(mod).find(key => typeof mod[key] === 'function' || typeof mod[key] === 'object') || item.name
+      return { default: mod.default || mod[exportName] }
+    }),
+    categories: undefined,
+    meta: undefined,
+  },
   "speaker-01": {
     name: "speaker-01",
     description: "EL-01 Speaker",
@@ -590,6 +608,24 @@ export const Index: Record<string, any> = {
     }],
     component: React.lazy(async () => {
       const mod = await import("@/registry/elevenlabs-ui/hooks/use-transcript-viewer.ts")
+      const exportName = Object.keys(mod).find(key => typeof mod[key] === 'function' || typeof mod[key] === 'object') || item.name
+      return { default: mod.default || mod[exportName] }
+    }),
+    categories: undefined,
+    meta: undefined,
+  },
+  "use-scribe": {
+    name: "use-scribe",
+    description: "",
+    type: "registry:hook",
+    registryDependencies: undefined,
+    files: [{
+      path: "registry/elevenlabs-ui/hooks/use-scribe.ts",
+      type: "registry:hook",
+      target: ""
+    }],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/elevenlabs-ui/hooks/use-scribe.ts")
       const exportName = Object.keys(mod).find(key => typeof mod[key] === 'function' || typeof mod[key] === 'object') || item.name
       return { default: mod.default || mod[exportName] }
     }),
@@ -878,6 +914,24 @@ export const Index: Record<string, any> = {
     }],
     component: React.lazy(async () => {
       const mod = await import("@/registry/elevenlabs-ui/examples/scrub-bar-demo.tsx")
+      const exportName = Object.keys(mod).find(key => typeof mod[key] === 'function' || typeof mod[key] === 'object') || item.name
+      return { default: mod.default || mod[exportName] }
+    }),
+    categories: undefined,
+    meta: undefined,
+  },
+  "speech-input-demo": {
+    name: "speech-input-demo",
+    description: "",
+    type: "registry:example",
+    registryDependencies: ["https://ui.elevenlabs.io/r/speech-input.json"],
+    files: [{
+      path: "registry/elevenlabs-ui/examples/speech-input-demo.tsx",
+      type: "registry:example",
+      target: ""
+    }],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/elevenlabs-ui/examples/speech-input-demo.tsx")
       const exportName = Object.keys(mod).find(key => typeof mod[key] === 'function' || typeof mod[key] === 'object') || item.name
       return { default: mod.default || mod[exportName] }
     }),
