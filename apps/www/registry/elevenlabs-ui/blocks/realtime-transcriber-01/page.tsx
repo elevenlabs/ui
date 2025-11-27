@@ -2,13 +2,13 @@
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import Link from "next/link"
-import { useScribe } from "@elevenlabs/react"
 import { AnimatePresence, motion } from "framer-motion"
 import { Copy } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { useDebounce } from "@/registry/elevenlabs-ui/hooks/use-debounce"
 import { usePrevious } from "@/registry/elevenlabs-ui/hooks/use-previous"
+import { useScribe } from "@/registry/elevenlabs-ui/hooks/use-scribe"
 import { Badge } from "@/registry/elevenlabs-ui/ui/badge"
 import { Button } from "@/registry/elevenlabs-ui/ui/button"
 import { ShimmeringText } from "@/registry/elevenlabs-ui/ui/shimmering-text"

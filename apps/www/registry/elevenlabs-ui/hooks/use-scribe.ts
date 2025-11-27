@@ -1,37 +1,89 @@
 "use client"
 
-import { useCallback, useRef, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
+import { RealtimeEvents, Scribe } from "@elevenlabs/client"
+import type {
+  AudioFormat,
+  AudioOptions,
+  CommitStrategy,
+  CommittedTranscriptMessage,
+  CommittedTranscriptWithTimestampsMessage,
+  MicrophoneOptions,
+  PartialTranscriptMessage,
+  RealtimeConnection,
+  ScribeAuthErrorMessage,
+  ScribeChunkSizeExceededErrorMessage,
+  ScribeCommitThrottledErrorMessage,
+  ScribeErrorMessage,
+  ScribeInputErrorMessage,
+  ScribeInsufficientAudioActivityErrorMessage,
+  ScribeQueueOverflowErrorMessage,
+  ScribeQuotaExceededErrorMessage,
+  ScribeRateLimitedErrorMessage,
+  ScribeResourceExhaustedErrorMessage,
+  ScribeSessionTimeLimitExceededErrorMessage,
+  ScribeTranscriberErrorMessage,
+  ScribeUnacceptedTermsErrorMessage,
+} from "@elevenlabs/client"
 
-export enum AudioFormat {
-  PCM_8000 = "pcm_8000",
-  PCM_16000 = "pcm_16000",
-  PCM_22050 = "pcm_22050",
-  PCM_24000 = "pcm_24000",
-  PCM_44100 = "pcm_44100",
-  PCM_48000 = "pcm_48000",
-  ULAW_8000 = "ulaw_8000",
-}
+// ============= Types =============
 
-export enum CommitStrategy {
-  MANUAL = "manual",
-  VAD = "vad",
-}
+export type ScribeStatus =
+  | "disconnected"
+  | "connecting"
+  | "connected"
+  | "transcribing"
+  | "error"
 
-export interface CommittedTranscript {
+export interface TranscriptSegment {
+  id: string
   text: string
+  timestamp: number
+  isFinal: boolean
 }
 
-export interface UseScribeOptions {
+export interface ScribeCallbacks {
+  onSessionStarted?: () => void
+  onPartialTranscript?: (data: { text: string }) => void
+  onCommittedTranscript?: (data: { text: string }) => void
+  onCommittedTranscriptWithTimestamps?: (data: {
+    text: string
+    timestamps?: { start: number; end: number }[]
+  }) => void
+  /** Called for any error (also called when specific error callbacks fire) */
+  onError?: (error: Error | Event) => void
+  onAuthError?: (data: { error: string }) => void
+  onQuotaExceededError?: (data: { error: string }) => void
+  onCommitThrottledError?: (data: { error: string }) => void
+  onTranscriberError?: (data: { error: string }) => void
+  onUnacceptedTermsError?: (data: { error: string }) => void
+  onRateLimitedError?: (data: { error: string }) => void
+  onInputError?: (data: { error: string }) => void
+  onQueueOverflowError?: (data: { error: string }) => void
+  onResourceExhaustedError?: (data: { error: string }) => void
+  onSessionTimeLimitExceededError?: (data: { error: string }) => void
+  onChunkSizeExceededError?: (data: { error: string }) => void
+  onInsufficientAudioActivityError?: (data: { error: string }) => void
+
+  onConnect?: () => void
+  onDisconnect?: () => void
+}
+
+export interface ScribeHookOptions extends ScribeCallbacks {
+  // Connection options
+  token?: string
   modelId?: string
   baseUri?: string
+
+  // VAD options
   commitStrategy?: CommitStrategy
   vadSilenceThresholdSecs?: number
   vadThreshold?: number
   minSpeechDurationMs?: number
   minSilenceDurationMs?: number
   languageCode?: string
-  audioFormat?: AudioFormat
-  sampleRate?: number
+
+  // Microphone options (for automatic microphone mode)
   microphone?: {
     deviceId?: string
     echoCancellation?: boolean
@@ -39,347 +91,533 @@ export interface UseScribeOptions {
     autoGainControl?: boolean
     channelCount?: number
   }
-  onPartialTranscript?: (data: { text: string }) => void
-  onCommittedTranscript?: (data: { text: string }) => void
-  onError?: (error: Error | Event) => void
-  onAuthError?: (data: { error: string }) => void
-  onQuotaExceededError?: (data: { error: string }) => void
+
+  // Manual audio options
+  audioFormat?: AudioFormat
+  sampleRate?: number
+
+  // Auto-connect on mount
+  autoConnect?: boolean
+
+  // Include timestamps
+  includeTimestamps?: boolean
 }
 
 export interface UseScribeReturn {
-  status: "disconnected" | "connecting" | "connected"
+  // State
+  status: ScribeStatus
   isConnected: boolean
-  error: string | null
+  isTranscribing: boolean
   partialTranscript: string
-  committedTranscripts: CommittedTranscript[]
-  connect: (options: { token: string }) => Promise<void>
+  committedTranscripts: TranscriptSegment[]
+  error: string | null
+
+  // Connection methods
+  connect: (options?: Partial<ScribeHookOptions>) => Promise<void>
   disconnect: () => void
+
+  // Audio methods (for manual mode)
+  sendAudio: (
+    audioBase64: string,
+    options?: { commit?: boolean; sampleRate?: number; previousText?: string }
+  ) => void
+  commit: () => void
+
+  // Utility methods
   clearTranscripts: () => void
+  getConnection: () => RealtimeConnection | null
 }
 
-interface ScribeConnection {
-  close: () => void
-}
+// ============= Hook Implementation =============
 
-const AUDIO_FORMAT_SAMPLE_RATES: Record<AudioFormat, number> = {
-  [AudioFormat.PCM_8000]: 8000,
-  [AudioFormat.PCM_16000]: 16000,
-  [AudioFormat.PCM_22050]: 22050,
-  [AudioFormat.PCM_24000]: 24000,
-  [AudioFormat.PCM_44100]: 44100,
-  [AudioFormat.PCM_48000]: 48000,
-  [AudioFormat.ULAW_8000]: 8000,
-}
-
-/**
- * A hook for real-time speech-to-text transcription using ElevenLabs Scribe.
- *
- * This hook wraps the ScribeRealtime class from @elevenlabs/react and provides
- * a React-friendly interface for managing transcription state.
- */
-export function useScribe(options: UseScribeOptions): UseScribeReturn {
+export function useScribe(options: ScribeHookOptions = {}): UseScribeReturn {
   const {
-    modelId = "scribe_v2_realtime",
-    baseUri,
-    commitStrategy = CommitStrategy.VAD,
-    vadSilenceThresholdSecs,
-    vadThreshold,
-    minSpeechDurationMs,
-    minSilenceDurationMs,
-    languageCode,
-    audioFormat,
-    sampleRate,
-    microphone,
+    // Callbacks
+    onSessionStarted,
     onPartialTranscript,
     onCommittedTranscript,
+    onCommittedTranscriptWithTimestamps,
     onError,
     onAuthError,
     onQuotaExceededError,
+    onCommitThrottledError,
+    onTranscriberError,
+    onUnacceptedTermsError,
+    onRateLimitedError,
+    onInputError,
+    onQueueOverflowError,
+    onResourceExhaustedError,
+    onSessionTimeLimitExceededError,
+    onChunkSizeExceededError,
+    onInsufficientAudioActivityError,
+    onConnect,
+    onDisconnect,
+
+    // Connection options
+    token: defaultToken,
+    modelId: defaultModelId,
+    baseUri: defaultBaseUri,
+    commitStrategy: defaultCommitStrategy,
+    vadSilenceThresholdSecs: defaultVadSilenceThresholdSecs,
+    vadThreshold: defaultVadThreshold,
+    minSpeechDurationMs: defaultMinSpeechDurationMs,
+    minSilenceDurationMs: defaultMinSilenceDurationMs,
+    languageCode: defaultLanguageCode,
+
+    // Mode options
+    microphone: defaultMicrophone,
+    audioFormat: defaultAudioFormat,
+    sampleRate: defaultSampleRate,
+
+    // Auto-connect
+    autoConnect = false,
   } = options
 
-  const [status, setStatus] = useState<
-    "disconnected" | "connecting" | "connected"
-  >("disconnected")
-  const [error, setError] = useState<string | null>(null)
-  const [partialTranscript, setPartialTranscript] = useState("")
+  const connectionRef = useRef<RealtimeConnection | null>(null)
+  const connectionIdCounterRef = useRef(0)
+  const activeConnectionIdRef = useRef<number | null>(null)
+
+  const [status, setStatus] = useState<ScribeStatus>("disconnected")
+  const [partialTranscript, setPartialTranscript] = useState<string>("")
   const [committedTranscripts, setCommittedTranscripts] = useState<
-    CommittedTranscript[]
+    TranscriptSegment[]
   >([])
-
-  const connectionRef = useRef<ScribeConnection | null>(null)
-  const mediaStreamRef = useRef<MediaStream | null>(null)
-  const audioContextRef = useRef<AudioContext | null>(null)
-  const workletNodeRef = useRef<AudioWorkletNode | null>(null)
-
-  const clearTranscripts = useCallback(() => {
-    setPartialTranscript("")
-    setCommittedTranscripts([])
-    setError(null)
-  }, [])
+  const [error, setError] = useState<string | null>(null)
 
   const disconnect = useCallback(() => {
-    // Stop audio worklet
-    if (workletNodeRef.current) {
-      workletNodeRef.current.disconnect()
-      workletNodeRef.current = null
+    const connection = connectionRef.current
+    if (!connection) {
+      setStatus("disconnected")
+      activeConnectionIdRef.current = null
+      return
     }
 
-    // Close audio context
-    if (audioContextRef.current) {
-      audioContextRef.current.close().catch(() => {})
-      audioContextRef.current = null
-    }
+    activeConnectionIdRef.current = null
+    connectionRef.current = null
 
-    // Stop media stream
-    if (mediaStreamRef.current) {
-      mediaStreamRef.current.getTracks().forEach((track) => track.stop())
-      mediaStreamRef.current = null
+    try {
+      const result = connection.close()
+      if (
+        typeof result === "object" &&
+        result !== null &&
+        "catch" in result &&
+        typeof (result as Promise<unknown>).catch === "function"
+      ) {
+        const promise = result as Promise<void>
+        promise.catch(() => {
+          /* noop */
+        })
+      }
+    } catch (err) {
+      console.warn("[useScribe] Failed to close connection", err)
+    } finally {
+      setStatus("disconnected")
+      onDisconnect?.()
     }
+  }, [onDisconnect])
 
-    // Close WebSocket connection
-    if (connectionRef.current) {
-      connectionRef.current.close()
-      connectionRef.current = null
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      disconnect()
     }
-
-    setStatus("disconnected")
-  }, [])
+  }, [disconnect])
 
   const connect = useCallback(
-    async ({ token }: { token: string }) => {
-      // Disconnect any existing connection
-      disconnect()
+    async (runtimeOptions: Partial<ScribeHookOptions> = {}) => {
+      if (connectionRef.current) {
+        console.warn("Already connected")
+        return
+      }
 
-      setStatus("connecting")
-      setError(null)
+      const connectionId = connectionIdCounterRef.current + 1
+      connectionIdCounterRef.current = connectionId
 
       try {
-        // Build WebSocket URL
-        const base = baseUri || "wss://api.elevenlabs.io"
-        const params = new URLSearchParams()
-        params.set("model_id", modelId)
-        params.set("token", token)
+        setStatus("connecting")
+        setError(null)
 
-        if (commitStrategy) {
-          params.set("commit_strategy", commitStrategy)
+        // Merge default options with runtime options
+        const token = runtimeOptions.token || defaultToken
+        const modelId = runtimeOptions.modelId || defaultModelId
+
+        if (!token) {
+          throw new Error("Token is required")
         }
-        if (vadSilenceThresholdSecs !== undefined) {
-          params.set(
-            "vad_silence_threshold_secs",
-            vadSilenceThresholdSecs.toString()
+        if (!modelId) {
+          throw new Error("Model ID is required")
+        }
+
+        // Determine mode: microphone or manual
+        const microphone = runtimeOptions.microphone || defaultMicrophone
+        const audioFormat = runtimeOptions.audioFormat || defaultAudioFormat
+        const sampleRate = runtimeOptions.sampleRate || defaultSampleRate
+
+        let connection: RealtimeConnection
+
+        const includeTimestamps =
+          runtimeOptions.includeTimestamps ??
+          !!(
+            runtimeOptions.onCommittedTranscriptWithTimestamps ||
+            onCommittedTranscriptWithTimestamps
+          )
+
+        if (microphone) {
+          // Microphone mode
+          connection = Scribe.connect({
+            token,
+            modelId,
+            baseUri: runtimeOptions.baseUri || defaultBaseUri,
+            commitStrategy:
+              runtimeOptions.commitStrategy || defaultCommitStrategy,
+            vadSilenceThresholdSecs:
+              runtimeOptions.vadSilenceThresholdSecs ||
+              defaultVadSilenceThresholdSecs,
+            vadThreshold: runtimeOptions.vadThreshold || defaultVadThreshold,
+            minSpeechDurationMs:
+              runtimeOptions.minSpeechDurationMs || defaultMinSpeechDurationMs,
+            minSilenceDurationMs:
+              runtimeOptions.minSilenceDurationMs ||
+              defaultMinSilenceDurationMs,
+            languageCode: runtimeOptions.languageCode || defaultLanguageCode,
+            microphone,
+            includeTimestamps,
+          } as MicrophoneOptions)
+        } else if (audioFormat && sampleRate) {
+          // Manual audio mode
+          connection = Scribe.connect({
+            token,
+            modelId,
+            baseUri: runtimeOptions.baseUri || defaultBaseUri,
+            commitStrategy:
+              runtimeOptions.commitStrategy || defaultCommitStrategy,
+            vadSilenceThresholdSecs:
+              runtimeOptions.vadSilenceThresholdSecs ||
+              defaultVadSilenceThresholdSecs,
+            vadThreshold: runtimeOptions.vadThreshold || defaultVadThreshold,
+            minSpeechDurationMs:
+              runtimeOptions.minSpeechDurationMs || defaultMinSpeechDurationMs,
+            minSilenceDurationMs:
+              runtimeOptions.minSilenceDurationMs ||
+              defaultMinSilenceDurationMs,
+            languageCode: runtimeOptions.languageCode || defaultLanguageCode,
+            includeTimestamps,
+            audioFormat,
+            sampleRate,
+          } as AudioOptions)
+        } else {
+          throw new Error(
+            "Either microphone options or (audioFormat + sampleRate) must be provided"
           )
         }
-        if (vadThreshold !== undefined) {
-          params.set("vad_threshold", vadThreshold.toString())
-        }
-        if (minSpeechDurationMs !== undefined) {
-          params.set("min_speech_duration_ms", minSpeechDurationMs.toString())
-        }
-        if (minSilenceDurationMs !== undefined) {
-          params.set("min_silence_duration_ms", minSilenceDurationMs.toString())
-        }
-        if (languageCode) {
-          params.set("language_code", languageCode)
-        }
 
-        const wsUrl = `${base}/v1/speech-to-text/realtime-beta?${params.toString()}`
+        connectionRef.current = connection
+        activeConnectionIdRef.current = connectionId
 
-        // Create WebSocket connection
-        const ws = new WebSocket(wsUrl)
-
-        // Set up connection promise
-        const connectionPromise = new Promise<void>((resolve, reject) => {
-          let isSettled = false
-          const timeout = setTimeout(() => {
-            if (!isSettled) {
-              isSettled = true
-              reject(new Error("Connection timeout"))
+        const runIfCurrent =
+          <Args extends unknown[]>(handler: (...args: Args) => void) =>
+          (...args: Args) => {
+            if (activeConnectionIdRef.current !== connectionId) {
+              return
             }
-          }, 30000)
-          const resolveOnce = () => {
-            if (isSettled) return
-            isSettled = true
-            clearTimeout(timeout)
-            resolve()
-          }
-          const rejectOnce = (error: Error) => {
-            if (isSettled) return
-            isSettled = true
-            clearTimeout(timeout)
-            reject(error)
+            handler(...args)
           }
 
-          ws.onmessage = (event) => {
-            try {
-              const data = JSON.parse(event.data)
-              const messageType = data.type || data.message_type
+        // Set up event listeners
+        connection.on(
+          RealtimeEvents.SESSION_STARTED,
+          runIfCurrent(() => {
+            setStatus("connected")
+            onSessionStarted?.()
+          })
+        )
 
-              switch (messageType) {
-                case "session_started":
-                  setStatus("connected")
-                  resolveOnce()
-                  break
+        connection.on(
+          RealtimeEvents.PARTIAL_TRANSCRIPT,
+          runIfCurrent((data: unknown) => {
+            const message = data as PartialTranscriptMessage
+            setPartialTranscript(message.text)
+            setStatus("transcribing")
+            onPartialTranscript?.(message)
+          })
+        )
 
-                case "auth_error":
-                  setError(data.error || "Authentication failed")
-                  onAuthError?.({
-                    error: data.error || "Authentication failed",
-                  })
-                  rejectOnce(new Error(data.error || "Authentication failed"))
-                  break
-
-                case "quota_exceeded":
-                  setError(data.error || "Quota exceeded")
-                  onQuotaExceededError?.({
-                    error: data.error || "Quota exceeded",
-                  })
-                  rejectOnce(new Error(data.error || "Quota exceeded"))
-                  break
-
-                case "partial_transcript":
-                  setPartialTranscript(data.text || "")
-                  onPartialTranscript?.({ text: data.text || "" })
-                  break
-
-                case "final_transcript":
-                case "final_transcript_with_timestamps":
-                  setCommittedTranscripts((prev) => [
-                    ...prev,
-                    { text: data.text || "" },
-                  ])
-                  setPartialTranscript("")
-                  onCommittedTranscript?.({ text: data.text || "" })
-                  break
-
-                case "error":
-                  {
-                    const errorMessage = data.error || "Unknown error"
-                    const error = new Error(errorMessage)
-                    setError(errorMessage)
-                    onError?.(error)
-                    rejectOnce(error)
-                  }
-                  break
-              }
-            } catch {
-              // Ignore JSON parse errors
+        connection.on(
+          RealtimeEvents.COMMITTED_TRANSCRIPT,
+          runIfCurrent((data: unknown) => {
+            const message = data as CommittedTranscriptMessage
+            const segment: TranscriptSegment = {
+              id: `${Date.now()}-${Math.random()}`,
+              text: message.text,
+              timestamp: Date.now(),
+              isFinal: true,
             }
-          }
+            setCommittedTranscripts((prev) => [...prev, segment])
+            setPartialTranscript("")
+            onCommittedTranscript?.(message)
+          })
+        )
 
-          ws.onerror = (event) => {
-            setError("WebSocket error")
-            onError?.(event)
-            rejectOnce(new Error("WebSocket error"))
-          }
+        connection.on(
+          RealtimeEvents.COMMITTED_TRANSCRIPT_WITH_TIMESTAMPS,
+          runIfCurrent((data: unknown) => {
+            const message = data as CommittedTranscriptWithTimestampsMessage
+            const segment: TranscriptSegment = {
+              id: `${Date.now()}-${Math.random()}`,
+              text: message.text,
+              timestamp: Date.now(),
+              isFinal: true,
+            }
+            setCommittedTranscripts((prev) => [...prev, segment])
+            setPartialTranscript("")
+            onCommittedTranscriptWithTimestamps?.(message)
+          })
+        )
 
-          ws.onclose = () => {
+        connection.on(
+          RealtimeEvents.ERROR,
+          runIfCurrent((err: unknown) => {
+            const message = err as ScribeErrorMessage
+            setError(message.error)
+            setStatus("error")
+            onError?.(new Error(message.error))
+          })
+        )
+
+        connection.on(
+          RealtimeEvents.AUTH_ERROR,
+          runIfCurrent((data: unknown) => {
+            const message = data as ScribeAuthErrorMessage
+            setError(message.error)
+            setStatus("error")
+            onAuthError?.(message)
+          })
+        )
+
+        connection.on(
+          RealtimeEvents.QUOTA_EXCEEDED,
+          runIfCurrent((data: unknown) => {
+            const message = data as ScribeQuotaExceededErrorMessage
+            setError(message.error)
+            setStatus("error")
+            onQuotaExceededError?.(message)
+          })
+        )
+
+        connection.on(
+          RealtimeEvents.COMMIT_THROTTLED,
+          runIfCurrent((data: unknown) => {
+            const message = data as ScribeCommitThrottledErrorMessage
+            setError(message.error)
+            setStatus("error")
+            onCommitThrottledError?.(message)
+          })
+        )
+
+        connection.on(
+          RealtimeEvents.TRANSCRIBER_ERROR,
+          runIfCurrent((data: unknown) => {
+            const message = data as ScribeTranscriberErrorMessage
+            setError(message.error)
+            setStatus("error")
+            onTranscriberError?.(message)
+          })
+        )
+
+        connection.on(
+          RealtimeEvents.UNACCEPTED_TERMS,
+          runIfCurrent((data: unknown) => {
+            const message = data as ScribeUnacceptedTermsErrorMessage
+            setError(message.error)
+            setStatus("error")
+            onUnacceptedTermsError?.(message)
+          })
+        )
+
+        connection.on(
+          RealtimeEvents.RATE_LIMITED,
+          runIfCurrent((data: unknown) => {
+            const message = data as ScribeRateLimitedErrorMessage
+            setError(message.error)
+            setStatus("error")
+            onRateLimitedError?.(message)
+          })
+        )
+
+        connection.on(
+          RealtimeEvents.INPUT_ERROR,
+          runIfCurrent((data: unknown) => {
+            const message = data as ScribeInputErrorMessage
+            setError(message.error)
+            setStatus("error")
+            onInputError?.(message)
+          })
+        )
+
+        connection.on(
+          RealtimeEvents.QUEUE_OVERFLOW,
+          runIfCurrent((data: unknown) => {
+            const message = data as ScribeQueueOverflowErrorMessage
+            setError(message.error)
+            setStatus("error")
+            onQueueOverflowError?.(message)
+          })
+        )
+
+        connection.on(
+          RealtimeEvents.RESOURCE_EXHAUSTED,
+          runIfCurrent((data: unknown) => {
+            const message = data as ScribeResourceExhaustedErrorMessage
+            setError(message.error)
+            setStatus("error")
+            onResourceExhaustedError?.(message)
+          })
+        )
+
+        connection.on(
+          RealtimeEvents.SESSION_TIME_LIMIT_EXCEEDED,
+          runIfCurrent((data: unknown) => {
+            const message = data as ScribeSessionTimeLimitExceededErrorMessage
+            setError(message.error)
+            setStatus("error")
+            onSessionTimeLimitExceededError?.(message)
+          })
+        )
+
+        connection.on(
+          RealtimeEvents.CHUNK_SIZE_EXCEEDED,
+          runIfCurrent((data: unknown) => {
+            const message = data as ScribeChunkSizeExceededErrorMessage
+            setError(message.error)
+            setStatus("error")
+            onChunkSizeExceededError?.(message)
+          })
+        )
+
+        connection.on(
+          RealtimeEvents.INSUFFICIENT_AUDIO_ACTIVITY,
+          runIfCurrent((data: unknown) => {
+            const message = data as ScribeInsufficientAudioActivityErrorMessage
+            setError(message.error)
+            setStatus("error")
+            onInsufficientAudioActivityError?.(message)
+          })
+        )
+
+        connection.on(
+          RealtimeEvents.OPEN,
+          runIfCurrent(() => {
+            onConnect?.()
+          })
+        )
+
+        connection.on(
+          RealtimeEvents.CLOSE,
+          runIfCurrent(() => {
+            activeConnectionIdRef.current = null
+            connectionRef.current = null
             setStatus("disconnected")
-            if (!isSettled) {
-              rejectOnce(new Error("WebSocket closed before session started"))
-            }
-          }
-        })
-
-        connectionRef.current = { close: () => ws.close() }
-
-        // Wait for authentication
-        await connectionPromise
-
-        // Get microphone stream
-        const micConfig = microphone || {}
-        const stream = await navigator.mediaDevices.getUserMedia({
-          audio: {
-            deviceId: micConfig.deviceId,
-            echoCancellation: micConfig.echoCancellation ?? true,
-            noiseSuppression: micConfig.noiseSuppression ?? true,
-            autoGainControl: micConfig.autoGainControl,
-            channelCount: micConfig.channelCount || 1,
-          },
-        })
-        mediaStreamRef.current = stream
-
-        // Set up audio processing
-        const targetSampleRate =
-          sampleRate ||
-          (audioFormat ? AUDIO_FORMAT_SAMPLE_RATES[audioFormat] : undefined) ||
-          16000
-
-        const audioContext = new AudioContext({
-          sampleRate: targetSampleRate,
-        })
-        audioContextRef.current = audioContext
-
-        const source = audioContext.createMediaStreamSource(stream)
-
-        // Create script processor for audio data
-        const bufferSize = 4096
-        const processor = audioContext.createScriptProcessor(bufferSize, 1, 1)
-
-        processor.onaudioprocess = (e) => {
-          if (ws.readyState !== WebSocket.OPEN) return
-
-          const inputData = e.inputBuffer.getChannelData(0)
-
-          // Convert Float32 to Int16
-          const int16Data = new Int16Array(inputData.length)
-          for (let i = 0; i < inputData.length; i++) {
-            const s = Math.max(-1, Math.min(1, inputData[i]))
-            int16Data[i] = s < 0 ? s * 0x8000 : s * 0x7fff
-          }
-
-          // Send audio data as base64
-          const uint8Array = new Uint8Array(int16Data.buffer)
-          const base64 = btoa(String.fromCharCode(...uint8Array))
-
-          ws.send(
-            JSON.stringify({
-              message_type: "input_audio_chunk",
-              audio_base_64: base64,
-              sample_rate: audioContext.sampleRate,
-              commit: false,
-            })
-          )
-        }
-
-        source.connect(processor)
-        processor.connect(audioContext.destination)
+            onDisconnect?.()
+          })
+        )
       } catch (err) {
-        setStatus("disconnected")
-        const message = err instanceof Error ? err.message : "Connection failed"
-        setError(message)
-        onError?.(err instanceof Error ? err : new Error(message))
+        const errorMessage =
+          err instanceof Error ? err.message : "Failed to connect"
+        setError(errorMessage)
+        setStatus("error")
         throw err
       }
     },
     [
-      baseUri,
-      modelId,
-      commitStrategy,
-      vadSilenceThresholdSecs,
-      vadThreshold,
-      minSpeechDurationMs,
-      minSilenceDurationMs,
-      languageCode,
-      audioFormat,
-      sampleRate,
-      microphone,
+      defaultToken,
+      defaultModelId,
+      defaultBaseUri,
+      defaultCommitStrategy,
+      defaultVadSilenceThresholdSecs,
+      defaultVadThreshold,
+      defaultMinSpeechDurationMs,
+      defaultMinSilenceDurationMs,
+      defaultLanguageCode,
+      defaultMicrophone,
+      defaultAudioFormat,
+      defaultSampleRate,
+      onSessionStarted,
       onPartialTranscript,
       onCommittedTranscript,
+      onCommittedTranscriptWithTimestamps,
       onError,
       onAuthError,
       onQuotaExceededError,
-      disconnect,
+      onCommitThrottledError,
+      onTranscriberError,
+      onUnacceptedTermsError,
+      onRateLimitedError,
+      onInputError,
+      onQueueOverflowError,
+      onResourceExhaustedError,
+      onSessionTimeLimitExceededError,
+      onChunkSizeExceededError,
+      onInsufficientAudioActivityError,
+      onConnect,
+      onDisconnect,
     ]
   )
 
+  const sendAudio = useCallback(
+    (
+      audioBase64: string,
+      options?: { commit?: boolean; sampleRate?: number; previousText?: string }
+    ) => {
+      if (!connectionRef.current) {
+        throw new Error("Not connected to Scribe")
+      }
+      connectionRef.current.send({ audioBase64, ...options })
+    },
+    []
+  )
+
+  const commit = useCallback(() => {
+    if (!connectionRef.current) {
+      throw new Error("Not connected to Scribe")
+    }
+    connectionRef.current.commit()
+  }, [])
+
+  const clearTranscripts = useCallback(() => {
+    setCommittedTranscripts([])
+    setPartialTranscript("")
+  }, [])
+
+  const getConnection = useCallback(() => {
+    return connectionRef.current
+  }, [])
+
+  // Auto-connect if enabled
+  useEffect(() => {
+    if (autoConnect) {
+      void connect()
+    }
+  }, [autoConnect, connect])
+
   return {
+    // State
     status,
-    isConnected: status === "connected",
-    error,
+    isConnected: status === "connected" || status === "transcribing",
+    isTranscribing: status === "transcribing",
     partialTranscript,
     committedTranscripts,
+    error,
+
+    // Methods
     connect,
     disconnect,
+    sendAudio,
+    commit,
     clearTranscripts,
+    getConnection,
   }
 }
+
+// Export types and enums from client for convenience
+export { AudioFormat, CommitStrategy, RealtimeEvents } from "@elevenlabs/client"
+export type { RealtimeConnection } from "@elevenlabs/client"

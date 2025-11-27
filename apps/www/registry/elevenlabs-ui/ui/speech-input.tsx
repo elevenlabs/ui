@@ -12,15 +12,15 @@ import {
   type ComponentPropsWithoutRef,
   type ReactNode,
 } from "react"
-import {
-  useScribe,
-  type AudioFormat,
-  type CommitStrategy,
-} from "@elevenlabs/react"
 import { motion } from "framer-motion"
 import { MicIcon, SquareIcon, XIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
+import {
+  useScribe,
+  type AudioFormat,
+  type CommitStrategy,
+} from "@/registry/elevenlabs-ui/hooks/use-scribe"
 
 // Context for sharing state between compound components
 interface SpeechInputContextValue {
@@ -373,9 +373,7 @@ const SpeechInputPreview = forwardRef<HTMLDivElement, SpeechInputPreviewProps>(
           showPlaceholder
             ? "text-muted-foreground italic"
             : "text-muted-foreground [mask-image:linear-gradient(to_right,transparent,black_16px,black_calc(100%-16px),transparent)]",
-          speechInput.isConnected
-            ? "w-28 opacity-100"
-            : "w-0 -translate-x-2 opacity-0",
+          speechInput.isConnected ? "w-28 opacity-100" : "w-0 opacity-0",
           className
         )}
         title={displayText}
@@ -385,7 +383,7 @@ const SpeechInputPreview = forwardRef<HTMLDivElement, SpeechInputPreviewProps>(
         <motion.p
           key="text"
           layout="position"
-          className={`absolute top-0 right-0 bottom-0 flex h-full min-w-full items-center px-1 whitespace-nowrap`}
+          className={`absolute top-0 right-0 bottom-0 flex h-full min-w-full items-center px-0 whitespace-nowrap`}
         >
           {displayText}
         </motion.p>

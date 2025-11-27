@@ -129,6 +129,9 @@ importers:
       '@dnd-kit/utilities':
         specifier: ^3.2.2
         version: 3.2.2(react@19.1.0)
+      '@elevenlabs/client':
+        specifier: ^0.12.0
+        version: 0.12.0(@types/dom-mediacapture-record@1.0.22)
       '@elevenlabs/elevenlabs-js':
         specifier: ^2.20.1
         version: 2.20.1
