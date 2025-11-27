@@ -268,7 +268,9 @@ const SpeechInput = forwardRef<HTMLDivElement, SpeechInputProps>(
           className={cn(
             "ring-border relative inline-flex items-center overflow-hidden rounded-lg ring-1 transition-colors duration-200",
             isRecordButtonFirst ? "justify-start" : "justify-end",
-            scribe.isConnected ? "bg-muted shadow-sm" : "bg-background",
+            scribe.isConnected
+              ? "bg-background dark:bg-muted shadow-sm"
+              : "bg-background",
             className
           )}
         >
