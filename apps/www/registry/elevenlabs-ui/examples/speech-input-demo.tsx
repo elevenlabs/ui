@@ -3,7 +3,6 @@
 import { useRef, useState } from "react"
 
 import { getScribeToken } from "@/registry/elevenlabs-ui/blocks/realtime-transcriber-01/actions/get-scribe-token"
-import { Button } from "@/registry/elevenlabs-ui/ui/button"
 import { Input } from "@/registry/elevenlabs-ui/ui/input"
 import {
   SpeechInput,
@@ -21,118 +20,138 @@ async function getToken() {
   return result.token!
 }
 
-export default function SpeechInputDemo() {
-  const [textareaValue, setTextareaValue] = useState("")
-  const textareaValueAtStartRef = useRef("")
-  const [notesValue, setNotesValue] = useState("")
-  const notesValueAtStartRef = useRef("")
-  const [titleValue, setTitleValue] = useState("")
-  const titleValueAtStartRef = useRef("")
+function TextareaWithSpeechInputRight() {
+  const [value, setValue] = useState("")
+  const valueAtStartRef = useRef("")
 
   return (
-    <div className="absolute inset-0 space-y-4 overflow-auto rounded-2xl p-10">
-      <div className="relative">
-        <Textarea
-          value={textareaValue}
-          onChange={(event) => {
-            setTextareaValue(event.target.value)
-          }}
-          placeholder="Jot down some thoughts..."
-          className="min-h-[120px] resize-none rounded-2xl px-3.5 pt-3 pb-14"
-        />
-        <div className="absolute right-3 bottom-3 flex items-center gap-2">
-          <SpeechInput
-            size="sm"
-            getToken={getToken}
-            onStart={() => {
-              textareaValueAtStartRef.current = textareaValue
-            }}
-            onChange={({ transcript }) => {
-              setTextareaValue(textareaValueAtStartRef.current + transcript)
-            }}
-            onStop={({ transcript }) => {
-              setTextareaValue(textareaValueAtStartRef.current + transcript)
-            }}
-            onCancel={() => {
-              setTextareaValue(textareaValueAtStartRef.current)
-            }}
-            onError={(error) => {
-              console.error("Speech input error:", error)
-            }}
-          >
-            <SpeechInputCancelButton />
-            <SpeechInputPreview placeholder="Listening..." />
-            <SpeechInputRecordButton />
-          </SpeechInput>
-        </div>
-      </div>
-      <div className="relative">
-        <Textarea
-          value={textareaValue}
-          onChange={(event) => {
-            setTextareaValue(event.target.value)
-          }}
-          placeholder="Jot down some thoughts..."
-          className="min-h-[120px] resize-none rounded-2xl px-3.5 pt-3 pb-14"
-        />
-        <div className="absolute bottom-3 left-3 flex items-center gap-2">
-          <SpeechInput
-            size="sm"
-            getToken={getToken}
-            onStart={() => {
-              textareaValueAtStartRef.current = textareaValue
-            }}
-            onChange={({ transcript }) => {
-              setTextareaValue(textareaValueAtStartRef.current + transcript)
-            }}
-            onStop={({ transcript }) => {
-              setTextareaValue(textareaValueAtStartRef.current + transcript)
-            }}
-            onCancel={() => {
-              setTextareaValue(textareaValueAtStartRef.current)
-            }}
-            onError={(error) => {
-              console.error("Speech input error:", error)
-            }}
-          >
-            <SpeechInputRecordButton />
-            <SpeechInputPreview placeholder="Listening..." />
-            <SpeechInputCancelButton />
-          </SpeechInput>
-        </div>
-      </div>
-      <div className="flex items-center gap-4">
-        <Input
-          value={titleValue}
-          onChange={(event) => {
-            setTitleValue(event.target.value)
-          }}
-          placeholder="Give this idea a title..."
-          className="min-w-0 flex-1 rounded-lg px-3.5 text-base transition-[flex-basis] duration-200 md:text-sm"
-        />
+    <div className="relative">
+      <Textarea
+        value={value}
+        onChange={(event) => {
+          setValue(event.target.value)
+        }}
+        placeholder="Jot down some thoughts..."
+        className="min-h-[120px] resize-none rounded-2xl px-3.5 pt-3 pb-14"
+      />
+      <div className="absolute right-3 bottom-3 flex items-center gap-2">
         <SpeechInput
+          size="sm"
           getToken={getToken}
-          className="border-input shrink-0"
           onStart={() => {
-            titleValueAtStartRef.current = titleValue
+            valueAtStartRef.current = value
           }}
           onChange={({ transcript }) => {
-            setTitleValue(titleValueAtStartRef.current + transcript)
+            setValue(valueAtStartRef.current + transcript)
           }}
           onStop={({ transcript }) => {
-            setTitleValue(titleValueAtStartRef.current + transcript)
+            setValue(valueAtStartRef.current + transcript)
           }}
           onCancel={() => {
-            setTitleValue(titleValueAtStartRef.current)
+            setValue(valueAtStartRef.current)
           }}
           onError={(error) => {
             console.error("Speech input error:", error)
           }}
         >
           <SpeechInputCancelButton />
+          <SpeechInputPreview placeholder="Listening..." />
           <SpeechInputRecordButton />
         </SpeechInput>
       </div>
+    </div>
+  )
+}
+
+function TextareaWithSpeechInputLeft() {
+  const [value, setValue] = useState("")
+  const valueAtStartRef = useRef("")
+
+  return (
+    <div className="relative">
+      <Textarea
+        value={value}
+        onChange={(event) => {
+          setValue(event.target.value)
+        }}
+        placeholder="Jot down some thoughts..."
+        className="min-h-[120px] resize-none rounded-2xl px-3.5 pt-3 pb-14"
+      />
+      <div className="absolute bottom-3 left-3 flex items-center gap-2">
+        <SpeechInput
+          size="sm"
+          getToken={getToken}
+          onStart={() => {
+            valueAtStartRef.current = value
+          }}
+          onChange={({ transcript }) => {
+            setValue(valueAtStartRef.current + transcript)
+          }}
+          onStop={({ transcript }) => {
+            setValue(valueAtStartRef.current + transcript)
+          }}
+          onCancel={() => {
+            setValue(valueAtStartRef.current)
+          }}
+          onError={(error) => {
+            console.error("Speech input error:", error)
+          }}
+        >
+          <SpeechInputRecordButton />
+          <SpeechInputPreview placeholder="Listening..." />
+          <SpeechInputCancelButton />
+        </SpeechInput>
+      </div>
+    </div>
+  )
+}
+
+function InputWithSpeechInput() {
+  const [value, setValue] = useState("")
+  const valueAtStartRef = useRef("")
+
+  return (
+    <div className="flex items-center gap-3">
+      <Input
+        value={value}
+        onChange={(event) => {
+          setValue(event.target.value)
+        }}
+        placeholder="Give this idea a title..."
+        className="min-w-0 flex-1 px-3.5 text-base transition-[flex-basis] duration-200 md:text-sm"
+      />
+      <SpeechInput
+        getToken={getToken}
+        className="border-input shrink-0"
+        onStart={() => {
+          valueAtStartRef.current = value
+        }}
+        onChange={({ transcript }) => {
+          setValue(valueAtStartRef.current + transcript)
+        }}
+        onStop={({ transcript }) => {
+          setValue(valueAtStartRef.current + transcript)
+        }}
+        onCancel={() => {
+          setValue(valueAtStartRef.current)
+        }}
+        onError={(error) => {
+          console.error("Speech input error:", error)
+        }}
+      >
+        <SpeechInputCancelButton />
+        <SpeechInputRecordButton />
+      </SpeechInput>
+    </div>
+  )
+}
+
+export default function SpeechInputDemo() {
+  return (
+    <div className="absolute inset-0 space-y-4 overflow-auto rounded-2xl p-10">
+      <TextareaWithSpeechInputRight />
+      <TextareaWithSpeechInputLeft />
+      <InputWithSpeechInput />
     </div>
   )
 }
