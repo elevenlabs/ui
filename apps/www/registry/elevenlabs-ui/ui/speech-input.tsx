@@ -275,18 +275,12 @@ const SpeechInput = forwardRef<HTMLDivElement, SpeechInputProps>(
       }
     }, [scribe.disconnect])
 
-    const childArray = Children.toArray(children)
-    const firstChild = childArray[0]
-    const isRecordButtonFirst =
-      isValidElement(firstChild) && firstChild.type === SpeechInputRecordButton
-
     return (
       <SpeechInputContext.Provider value={contextValue}>
         <div
           ref={ref}
           className={cn(
             "relative inline-flex items-center overflow-hidden rounded-lg border border-transparent transition-all duration-200",
-            isRecordButtonFirst ? "justify-start" : "justify-end",
             scribe.isConnected
               ? "bg-background dark:bg-muted border-input shadow-sm"
               : "",
@@ -453,7 +447,6 @@ const SpeechInputCancelButton = forwardRef<
   )
 })
 
-// Export compound components
 export {
   SpeechInput,
   SpeechInputRecordButton,

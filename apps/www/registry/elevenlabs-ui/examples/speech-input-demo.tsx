@@ -30,14 +30,14 @@ export default function SpeechInputDemo() {
   const titleValueAtStartRef = useRef("")
 
   return (
-    <div className="w-full space-y-6 rounded-2xl p-6">
+    <div className="absolute inset-0 space-y-4 overflow-auto rounded-2xl p-10">
       <div className="relative">
         <Textarea
           value={textareaValue}
           onChange={(event) => {
             setTextareaValue(event.target.value)
           }}
-          placeholder="Describe a sound..."
+          placeholder="Jot down some thoughts..."
           className="min-h-[120px] resize-none rounded-2xl px-3.5 pt-3 pb-14"
         />
         <div className="absolute right-3 bottom-3 flex items-center gap-2">
@@ -64,46 +64,44 @@ export default function SpeechInputDemo() {
             <SpeechInputPreview placeholder="Listening..." />
             <SpeechInputRecordButton />
           </SpeechInput>
-          <Button size="sm" className="shadow-sm">
-            Generate
-          </Button>
         </div>
       </div>
       <div className="relative">
         <Textarea
-          value={notesValue}
+          value={textareaValue}
           onChange={(event) => {
-            setNotesValue(event.target.value)
+            setTextareaValue(event.target.value)
           }}
-          placeholder="Add post-processing notes..."
-          className="min-h-[100px] resize-none rounded-2xl px-3.5 pt-3 pb-12"
+          placeholder="Jot down some thoughts..."
+          className="min-h-[120px] resize-none rounded-2xl px-3.5 pt-3 pb-14"
         />
-        <div className="absolute right-3 bottom-3 flex items-center gap-2">
+        <div className="absolute bottom-3 left-3 flex items-center gap-2">
           <SpeechInput
             size="sm"
             getToken={getToken}
             onStart={() => {
-              notesValueAtStartRef.current = notesValue
+              textareaValueAtStartRef.current = textareaValue
             }}
             onChange={({ transcript }) => {
-              setNotesValue(notesValueAtStartRef.current + transcript)
+              setTextareaValue(textareaValueAtStartRef.current + transcript)
             }}
             onStop={({ transcript }) => {
-              setNotesValue(notesValueAtStartRef.current + transcript)
+              setTextareaValue(textareaValueAtStartRef.current + transcript)
             }}
             onCancel={() => {
-              setNotesValue(notesValueAtStartRef.current)
+              setTextareaValue(textareaValueAtStartRef.current)
             }}
             onError={(error) => {
               console.error("Speech input error:", error)
             }}
           >
-            <SpeechInputCancelButton />
             <SpeechInputRecordButton />
+            <SpeechInputPreview placeholder="Listening..." />
+            <SpeechInputCancelButton />
           </SpeechInput>
         </div>
       </div>
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-4">
         <Input
           value={titleValue}
           onChange={(event) => {
@@ -114,7 +112,7 @@ export default function SpeechInputDemo() {
         />
         <SpeechInput
           getToken={getToken}
-          className="shrink-0"
+          className="border-input shrink-0"
           onStart={() => {
             titleValueAtStartRef.current = titleValue
           }}
