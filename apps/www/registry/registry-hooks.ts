@@ -31,6 +31,6 @@ export const hooks: Registry["items"] = [
         type: "registry:hook",
       },
     ],
-    dependencies: ["@elevenlabs/react"],
+    dependencies: ["@elevenlabs/client"],
   },
 ]

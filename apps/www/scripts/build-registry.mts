@@ -140,11 +140,11 @@ async function cleanupGeneratedPaths() {
 
   // Get all JSON files in the public/r directory
   const files = await fs.readdir(publicDir)
-  const jsonFiles = files.filter(file => file.endsWith('.json'))
+  const jsonFiles = files.filter((file) => file.endsWith(".json"))
 
   for (const file of jsonFiles) {
     const filePath = path.join(publicDir, file)
-    const content = await fs.readFile(filePath, 'utf-8')
+    const content = await fs.readFile(filePath, "utf-8")
     const json = JSON.parse(content)
 
     // Clean up the paths in the files array
@@ -153,21 +153,21 @@ async function cleanupGeneratedPaths() {
       const pathMappings = new Map<string, string>()
 
       json.files.forEach((file: any) => {
-        if (typeof file === 'object' && file.path && file.target) {
+        if (typeof file === "object" && file.path && file.target) {
           // Map the source registry path to the target path
-          const sourcePath = file.path.replace(/^registry\/elevenlabs-ui\//, '')
+          const sourcePath = file.path.replace(/^registry\/elevenlabs-ui\//, "")
           pathMappings.set(sourcePath, file.target)
         }
       })
 
       json.files = json.files.map((file: any) => {
-        if (typeof file === 'object' && file.path) {
+        if (typeof file === "object" && file.path) {
           // Remove registry/elevenlabs-ui/ prefix
-          let cleanPath = file.path.replace(/^registry\/elevenlabs-ui\//, '')
+          let cleanPath = file.path.replace(/^registry\/elevenlabs-ui\//, "")
 
           // For UI components, prepend with components/
-          if (cleanPath.startsWith('ui/')) {
-            cleanPath = 'components/' + cleanPath
+          if (cleanPath.startsWith("ui/")) {
+            cleanPath = "components/" + cleanPath
           }
 
           file.path = cleanPath
@@ -188,7 +188,10 @@ async function cleanupGeneratedPaths() {
   console.log(`✨ Cleaned paths in ${jsonFiles.length} files`)
 }
 
-function rewriteImports(content: string, pathMappings: Map<string, string>): string {
+function rewriteImports(
+  content: string,
+  pathMappings: Map<string, string>
+): string {
   // Sort mappings by path length (longest first) to handle more specific paths first
   const sortedMappings = Array.from(pathMappings.entries()).sort(
     ([a], [b]) => b.length - a.length
@@ -196,18 +199,18 @@ function rewriteImports(content: string, pathMappings: Map<string, string>): str
 
   // Handle block-specific imports using the exact path mappings
   sortedMappings.forEach(([sourcePath, targetPath]) => {
-    if (sourcePath.startsWith('blocks/')) {
+    if (sourcePath.startsWith("blocks/")) {
       // Remove the file extension from sourcePath to match import statements
-      const sourcePathNoExt = sourcePath.replace(/\.(tsx?|jsx?)$/, '')
+      const sourcePathNoExt = sourcePath.replace(/\.(tsx?|jsx?)$/, "")
 
       // Extract the directory from the target path (removing filename)
-      const targetPathNoExt = targetPath.replace(/\.(tsx?|jsx?)$/, '')
+      const targetPathNoExt = targetPath.replace(/\.(tsx?|jsx?)$/, "")
 
       // Create regex to match this specific import path
-      const escapedPath = sourcePathNoExt.replace(/\//g, '\\/')
+      const escapedPath = sourcePathNoExt.replace(/\//g, "\\/")
       const importRegex = new RegExp(
         `@\\/registry\\/elevenlabs-ui\\/${escapedPath}`,
-        'g'
+        "g"
       )
 
       content = content.replace(importRegex, `@/${targetPathNoExt}`)
@@ -217,20 +220,17 @@ function rewriteImports(content: string, pathMappings: Map<string, string>): str
   // Rewrite imports from @/registry/elevenlabs-ui/ui/... to @/components/ui/...
   content = content.replace(
     /@\/registry\/elevenlabs-ui\/ui\//g,
-    '@/components/ui/'
+    "@/components/ui/"
   )
 
   // Rewrite imports from @/registry/elevenlabs-ui/examples/... to @/components/examples/...
   content = content.replace(
     /@\/registry\/elevenlabs-ui\/examples\//g,
-    '@/components/examples/'
+    "@/components/examples/"
   )
 
   // Rewrite imports from @/registry/elevenlabs-ui/lib/... to @/lib/...
-  content = content.replace(
-    /@\/registry\/elevenlabs-ui\/lib\//g,
-    '@/lib/'
-  )
+  content = content.replace(/@\/registry\/elevenlabs-ui\/lib\//g, "@/lib/")
 
   return content
 }
@@ -239,7 +239,9 @@ async function buildAllJson() {
   console.log("🎨 Building all.json for UI components...")
 
   // Filter only UI components
-  const uiComponents = registry.items.filter(item => item.type === "registry:ui")
+  const uiComponents = registry.items.filter(
+    (item) => item.type === "registry:ui"
+  )
 
   // Aggregate all dependencies and registryDependencies
   const allDependencies = new Set<string>()
@@ -252,12 +254,14 @@ async function buildAllJson() {
   for (const component of uiComponents) {
     // Collect dependencies
     if (component.dependencies) {
-      component.dependencies.forEach(dep => allDependencies.add(dep))
+      component.dependencies.forEach((dep) => allDependencies.add(dep))
     }
 
     // Collect registryDependencies
     if (component.registryDependencies) {
-      component.registryDependencies.forEach(dep => allRegistryDependencies.add(dep))
+      component.registryDependencies.forEach((dep) =>
+        allRegistryDependencies.add(dep)
+      )
     }
 
     // Collect files and read their content
@@ -269,13 +273,13 @@ async function buildAllJson() {
         // Read file content
         let content = ""
         if (existsSync(absolutePath)) {
-          content = await fs.readFile(absolutePath, 'utf-8')
+          content = await fs.readFile(absolutePath, "utf-8")
         }
 
         // Clean path - remove registry/elevenlabs-ui/ prefix
         let cleanPath = file.path
-        if (cleanPath.startsWith('ui/')) {
-          cleanPath = 'components/' + cleanPath
+        if (cleanPath.startsWith("ui/")) {
+          cleanPath = "components/" + cleanPath
         }
 
         // Build path mapping
@@ -287,14 +291,14 @@ async function buildAllJson() {
           path: cleanPath,
           type: file.type,
           target: file.target ?? "",
-          content: content
+          content: content,
         })
       }
     }
   }
 
   // Rewrite imports in all file contents
-  allFiles.forEach(file => {
+  allFiles.forEach((file) => {
     if (file.content) {
       file.content = rewriteImports(file.content, pathMappings)
     }
@@ -302,13 +306,13 @@ async function buildAllJson() {
 
   // Create the all.json structure
   const allJson = {
-    "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+    $schema: "https://ui.shadcn.com/schema/registry-item.json",
     name: "all",
     type: "registry:ui",
     description: "All UI components from ElevenLabs UI",
     dependencies: Array.from(allDependencies).sort(),
     registryDependencies: Array.from(allRegistryDependencies).sort(),
-    files: allFiles
+    files: allFiles,
   }
 
   // Write to public/r/all.json

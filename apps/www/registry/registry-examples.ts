@@ -210,7 +210,11 @@ export const examples: Registry["items"] = [
   {
     name: "speech-input-demo",
     type: "registry:example",
-    registryDependencies: ["https://ui.elevenlabs.io/r/speech-input.json"],
+    registryDependencies: [
+      "https://ui.elevenlabs.io/r/speech-input.json",
+      "input",
+      "textarea",
+    ],
     files: [
       {
         path: "examples/speech-input-demo.tsx",
