@@ -42,6 +42,7 @@ export default function SpeechInputDemo() {
         />
         <div className="absolute right-3 bottom-3 flex items-center gap-2">
           <SpeechInput
+            size="sm"
             getToken={getToken}
             onStart={() => {
               textareaValueAtStartRef.current = textareaValue
@@ -79,6 +80,7 @@ export default function SpeechInputDemo() {
         />
         <div className="absolute right-3 bottom-3 flex items-center gap-2">
           <SpeechInput
+            size="sm"
             getToken={getToken}
             onStart={() => {
               notesValueAtStartRef.current = notesValue
@@ -108,7 +110,7 @@ export default function SpeechInputDemo() {
             setTitleValue(event.target.value)
           }}
           placeholder="Give this idea a title..."
-          className="h-8 min-w-0 flex-1 rounded-lg px-3.5 text-base transition-[flex-basis] duration-200 md:text-sm"
+          className="min-w-0 flex-1 rounded-lg px-3.5 text-base transition-[flex-basis] duration-200 md:text-sm"
         />
         <SpeechInput
           getToken={getToken}

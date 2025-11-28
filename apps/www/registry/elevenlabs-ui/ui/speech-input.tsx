@@ -12,6 +12,7 @@ import {
   type ComponentPropsWithoutRef,
   type ReactNode,
 } from "react"
+import { cva, VariantProps } from "class-variance-authority"
 import { motion } from "framer-motion"
 import { MicIcon, SquareIcon, XIcon } from "lucide-react"
 
@@ -21,6 +22,20 @@ import {
   type AudioFormat,
   type CommitStrategy,
 } from "@/registry/elevenlabs-ui/hooks/use-scribe"
+import { Button } from "@/registry/elevenlabs-ui/ui/button"
+
+const buttonVariants = cva("!px-0", {
+  variants: {
+    size: {
+      default: "h-9 w-9",
+      sm: "h-8 w-8",
+      lg: "h-10 w-10",
+    },
+  },
+  defaultVariants: {
+    size: "default",
+  },
+})
 
 // Context for sharing state between compound components
 interface SpeechInputContextValue {
@@ -33,6 +48,7 @@ interface SpeechInputContextValue {
   start: () => Promise<void>
   stop: () => void
   cancel: () => void
+  size: VariantProps<typeof buttonVariants>["size"]
 }
 
 const SpeechInputContext = createContext<SpeechInputContextValue | null>(null)
@@ -62,6 +78,7 @@ interface SpeechInputProps {
   onStart?: (event: SpeechInputEvent) => void
   onStop?: (event: SpeechInputEvent) => void
   className?: string
+  size?: VariantProps<typeof buttonVariants>["size"]
 
   // Connection options
   modelId?: string
@@ -134,6 +151,7 @@ const SpeechInput = forwardRef<HTMLDivElement, SpeechInputProps>(
       onStart,
       onStop,
       className,
+      size = "default",
       modelId = "scribe_v2_realtime",
       baseUri,
       commitStrategy,
@@ -243,6 +261,7 @@ const SpeechInput = forwardRef<HTMLDivElement, SpeechInputProps>(
       stop,
       cancel,
       error: scribe.error,
+      size,
       ...buildEvent({
         partialTranscript: scribe.partialTranscript,
         committedTranscripts: scribe.committedTranscripts.map((t) => t.text),
@@ -266,11 +285,11 @@ const SpeechInput = forwardRef<HTMLDivElement, SpeechInputProps>(
         <div
           ref={ref}
           className={cn(
-            "border-input relative inline-flex items-center overflow-hidden rounded-lg border transition-colors duration-200",
+            "relative inline-flex items-center overflow-hidden rounded-lg border border-transparent transition-all duration-200",
             isRecordButtonFirst ? "justify-start" : "justify-end",
             scribe.isConnected
-              ? "bg-background dark:bg-muted shadow-xs"
-              : "bg-background",
+              ? "bg-background dark:bg-muted border-input shadow-sm"
+              : "",
             className
           )}
         >
@@ -282,20 +301,24 @@ const SpeechInput = forwardRef<HTMLDivElement, SpeechInputProps>(
 )
 
 // Record button - toggles between mic icon and stop icon
-type SpeechInputRecordButtonProps = ComponentPropsWithoutRef<"button">
+type SpeechInputRecordButtonProps = Omit<
+  ComponentPropsWithoutRef<typeof Button>,
+  "size"
+>
 
 const SpeechInputRecordButton = forwardRef<
   HTMLButtonElement,
   SpeechInputRecordButtonProps
 >(function SpeechInputRecordButton(
-  { className, onClick, disabled, ...props },
+  { className, onClick, variant = "ghost", disabled, ...props },
   ref
 ) {
   const speechInput = useSpeechInput()
 
   return (
-    <button
+    <Button
       ref={ref}
+      variant={variant}
       onClick={(e) => {
         if (speechInput.isConnected) {
           speechInput.stop()
@@ -306,9 +329,8 @@ const SpeechInputRecordButton = forwardRef<
       }}
       disabled={disabled ?? speechInput.isConnecting}
       className={cn(
-        "relative flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg transition-all",
-        "hover:bg-accent active:bg-accent/80",
-        "disabled:cursor-not-allowed disabled:opacity-50",
+        buttonVariants({ size: speechInput.size }),
+        "relative flex flex-shrink-0 items-center justify-center transition-all",
         speechInput.isConnected && "scale-[80%]",
         className
       )}
@@ -325,27 +347,23 @@ const SpeechInputRecordButton = forwardRef<
             : "scale-[60%] opacity-0"
         )}
       />
-      <div
+      <SquareIcon
         className={cn(
-          "absolute inset-0 flex items-center justify-center transition-all duration-200",
+          "text-destructive absolute h-4 w-4 fill-current transition-all duration-200",
           !speechInput.isConnecting && speechInput.isConnected
             ? "scale-100 opacity-100"
             : "scale-[60%] opacity-0"
         )}
-      >
-        <SquareIcon className="text-destructive h-4 w-4 fill-current" />
-      </div>
-      <div
+      />
+      <MicIcon
         className={cn(
-          "absolute inset-0 flex items-center justify-center transition-all duration-200",
+          "absolute h-4 w-4 transition-all duration-200",
           !speechInput.isConnecting && !speechInput.isConnected
             ? "scale-100 opacity-100"
             : "scale-[60%] opacity-0"
         )}
-      >
-        <MicIcon className="h-4 w-4" />
-      </div>
-    </button>
+      />
+    </Button>
   )
 })
 
@@ -395,17 +413,24 @@ const SpeechInputPreview = forwardRef<HTMLDivElement, SpeechInputPreviewProps>(
 )
 
 // Cancel button
-type SpeechInputCancelButtonProps = ComponentPropsWithoutRef<"button">
+type SpeechInputCancelButtonProps = Omit<
+  ComponentPropsWithoutRef<typeof Button>,
+  "size"
+>
 
 const SpeechInputCancelButton = forwardRef<
   HTMLButtonElement,
   SpeechInputCancelButtonProps
->(function SpeechInputCancelButton({ className, onClick, ...props }, ref) {
+>(function SpeechInputCancelButton(
+  { className, onClick, variant = "ghost", ...props },
+  ref
+) {
   const speechInput = useSpeechInput()
 
   return (
-    <button
+    <Button
       ref={ref}
+      variant={variant}
       // @ts-expect-error inert is not yet in React types
       inert={speechInput.isConnected ? undefined : ""}
       onClick={(e) => {
@@ -413,10 +438,10 @@ const SpeechInputCancelButton = forwardRef<
         onClick?.(e)
       }}
       className={cn(
-        "flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg transition-[opacity,transform,width] duration-200 ease-out",
-        "text-muted-foreground hover:text-foreground hover:bg-accent active:bg-accent/80",
+        buttonVariants({ size: speechInput.size }),
+        "flex-shrink-0 transition-[opacity,transform,width] duration-200 ease-out",
         speechInput.isConnected
-          ? "w-8 scale-[80%] opacity-100"
+          ? "scale-[80%] opacity-100"
           : "pointer-events-none w-0 scale-100 opacity-0",
         className
       )}
@@ -424,7 +449,7 @@ const SpeechInputCancelButton = forwardRef<
       {...props}
     >
       <XIcon className="h-3 w-3" />
-    </button>
+    </Button>
   )
 })
 
