@@ -324,7 +324,7 @@ const SpeechInputRecordButton = forwardRef<
       disabled={disabled ?? speechInput.isConnecting}
       className={cn(
         buttonVariants({ size: speechInput.size }),
-        "relative flex flex-shrink-0 items-center justify-center transition-all",
+        "relative flex items-center justify-center transition-all",
         speechInput.isConnected && "scale-[80%]",
         className
       )}
@@ -383,10 +383,10 @@ const SpeechInputPreview = forwardRef<HTMLDivElement, SpeechInputPreviewProps>(
         // @ts-expect-error inert is not yet in React types
         inert={speechInput.isConnected ? undefined : ""}
         className={cn(
-          "relative flex h-8 flex-shrink-0 items-center overflow-hidden text-sm transition-[opacity,transform,width] duration-200 ease-out",
+          "relative self-stretch text-sm transition-[opacity,transform,width] duration-200 ease-out",
           showPlaceholder
             ? "text-muted-foreground italic"
-            : "text-muted-foreground [mask-image:linear-gradient(to_right,transparent,black_16px,black_calc(100%-16px),transparent)]",
+            : "text-muted-foreground",
           speechInput.isConnected ? "w-28 opacity-100" : "w-0 opacity-0",
           className
         )}
@@ -394,13 +394,15 @@ const SpeechInputPreview = forwardRef<HTMLDivElement, SpeechInputPreviewProps>(
         aria-hidden={!speechInput.isConnected}
         {...props}
       >
-        <motion.p
-          key="text"
-          layout="position"
-          className={`absolute top-0 right-0 bottom-0 flex h-full min-w-full items-center px-0 whitespace-nowrap`}
-        >
-          {displayText}
-        </motion.p>
+        <div className="absolute inset-y-0 -right-1 -left-1 [mask-image:linear-gradient(to_right,transparent,black_10px,black_calc(100%-10px),transparent)]">
+          <motion.p
+            key="text"
+            layout="position"
+            className={`absolute top-0 right-0 bottom-0 flex h-full min-w-full items-center px-1 whitespace-nowrap`}
+          >
+            {displayText}
+          </motion.p>
+        </div>
       </div>
     )
   }
@@ -433,7 +435,7 @@ const SpeechInputCancelButton = forwardRef<
       }}
       className={cn(
         buttonVariants({ size: speechInput.size }),
-        "flex-shrink-0 transition-[opacity,transform,width] duration-200 ease-out",
+        "transition-[opacity,transform,width] duration-200 ease-out",
         speechInput.isConnected
           ? "scale-[80%] opacity-100"
           : "pointer-events-none w-0 scale-100 opacity-0",
