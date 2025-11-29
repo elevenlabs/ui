@@ -1,18 +1,7 @@
 "use client"
 
-import {
-  Children,
-  createContext,
-  forwardRef,
-  isValidElement,
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-  type ComponentPropsWithoutRef,
-  type ReactNode,
-} from "react"
-import { cva, VariantProps } from "class-variance-authority"
+import * as React from "react"
+import { cva, type VariantProps } from "class-variance-authority"
 import { motion } from "framer-motion"
 import { MicIcon, SquareIcon, XIcon } from "lucide-react"
 
@@ -37,7 +26,17 @@ const buttonVariants = cva("!px-0", {
   },
 })
 
-// Context for sharing state between compound components
+type ButtonSize = VariantProps<typeof buttonVariants>["size"]
+
+export interface SpeechInputData {
+  /** The current partial (in-progress) transcript */
+  partialTranscript: string
+  /** Array of all committed (finalized) transcripts */
+  committedTranscripts: string[]
+  /** Full transcript combining committed and partial transcripts */
+  transcript: string
+}
+
 interface SpeechInputContextValue {
   isConnected: boolean
   isConnecting: boolean
@@ -48,13 +47,15 @@ interface SpeechInputContextValue {
   start: () => Promise<void>
   stop: () => void
   cancel: () => void
-  size: VariantProps<typeof buttonVariants>["size"]
+  size: ButtonSize
 }
 
-const SpeechInputContext = createContext<SpeechInputContextValue | null>(null)
+const SpeechInputContext = React.createContext<SpeechInputContextValue | null>(
+  null
+)
 
 function useSpeechInput() {
-  const context = useContext(SpeechInputContext)
+  const context = React.useContext(SpeechInputContext)
   if (!context) {
     throw new Error(
       "SpeechInput compound components must be used within a SpeechInput"
@@ -63,61 +64,13 @@ function useSpeechInput() {
   return context
 }
 
-// Root component
-interface SpeechInputEvent {
-  partialTranscript: string
-  committedTranscripts: string[]
-  transcript: string
-}
-
-interface SpeechInputProps {
-  children: ReactNode
-  getToken: () => Promise<string>
-  onChange?: (event: SpeechInputEvent) => void
-  onCancel?: (event: SpeechInputEvent) => void
-  onStart?: (event: SpeechInputEvent) => void
-  onStop?: (event: SpeechInputEvent) => void
-  className?: string
-  size?: VariantProps<typeof buttonVariants>["size"]
-
-  // Connection options
-  modelId?: string
-  baseUri?: string
-
-  // VAD options
-  commitStrategy?: CommitStrategy
-  vadSilenceThresholdSecs?: number
-  vadThreshold?: number
-  minSpeechDurationMs?: number
-  minSilenceDurationMs?: number
-  languageCode?: string
-
-  // Microphone options (for automatic microphone mode)
-  microphone?: {
-    deviceId?: string
-    echoCancellation?: boolean
-    noiseSuppression?: boolean
-    autoGainControl?: boolean
-    channelCount?: number
-  }
-
-  // Manual audio options
-  audioFormat?: AudioFormat
-  sampleRate?: number
-
-  // Error callbacks
-  onError?: (error: Error | Event) => void
-  onAuthError?: (data: { error: string }) => void
-  onQuotaExceededError?: (data: { error: string }) => void
-}
-
-const buildTranscript = ({
+function buildTranscript({
   partialTranscript,
   committedTranscripts,
 }: {
   partialTranscript: string
   committedTranscripts: string[]
-}): string => {
+}): string {
   const committed = committedTranscripts.join(" ").trim()
   const partial = partialTranscript.trim()
 
@@ -127,13 +80,13 @@ const buildTranscript = ({
   return committed || partial
 }
 
-const buildEvent = ({
+function buildData({
   partialTranscript,
   committedTranscripts,
 }: {
   partialTranscript: string
   committedTranscripts: string[]
-}): SpeechInputEvent => {
+}): SpeechInputData {
   return {
     partialTranscript,
     committedTranscripts,
@@ -141,7 +94,125 @@ const buildEvent = ({
   }
 }
 
-const SpeechInput = forwardRef<HTMLDivElement, SpeechInputProps>(
+export interface SpeechInputProps {
+  children: React.ReactNode
+
+  /**
+   * Function that returns a token for authenticating with the speech service.
+   * This should be an async function that fetches a token from your backend.
+   */
+  getToken: () => Promise<string>
+
+  /**
+   * Called whenever the transcript changes (partial or committed)
+   */
+  onChange?: (data: SpeechInputData) => void
+
+  /**
+   * Called when recording is cancelled
+   */
+  onCancel?: (data: SpeechInputData) => void
+
+  /**
+   * Called when recording starts
+   */
+  onStart?: (data: SpeechInputData) => void
+
+  /**
+   * Called when recording stops
+   */
+  onStop?: (data: SpeechInputData) => void
+
+  /**
+   * Additional CSS classes for the root container
+   */
+  className?: string
+
+  /**
+   * Size variant for the component buttons
+   * @default "default"
+   */
+  size?: ButtonSize
+
+  /**
+   * Model ID for the speech recognition service
+   * @default "scribe_v2_realtime"
+   */
+  modelId?: string
+
+  /**
+   * Base URI for the speech recognition service
+   */
+  baseUri?: string
+
+  /**
+   * Strategy for committing transcripts
+   */
+  commitStrategy?: CommitStrategy
+
+  /**
+   * Silence threshold in seconds for VAD
+   */
+  vadSilenceThresholdSecs?: number
+
+  /**
+   * VAD threshold value
+   */
+  vadThreshold?: number
+
+  /**
+   * Minimum speech duration in milliseconds
+   */
+  minSpeechDurationMs?: number
+
+  /**
+   * Minimum silence duration in milliseconds
+   */
+  minSilenceDurationMs?: number
+
+  /**
+   * Language code for transcription (e.g., "en", "es", "fr")
+   */
+  languageCode?: string
+
+  /**
+   * Microphone configuration options
+   */
+  microphone?: {
+    deviceId?: string
+    echoCancellation?: boolean
+    noiseSuppression?: boolean
+    autoGainControl?: boolean
+    channelCount?: number
+  }
+
+  /**
+   * Audio format for manual audio mode
+   */
+  audioFormat?: AudioFormat
+
+  /**
+   * Sample rate for manual audio mode
+   */
+  sampleRate?: number
+
+  /**
+   * Called when an error occurs
+   */
+  onError?: (error: Error | Event) => void
+
+  /**
+   * Called when an authentication error occurs
+   */
+  onAuthError?: (data: { error: string }) => void
+
+  /**
+   * Called when a quota exceeded error occurs
+   */
+  onQuotaExceededError?: (data: { error: string }) => void
+}
+
+const SpeechInput = React.forwardRef<HTMLDivElement, SpeechInputProps>(
   function SpeechInput(
     {
       children,
@@ -172,11 +243,11 @@ const SpeechInput = forwardRef<HTMLDivElement, SpeechInputProps>(
     },
     ref
   ) {
-    const transcriptsRef = useRef({
+    const transcriptsRef = React.useRef({
       partialTranscript: "",
       committedTranscripts: [] as string[],
     })
-    const startRequestIdRef = useRef(0)
+    const startRequestIdRef = React.useRef(0)
 
     const scribe = useScribe({
       modelId,
@@ -192,12 +263,12 @@ const SpeechInput = forwardRef<HTMLDivElement, SpeechInputProps>(
       microphone,
       onPartialTranscript: (data) => {
         transcriptsRef.current.partialTranscript = data.text
-        onChange?.(buildEvent(transcriptsRef.current))
+        onChange?.(buildData(transcriptsRef.current))
       },
       onCommittedTranscript: (data) => {
         transcriptsRef.current.committedTranscripts.push(data.text)
         transcriptsRef.current.partialTranscript = ""
-        onChange?.(buildEvent(transcriptsRef.current))
+        onChange?.(buildData(transcriptsRef.current))
       },
       onError,
       onAuthError,
@@ -206,7 +277,7 @@ const SpeechInput = forwardRef<HTMLDivElement, SpeechInputProps>(
 
     const isConnecting = scribe.status === "connecting"
 
-    const start = useCallback(async () => {
+    const start = React.useCallback(async () => {
       const requestId = startRequestIdRef.current + 1
       startRequestIdRef.current = requestId
 
@@ -229,46 +300,58 @@ const SpeechInput = forwardRef<HTMLDivElement, SpeechInputProps>(
           scribe.disconnect()
           return
         }
-        onStart?.(buildEvent(transcriptsRef.current))
+        onStart?.(buildData(transcriptsRef.current))
       } catch (error) {
         onError?.(error instanceof Error ? error : new Error(String(error)))
       }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [getToken, scribe, onStart, microphone])
+    }, [getToken, scribe, onStart, onError])
 
-    const stop = () => {
+    const stop = React.useCallback(() => {
       startRequestIdRef.current += 1
       scribe.disconnect()
-      onStop?.(buildEvent(transcriptsRef.current))
-    }
+      onStop?.(buildData(transcriptsRef.current))
+    }, [scribe, onStop])
 
-    const cancel = () => {
+    const cancel = React.useCallback(() => {
       startRequestIdRef.current += 1
-      const event = buildEvent(transcriptsRef.current)
+      const data = buildData(transcriptsRef.current)
       scribe.disconnect()
       scribe.clearTranscripts()
       transcriptsRef.current = {
         partialTranscript: "",
         committedTranscripts: [],
       }
-      onCancel?.(event)
-    }
+      onCancel?.(data)
+    }, [scribe, onCancel])
 
-    const contextValue: SpeechInputContextValue = {
-      isConnected: scribe.isConnected,
-      isConnecting,
-      start,
-      stop,
-      cancel,
-      error: scribe.error,
-      size,
-      ...buildEvent({
-        partialTranscript: scribe.partialTranscript,
-        committedTranscripts: scribe.committedTranscripts.map((t) => t.text),
+    const contextValue: SpeechInputContextValue = React.useMemo(
+      () => ({
+        isConnected: scribe.isConnected,
+        isConnecting,
+        start,
+        stop,
+        cancel,
+        error: scribe.error,
+        size,
+        ...buildData({
+          partialTranscript: scribe.partialTranscript,
+          committedTranscripts: scribe.committedTranscripts.map((t) => t.text),
+        }),
       }),
-    }
+      [
+        scribe.isConnected,
+        scribe.error,
+        scribe.partialTranscript,
+        scribe.committedTranscripts,
+        isConnecting,
+        start,
+        stop,
+        cancel,
+        size,
+      ]
+    )
 
-    useEffect(() => {
+    React.useEffect(() => {
       return () => {
         startRequestIdRef.current += 1
         scribe.disconnect()
@@ -294,13 +377,18 @@ const SpeechInput = forwardRef<HTMLDivElement, SpeechInputProps>(
   }
 )
 
-// Record button - toggles between mic icon and stop icon
-type SpeechInputRecordButtonProps = Omit<
-  ComponentPropsWithoutRef<typeof Button>,
+SpeechInput.displayName = "SpeechInput"
+
+export type SpeechInputRecordButtonProps = Omit<
+  React.ComponentPropsWithoutRef<typeof Button>,
   "size"
 >
 
-const SpeechInputRecordButton = forwardRef<
+/**
+ * Toggle button for starting/stopping speech recording.
+ * Shows a microphone icon when idle and a stop icon when recording.
+ */
+const SpeechInputRecordButton = React.forwardRef<
   HTMLButtonElement,
   SpeechInputRecordButtonProps
 >(function SpeechInputRecordButton(
@@ -312,6 +400,7 @@ const SpeechInputRecordButton = forwardRef<
   return (
     <Button
       ref={ref}
+      type="button"
       variant={variant}
       onClick={(e) => {
         if (speechInput.isConnected) {
@@ -361,60 +450,74 @@ const SpeechInputRecordButton = forwardRef<
   )
 })
 
-// Preview - shows the current transcript with partial
-type SpeechInputPreviewProps = ComponentPropsWithoutRef<"div"> & {
+SpeechInputRecordButton.displayName = "SpeechInputRecordButton"
+
+export interface SpeechInputPreviewProps
+  extends React.ComponentPropsWithoutRef<"div"> {
+  /**
+   * Text to show when no transcript is available
+   * @default "Listening..."
+   */
   placeholder?: string
 }
 
-const SpeechInputPreview = forwardRef<HTMLDivElement, SpeechInputPreviewProps>(
-  function SpeechInputPreview(
-    { className, placeholder = "Listening...", ...props },
-    ref
-  ) {
-    const speechInput = useSpeechInput()
+/**
+ * Displays the current transcript with a placeholder when empty.
+ * Only visible when actively recording.
+ */
+const SpeechInputPreview = React.forwardRef<
+  HTMLDivElement,
+  SpeechInputPreviewProps
+>(function SpeechInputPreview(
+  { className, placeholder = "Listening...", ...props },
+  ref
+) {
+  const speechInput = useSpeechInput()
 
-    const displayText =
-      speechInput.transcript || speechInput.partialTranscript || placeholder
-    const showPlaceholder = !speechInput.transcript.trim()
+  const displayText = speechInput.transcript || placeholder
+  const showPlaceholder = !speechInput.transcript.trim()
 
-    return (
-      <div
-        ref={ref}
-        // @ts-expect-error inert is not yet in React types
-        inert={speechInput.isConnected ? undefined : ""}
-        className={cn(
-          "relative self-stretch text-sm transition-[opacity,transform,width] duration-200 ease-out",
-          showPlaceholder
-            ? "text-muted-foreground italic"
-            : "text-muted-foreground",
-          speechInput.isConnected ? "w-28 opacity-100" : "w-0 opacity-0",
-          className
-        )}
-        title={displayText}
-        aria-hidden={!speechInput.isConnected}
-        {...props}
-      >
-        <div className="absolute inset-y-0 -right-1 -left-1 [mask-image:linear-gradient(to_right,transparent,black_10px,black_calc(100%-10px),transparent)]">
-          <motion.p
-            key="text"
-            layout="position"
-            className={`absolute top-0 right-0 bottom-0 flex h-full min-w-full items-center px-1 whitespace-nowrap`}
-          >
-            {displayText}
-          </motion.p>
-        </div>
+  return (
+    <div
+      ref={ref}
+      inert={speechInput.isConnected ? undefined : true}
+      className={cn(
+        "relative self-stretch text-sm transition-[opacity,transform,width] duration-200 ease-out",
+        showPlaceholder
+          ? "text-muted-foreground italic"
+          : "text-muted-foreground",
+        speechInput.isConnected ? "w-28 opacity-100" : "w-0 opacity-0",
+        className
+      )}
+      title={displayText}
+      aria-hidden={!speechInput.isConnected}
+      {...props}
+    >
+      <div className="absolute inset-y-0 -right-1 -left-1 [mask-image:linear-gradient(to_right,transparent,black_10px,black_calc(100%-10px),transparent)]">
+        <motion.p
+          key="text"
+          layout="position"
+          className="absolute top-0 right-0 bottom-0 flex h-full min-w-full items-center px-1 whitespace-nowrap"
+        >
+          {displayText}
+        </motion.p>
       </div>
-    )
-  }
-)
+    </div>
+  )
+})
 
-// Cancel button
-type SpeechInputCancelButtonProps = Omit<
-  ComponentPropsWithoutRef<typeof Button>,
+SpeechInputPreview.displayName = "SpeechInputPreview"
+
+export type SpeechInputCancelButtonProps = Omit<
+  React.ComponentPropsWithoutRef<typeof Button>,
   "size"
 >
 
-const SpeechInputCancelButton = forwardRef<
+/**
+ * Button to cancel the current recording and discard the transcript.
+ * Only visible when actively recording.
+ */
+const SpeechInputCancelButton = React.forwardRef<
   HTMLButtonElement,
   SpeechInputCancelButtonProps
 >(function SpeechInputCancelButton(
@@ -426,9 +529,9 @@ const SpeechInputCancelButton = forwardRef<
   return (
     <Button
       ref={ref}
+      type="button"
       variant={variant}
-      // @ts-expect-error inert is not yet in React types
-      inert={speechInput.isConnected ? undefined : ""}
+      inert={speechInput.isConnected ? undefined : true}
       onClick={(e) => {
         speechInput.cancel()
         onClick?.(e)
@@ -448,6 +551,8 @@ const SpeechInputCancelButton = forwardRef<
     </Button>
   )
 })
+
+SpeechInputCancelButton.displayName = "SpeechInputCancelButton"
 
 export {
   SpeechInput,

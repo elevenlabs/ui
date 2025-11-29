@@ -68,16 +68,16 @@ import {
 ```tsx showLineNumbers
 async function getToken() {
   const response = await fetch("/api/get-scribe-token", { method: "POST" })
-  const data = await response.json()
-  return data.token
+  const json = await response.json()
+  return json.token
 }
 
 export default function Example() {
   return (
     <SpeechInput
       getToken={getToken}
-      onChange={(event) => console.log(event.transcript)}
-      onStop={(event) => console.log("Final:", event.transcript)}
+      onChange={(data) => console.log(data.transcript)}
+      onStop={(data) => console.log("Final:", data.transcript)}
     >
       <SpeechInputRecordButton />
       <SpeechInputPreview placeholder="Start speaking..." />
@@ -104,7 +104,7 @@ export default function Example() {
       />
       <SpeechInput
         getToken={getToken}
-        onStop={(event) => setValue((prev) => prev + " " + event.transcript)}
+        onStop={(data) => setValue((prev) => prev + " " + data.transcript)}
       >
         <SpeechInputRecordButton />
         <SpeechInputPreview />
@@ -132,7 +132,7 @@ The component automatically adjusts its layout based on child order:
 ```tsx showLineNumbers
 <SpeechInput
   getToken={getToken}
-  onStop={(event) => console.log(event.transcript)}
+  onStop={(data) => console.log(data.transcript)}
 >
   <SpeechInputRecordButton />
 </SpeechInput>
@@ -209,10 +209,10 @@ The root component that manages speech-to-text state and provides context to chi
 | ----------------------- | ----------------------------------- | ---------------------- | ----------------------------------------------------- |
 | children                | `ReactNode`                         | -                      | Child components (record button, preview, cancel)     |
 | getToken                | `() => Promise<string>`             | -                      | Function to fetch ElevenLabs Scribe token             |
-| onChange                | `(event: SpeechInputEvent) => void` | -                      | Called when transcript changes                        |
-| onStart                 | `(event: SpeechInputEvent) => void` | -                      | Called when recording starts                          |
-| onStop                  | `(event: SpeechInputEvent) => void` | -                      | Called when recording stops                           |
-| onCancel                | `(event: SpeechInputEvent) => void` | -                      | Called when recording is cancelled                    |
+| onChange                | `(data: SpeechInputData) => void`   | -                      | Called when transcript changes                        |
+| onStart                 | `(data: SpeechInputData) => void`   | -                      | Called when recording starts                          |
+| onStop                  | `(data: SpeechInputData) => void`   | -                      | Called when recording stops                           |
+| onCancel                | `(data: SpeechInputData) => void`   | -                      | Called when recording is cancelled                    |
 | onError                 | `(error: Error \| Event) => void`   | -                      | Called on connection errors                           |
 | onAuthError             | `(data: { error: string }) => void` | -                      | Called on authentication errors                       |
 | onQuotaExceededError    | `(data: { error: string }) => void` | -                      | Called when quota is exceeded                         |
@@ -293,12 +293,12 @@ Hook to access speech input context from child components.
 | stop                 | `() => void`          | Stop recording                        |
 | cancel               | `() => void`          | Cancel and clear transcript           |
 
-### SpeechInputEvent
+### SpeechInputData
 
-Event object passed to callbacks.
+Data object passed to callbacks.
 
 ```tsx
-interface SpeechInputEvent {
+interface SpeechInputData {
   partialTranscript: string
   committedTranscripts: string[]
   transcript: string // Combined full transcript
