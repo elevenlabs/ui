@@ -122,7 +122,7 @@ function InputWithSpeechInput() {
       />
       <SpeechInput
         getToken={getToken}
-        className="border-input shrink-0"
+        className="shrink-0"
         onStart={() => {
           valueAtStartRef.current = value
         }}

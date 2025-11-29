@@ -214,6 +214,7 @@ export const ui: Registry["items"] = [
     dependencies: ["motion", "lucide-react"],
     registryDependencies: [
       "button",
+      "skeleton",
       "https://ui.elevenlabs.io/r/use-scribe.json",
     ],
     files: [

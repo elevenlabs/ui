@@ -12,6 +12,7 @@ import {
   type CommitStrategy,
 } from "@/registry/elevenlabs-ui/hooks/use-scribe"
 import { Button } from "@/registry/elevenlabs-ui/ui/button"
+import { Skeleton } from "@/registry/elevenlabs-ui/ui/skeleton"
 
 const buttonVariants = cva("!px-0", {
   variants: {
@@ -422,12 +423,12 @@ const SpeechInputRecordButton = React.forwardRef<
       }
       {...props}
     >
-      <div
+      <Skeleton
         className={cn(
-          "bg-primary absolute h-4 w-4 rounded-full transition-all duration-200",
+          "absolute h-4 w-4 rounded-full transition-all duration-200",
           speechInput.isConnecting
-            ? "scale-90 opacity-100"
-            : "scale-[60%] opacity-0"
+            ? "bg-primary scale-90"
+            : "scale-[60%] bg-transparent"
         )}
       />
       <SquareIcon
