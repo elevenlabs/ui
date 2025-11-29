@@ -111,7 +111,7 @@ function InputWithSpeechInput() {
   const valueAtStartRef = useRef("")
 
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex items-center gap-2.5">
       <Input
         value={value}
         onChange={(event) => {

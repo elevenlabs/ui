@@ -230,8 +230,8 @@ const SpeechInput = forwardRef<HTMLDivElement, SpeechInputProps>(
           return
         }
         onStart?.(buildEvent(transcriptsRef.current))
-      } catch {
-        // Error is handled by onError callback
+      } catch (error) {
+        onError?.(error instanceof Error ? error : new Error(String(error)))
       }
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [getToken, scribe, onStart, microphone])
