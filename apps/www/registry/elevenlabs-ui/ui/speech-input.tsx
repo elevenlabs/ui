@@ -280,9 +280,9 @@ const SpeechInput = forwardRef<HTMLDivElement, SpeechInputProps>(
         <div
           ref={ref}
           className={cn(
-            "relative inline-flex items-center overflow-hidden rounded-md border border-transparent transition-all duration-200",
+            "relative inline-flex items-center overflow-hidden rounded-md transition-all duration-200",
             scribe.isConnected
-              ? "bg-background dark:bg-muted border-input shadow-sm"
+              ? "bg-background dark:bg-muted shadow-[inset_0_0_0_1px_var(--color-input),0_1px_2px_0_rgba(0,0,0,0.05)]"
               : "",
             className
           )}
