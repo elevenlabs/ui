@@ -1,6 +1,7 @@
 "use client"
 
 import { useRef, useState } from "react"
+import { toast } from "sonner"
 
 import { getScribeToken } from "@/registry/elevenlabs-ui/blocks/realtime-transcriber-01/actions/get-scribe-token"
 import { Input } from "@/registry/elevenlabs-ui/ui/input"
@@ -51,7 +52,7 @@ function TextareaWithSpeechInputRight() {
             setValue(valueAtStartRef.current)
           }}
           onError={(error) => {
-            console.error("Speech input error:", error)
+            toast.error(String(error))
           }}
         >
           <SpeechInputCancelButton />
@@ -94,7 +95,7 @@ function TextareaWithSpeechInputLeft() {
             setValue(valueAtStartRef.current)
           }}
           onError={(error) => {
-            console.error("Speech input error:", error)
+            toast.error(String(error))
           }}
         >
           <SpeechInputRecordButton />
@@ -136,7 +137,7 @@ function InputWithSpeechInput() {
           setValue(valueAtStartRef.current)
         }}
         onError={(error) => {
-          console.error("Speech input error:", error)
+          toast.error(String(error))
         }}
       >
         <SpeechInputCancelButton />
