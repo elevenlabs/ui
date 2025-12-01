@@ -49,6 +49,31 @@ npm install streamdown
 
 </CodeTabs>
 
+To ensure the styles are properly applied, you need to configure your Tailwind setup to include Streamdown's source files.
+
+### Tailwind v4
+
+Add the following CSS source directive to your `globals.css` or main CSS file:
+
+```css title="globals.css"
+@source "../node_modules/streamdown/dist/*.js";
+```
+
+Make sure the path matches the location of your `node_modules` folder relative to your CSS file.
+
+### Tailwind v3
+
+Add Streamdown to your `content` array in your `tailwind.config.js`:
+
+```js title="tailwind.config.js"
+module.exports = {
+  content: [
+    './node_modules/streamdown/dist/*.js',
+  ],
+  // ... rest of your config
+}
+```
+
 ## Usage
 
 ```tsx showLineNumbers
