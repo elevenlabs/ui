@@ -12,7 +12,6 @@ import {
 import { Message, MessageContent } from "@/registry/elevenlabs-ui/ui/message"
 import { Orb } from "@/registry/elevenlabs-ui/ui/orb"
 import { Response } from "@/registry/elevenlabs-ui/ui/response"
-import { ShimmeringText } from "@/registry/elevenlabs-ui/ui/shimmering-text"
 
 const allMessages = [
   {
