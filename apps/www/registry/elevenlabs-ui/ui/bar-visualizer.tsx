@@ -1,7 +1,14 @@
 "use client"
 
-import * as React from "react"
-import { useEffect, useMemo, useRef, useState } from "react"
+import {
+  forwardRef,
+  memo,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type HTMLAttributes,
+} from "react"
 
 import { cn } from "@/lib/utils"
 
@@ -332,8 +339,7 @@ export type AgentState =
   | "speaking"
   | "thinking"
 
-export interface BarVisualizerProps
-  extends React.HTMLAttributes<HTMLDivElement> {
+export interface BarVisualizerProps extends HTMLAttributes<HTMLDivElement> {
   /** Voice assistant state */
   state?: AgentState
   /** Number of bars to display */
@@ -349,7 +355,7 @@ export interface BarVisualizerProps
   centerAlign?: boolean
 }
 
-const BarVisualizerComponent = React.forwardRef<
+const BarVisualizerComponent = forwardRef<
   HTMLDivElement,
   BarVisualizerProps
 >(
@@ -494,7 +500,7 @@ const BarVisualizerComponent = React.forwardRef<
 )
 
 // Memoized Bar component to prevent unnecessary re-renders
-const Bar = React.memo<{
+const Bar = memo<{
   heightPct: number
   isHighlighted: boolean
   state?: AgentState
@@ -517,8 +523,8 @@ const Bar = React.memo<{
 
 Bar.displayName = "Bar"
 
-// Wrap the main component with React.memo for prop comparison optimization
-const BarVisualizer = React.memo(
+// Wrap the main component with memo for prop comparison optimization
+const BarVisualizer = memo(
   BarVisualizerComponent,
   (prevProps, nextProps) => {
     return (
