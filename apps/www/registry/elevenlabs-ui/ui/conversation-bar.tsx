@@ -19,6 +19,12 @@ import { LiveWaveform } from "@/registry/elevenlabs-ui/ui/live-waveform"
 import { Separator } from "@/registry/elevenlabs-ui/ui/separator"
 import { Textarea } from "@/registry/elevenlabs-ui/ui/textarea"
 
+export type AgentConnectionState =
+  | "disconnected"
+  | "connecting"
+  | "connected"
+  | "disconnecting"
+
 export interface ConversationBarProps {
   /**
    * ElevenLabs Agent ID to connect to
@@ -79,9 +85,8 @@ export const ConversationBar = React.forwardRef<
     ref
   ) => {
     const [isMuted, setIsMuted] = React.useState(false)
-    const [agentState, setAgentState] = React.useState<
-      "disconnected" | "connecting" | "connected" | "disconnecting" | null
-    >("disconnected")
+    const [agentState, setAgentState] =
+      React.useState<AgentConnectionState>("disconnected")
     const [keyboardOpen, setKeyboardOpen] = React.useState(false)
     const [textInput, setTextInput] = React.useState("")
     const mediaStreamRef = React.useRef<MediaStream | null>(null)
