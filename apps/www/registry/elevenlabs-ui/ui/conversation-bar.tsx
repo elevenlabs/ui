@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { useCallback } from "react"
 import { useConversation } from "@elevenlabs/react"
 import {
   ArrowUpIcon,
@@ -91,20 +92,25 @@ export const ConversationBar = React.forwardRef<
     const [textInput, setTextInput] = React.useState("")
     const mediaStreamRef = React.useRef<MediaStream | null>(null)
 
-    const conversation = useConversation({
-      onConnect: () => {
-        onConnect?.()
-      },
-      onDisconnect: () => {
-        setAgentState("disconnected")
-        onDisconnect?.()
-        setKeyboardOpen(false)
-      },
-      onMessage: (message) => {
+    const handleConnect = useCallback(() => {
+      onConnect?.()
+    }, [onConnect])
+
+    const handleDisconnect = useCallback(() => {
+      setAgentState("disconnected")
+      onDisconnect?.()
+      setKeyboardOpen(false)
+    }, [onDisconnect])
+
+    const handleMessage = useCallback(
+      (message: { source: "user" | "ai"; message: string }) => {
         onMessage?.(message)
       },
-      micMuted: isMuted,
-      onError: (error: unknown) => {
+      [onMessage]
+    )
+
+    const handleError = useCallback(
+      (error: unknown) => {
         console.error("Error:", error)
         setAgentState("disconnected")
         const errorObj =
@@ -115,9 +121,18 @@ export const ConversationBar = React.forwardRef<
               )
         onError?.(errorObj)
       },
+      [onError]
+    )
+
+    const conversation = useConversation({
+      onConnect: handleConnect,
+      onDisconnect: handleDisconnect,
+      onMessage: handleMessage,
+      onError: handleError,
+      micMuted: isMuted,
     })
 
-    const getMicStream = React.useCallback(async () => {
+    const getMicStream = useCallback(async () => {
       if (mediaStreamRef.current) return mediaStreamRef.current
 
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
@@ -126,7 +141,7 @@ export const ConversationBar = React.forwardRef<
       return stream
     }, [])
 
-    const startConversation = React.useCallback(async () => {
+    const startConversation = useCallback(async () => {
       try {
         setAgentState("connecting")
 
@@ -144,7 +159,7 @@ export const ConversationBar = React.forwardRef<
       }
     }, [conversation, getMicStream, agentId, onError])
 
-    const handleEndSession = React.useCallback(() => {
+    const handleEndSession = useCallback(() => {
       conversation.endSession()
       setAgentState("disconnected")
 
@@ -154,11 +169,11 @@ export const ConversationBar = React.forwardRef<
       }
     }, [conversation])
 
-    const toggleMute = React.useCallback(() => {
+    const toggleMute = useCallback(() => {
       setIsMuted((prev) => !prev)
     }, [])
 
-    const handleStartOrEnd = React.useCallback(() => {
+    const handleStartOrEnd = useCallback(() => {
       if (agentState === "connected" || agentState === "connecting") {
         handleEndSession()
       } else if (agentState === "disconnected") {
@@ -166,7 +181,7 @@ export const ConversationBar = React.forwardRef<
       }
     }, [agentState, handleEndSession, startConversation])
 
-    const handleSendText = React.useCallback(() => {
+    const handleSendText = useCallback(() => {
       if (!textInput.trim()) return
 
       const messageToSend = textInput
@@ -177,7 +192,7 @@ export const ConversationBar = React.forwardRef<
 
     const isConnected = agentState === "connected"
 
-    const handleTextChange = React.useCallback(
+    const handleTextChange = useCallback(
       (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         const value = e.target.value
         setTextInput(value)
@@ -189,7 +204,7 @@ export const ConversationBar = React.forwardRef<
       [conversation, isConnected]
     )
 
-    const handleKeyDown = React.useCallback(
+    const handleKeyDown = useCallback(
       (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
         if (e.key === "Enter" && !e.shiftKey) {
           e.preventDefault()
