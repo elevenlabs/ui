@@ -263,15 +263,26 @@ function Scene({
   )
 }
 
-function splitmix32(a: number) {
+// SplitMix32 PRNG random number generator
+// Learn more about it here : https://github.com/bryc/code/blob/master/jshash/PRNGs.md#splitmix32
+function splitmix32(seed: number) {
+  const HALF_BITS_SHIFT = 16
+  const MIX_SHIFT = 15
+  const UINT32_BITS = 32
+  const GOLDEN_RATIO = 0x9e3779b9
+  const MIX_MULTIPLIER_1 = 0x21f0aaad
+  const MIX_MULTIPLIER_2 = 0x735a2d97
+
   return function () {
-    a |= 0
-    a = (a + 0x9e3779b9) | 0
-    let t = a ^ (a >>> 16)
-    t = Math.imul(t, 0x21f0aaad)
-    t = t ^ (t >>> 15)
-    t = Math.imul(t, 0x735a2d97)
-    return ((t = t ^ (t >>> 15)) >>> 0) / 4294967296
+    seed = Math.trunc(seed)
+    seed = Math.trunc(seed + GOLDEN_RATIO)
+    let mixedBits = seed ^ (seed >>> HALF_BITS_SHIFT)
+    mixedBits = Math.imul(mixedBits, MIX_MULTIPLIER_1)
+    mixedBits = mixedBits ^ (mixedBits >>> MIX_SHIFT)
+    mixedBits = Math.imul(mixedBits, MIX_MULTIPLIER_2)
+    mixedBits = mixedBits ^ (mixedBits >>> MIX_SHIFT)
+    // >>> 0 coerces to unsigned 32-bit integer
+    return (mixedBits >>> 0) / 2 ** UINT32_BITS
   }
 }
 
