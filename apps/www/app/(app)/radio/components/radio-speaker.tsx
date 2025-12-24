@@ -46,10 +46,7 @@ const SpeakerContextBridge = ({ className }: { className?: string }) => {
 
   playerRefStatic.current = player
 
-  return useMemo(
-    () => <SpeakerControls className={className} playerRef={playerRefStatic} />,
-    [className]
-  )
+  return <SpeakerControls className={className} playerRef={playerRefStatic} />
 }
 
 export function RadioSpeaker({ className }: { className?: string }) {
@@ -272,7 +269,7 @@ const VolumeSlider = memo(
 
 VolumeSlider.displayName = "VolumeSlider"
 
-function SpeakerControls({
+const SpeakerControls = memo(function SpeakerControls({
   className,
   playerRef,
 }: {
@@ -593,4 +590,6 @@ function SpeakerControls({
       </div>
     </Card>
   )
-}
+})
+
+SpeakerControls.displayName = "SpeakerControls"
