@@ -46,3 +46,5 @@ tsconfig.tsbuildinfo
 
 *storybook.log
 storybook-static
+.pnpm-store/
+__screenshots__/
