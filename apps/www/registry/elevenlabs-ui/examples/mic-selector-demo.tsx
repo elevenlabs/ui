@@ -118,15 +118,15 @@ export default function MicSelectorDemo() {
   return (
     <div className="flex min-h-[200px] w-full items-center justify-center p-4">
       <Card className="m-0 w-full max-w-2xl border p-0 shadow-lg">
-        <div className="flex items-center justify-between gap-2 p-2">
-          <div className="h-8 w-[120px] md:h-10 md:w-[200px]">
+        <div className="flex w-full flex-wrap items-center justify-between gap-2 p-2">
+          <div className="h-8 w-full min-w-0 flex-1 md:w-[200px] md:flex-none">
             <div
               className={cn(
                 "flex h-full items-center gap-2 rounded-md py-1",
                 "bg-foreground/5 text-foreground/70"
               )}
             >
-              <div className="h-full flex-1">
+              <div className="h-full min-w-0 flex-1">
                 <div className="relative flex h-full w-full shrink-0 items-center justify-center overflow-hidden rounded-sm">
                   <LiveWaveform
                     key={state}
@@ -149,14 +149,14 @@ export default function MicSelectorDemo() {
                   />
                   {state === "idle" && (
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <span className="text-foreground/50 text-[10px] font-medium">
+                      <span className="text-foreground/50 text-xs font-medium">
                         Start Recording
                       </span>
                     </div>
                   )}
                   {showRecorded && (
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <span className="text-foreground/50 text-[10px] font-medium">
+                      <span className="text-foreground/50 text-xs font-medium">
                         Ready to Play
                       </span>
                     </div>
@@ -165,7 +165,7 @@ export default function MicSelectorDemo() {
               </div>
             </div>
           </div>
-          <div className="flex items-center">
+          <div className="flex w-full flex-wrap items-center justify-center gap-1 md:w-auto ">
             <MicSelector
               value={selectedDevice}
               onValueChange={setSelectedDevice}
@@ -174,60 +174,64 @@ export default function MicSelectorDemo() {
               disabled={state === "recording" || state === "loading"}
             />
             <Separator orientation="vertical" className="mx-1 -my-2.5" />
-            {state === "idle" && (
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={startRecording}
-                disabled={isMuted}
-                aria-label="Start recording"
-              >
-                <Disc className="h-5 w-5" />
-              </Button>
-            )}
-            {(state === "loading" || state === "recording") && (
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={stopRecording}
-                disabled={state === "loading"}
-                aria-label="Stop recording"
-              >
-                <Pause className="h-5 w-5" />
-              </Button>
-            )}
-            {showRecorded && (
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={playRecording}
-                aria-label="Play recording"
-              >
-                <Play className="h-5 w-5" />
-              </Button>
-            )}
-            {state === "playing" && (
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={pausePlayback}
-                aria-label="Pause playback"
-              >
-                <Pause className="h-5 w-5" />
-              </Button>
-            )}
+             <div className="flex">
+              {state === "idle" && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={startRecording}
+                  disabled={isMuted}
+                  aria-label="Start recording"
+                >
+                  <Disc className="size-5" />
+                </Button>
+              )}
+              {(state === "loading" || state === "recording") && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={stopRecording}
+                  disabled={state === "loading"}
+                  aria-label="Stop recording"
+                >
+                  <Pause className="size-5" />
+                </Button>
+              )}
+              {showRecorded && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={playRecording}
+                  aria-label="Play recording"
+                >
+                  <Play className="size-5" />
+                </Button>
+              )}
+              {state === "playing" && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={pausePlayback}
+                  aria-label="Pause playback"
+                >
+                  <Pause className="size-5" />
+                </Button>
+              )}
             <Separator orientation="vertical" className="mx-1 -my-2.5" />
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={restart}
-              disabled={
-                state === "idle" || state === "loading" || state === "recording"
-              }
-              aria-label="Delete recording"
-            >
-              <Trash2 className="h-5 w-5" />
-            </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={restart}
+                disabled={
+                  state === "idle" ||
+                  state === "loading" ||
+                  state === "recording"
+                }
+                aria-label="Delete recording"
+              >
+                <Trash2 className="size-5" />
+              </Button>
+            </div>
           </div>
         </div>
       </Card>

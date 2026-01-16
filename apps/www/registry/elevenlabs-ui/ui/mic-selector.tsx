@@ -99,7 +99,7 @@ export function MicSelector({
           variant="ghost"
           size="sm"
           className={cn(
-            "hover:bg-accent flex w-48 cursor-pointer items-center gap-1.5",
+            "hover:bg-accent flex w-40 min-w-0 shrink cursor-pointer items-center gap-1.5 sm:w-48",
             className
           )}
           disabled={loading || disabled}
@@ -109,7 +109,7 @@ export function MicSelector({
           ) : (
             <Mic className="h-4 w-4 flex-shrink-0" />
           )}
-          <span className="flex-1 truncate text-left">
+          <span className="min-w-0 flex-1 truncate text-left text-xs sm:text-sm">
             {currentDevice.label}
           </span>
           <ChevronsUpDown className="h-3 w-3 flex-shrink-0" />
