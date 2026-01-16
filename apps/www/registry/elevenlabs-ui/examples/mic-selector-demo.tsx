@@ -165,7 +165,7 @@ export default function MicSelectorDemo() {
               </div>
             </div>
           </div>
-          <div className="flex w-full flex-wrap items-center justify-center gap-1 md:w-auto ">
+          <div className="flex w-full flex-wrap items-center justify-center gap-1 md:w-auto">
             <MicSelector
               value={selectedDevice}
               onValueChange={setSelectedDevice}
@@ -174,7 +174,7 @@ export default function MicSelectorDemo() {
               disabled={state === "recording" || state === "loading"}
             />
             <Separator orientation="vertical" className="mx-1 -my-2.5" />
-             <div className="flex">
+            <div className="flex">
               {state === "idle" && (
                 <Button
                   variant="ghost"
@@ -217,7 +217,7 @@ export default function MicSelectorDemo() {
                   <Pause className="size-5" />
                 </Button>
               )}
-            <Separator orientation="vertical" className="mx-1 -my-2.5" />
+              <Separator orientation="vertical" className="mx-1 -my-2.5" />
               <Button
                 variant="ghost"
                 size="icon"

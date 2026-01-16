@@ -355,10 +355,7 @@ export interface BarVisualizerProps extends HTMLAttributes<HTMLDivElement> {
   centerAlign?: boolean
 }
 
-const BarVisualizerComponent = forwardRef<
-  HTMLDivElement,
-  BarVisualizerProps
->(
+const BarVisualizerComponent = forwardRef<HTMLDivElement, BarVisualizerProps>(
   (
     {
       state,
@@ -524,22 +521,19 @@ const Bar = memo<{
 Bar.displayName = "Bar"
 
 // Wrap the main component with memo for prop comparison optimization
-const BarVisualizer = memo(
-  BarVisualizerComponent,
-  (prevProps, nextProps) => {
-    return (
-      prevProps.state === nextProps.state &&
-      prevProps.barCount === nextProps.barCount &&
-      prevProps.mediaStream === nextProps.mediaStream &&
-      prevProps.minHeight === nextProps.minHeight &&
-      prevProps.maxHeight === nextProps.maxHeight &&
-      prevProps.demo === nextProps.demo &&
-      prevProps.centerAlign === nextProps.centerAlign &&
-      prevProps.className === nextProps.className &&
-      JSON.stringify(prevProps.style) === JSON.stringify(nextProps.style)
-    )
-  }
-)
+const BarVisualizer = memo(BarVisualizerComponent, (prevProps, nextProps) => {
+  return (
+    prevProps.state === nextProps.state &&
+    prevProps.barCount === nextProps.barCount &&
+    prevProps.mediaStream === nextProps.mediaStream &&
+    prevProps.minHeight === nextProps.minHeight &&
+    prevProps.maxHeight === nextProps.maxHeight &&
+    prevProps.demo === nextProps.demo &&
+    prevProps.centerAlign === nextProps.centerAlign &&
+    prevProps.className === nextProps.className &&
+    JSON.stringify(prevProps.style) === JSON.stringify(nextProps.style)
+  )
+})
 
 BarVisualizerComponent.displayName = "BarVisualizerComponent"
 BarVisualizer.displayName = "BarVisualizer"
