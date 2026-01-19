@@ -217,16 +217,19 @@ export function AudioPlayerProvider<TData = unknown>({
   )
 
   useAnimationFrame(() => {
-    if (audioRef.current) {
-      _setActiveItem(itemRef.current)
-      setReadyState(audioRef.current.readyState)
-      setNetworkState(audioRef.current.networkState)
-      setTime(audioRef.current.currentTime)
-      setDuration(audioRef.current.duration)
-      setPaused(audioRef.current.paused)
-      setError(audioRef.current.error)
-      setPlaybackRateState(audioRef.current.playbackRate)
+    const audio = audioRef.current
+    if (!audio) {
+      return
     }
+
+    _setActiveItem(itemRef.current)
+    setReadyState(audio.readyState)
+    setNetworkState(audio.networkState)
+    setTime(audio.currentTime)
+    setDuration(audio.duration)
+    setPaused(audio.paused)
+    setError(audio.error)
+    setPlaybackRateState(audio.playbackRate)
   })
 
   const isPlaying = !paused
