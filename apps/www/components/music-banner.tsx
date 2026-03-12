@@ -249,12 +249,23 @@ export function MusicBanner() {
             Introducing
           </span>
           <ElevenMusicWordmark className="h-[11px] w-auto" />
+          <span className="text-foreground/25 text-[13px]">·</span>
+          <span className="text-foreground/50 text-[13px] font-medium tracking-wide">
+            Access code{" "}
+            <span className="bg-foreground/[0.06] border-foreground/[0.08] text-foreground/80 ml-0.5 inline-flex items-center rounded-[4px] border px-1.5 py-[1px] font-mono text-[12px] font-semibold tracking-widest">
+              ELEVENUI
+            </span>
+          </span>
         </span>
         <span className="flex items-center gap-2 sm:hidden">
           <span className="text-foreground/45 text-[13px] font-medium tracking-wide">
             Introducing
           </span>
           <ElevenMusicWordmark className="h-[10px] w-auto" />
+          <span className="text-foreground/25 text-[11px]">·</span>
+          <span className="bg-foreground/[0.06] border-foreground/[0.08] text-foreground/80 inline-flex items-center rounded-[4px] border px-1.5 py-[1px] font-mono text-[11px] font-semibold tracking-widest">
+            ELEVENUI
+          </span>
         </span>
         <span className="text-foreground/35 group-hover:text-foreground/70 flex items-center gap-1 text-[13px] font-medium transition-colors">
           <span className="hidden lg:inline">Try it now</span>
