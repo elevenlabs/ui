@@ -22,19 +22,175 @@ function ElevenMusicWordmark({ className }: { className?: string }) {
 	);
 }
 
-function EqualizerBars() {
+// Detect dark mode from the DOM
+function isDarkMode() {
+	if (typeof document === "undefined") return true;
+	return document.documentElement.classList.contains("dark");
+}
+
+// Theme-aware color palettes
+const THEME_COLORS = {
+	dark: {
+		rings: [
+			["229, 108, 97", "212, 143, 160"],
+			["195, 141, 194", "170, 130, 200"],
+			["139, 126, 200", "160, 150, 210"],
+			["200, 169, 204", "229, 108, 97"],
+		],
+		highlight: "255, 255, 255",
+		glowMultiplier: 1,
+		alphaBase: 0.3,
+	},
+	light: {
+		rings: [
+			["180, 70, 60", "170, 100, 120"],
+			["150, 100, 155", "130, 90, 160"],
+			["100, 85, 165", "120, 110, 175"],
+			["160, 125, 165", "180, 70, 60"],
+		],
+		highlight: "0, 0, 0",
+		glowMultiplier: 0.6,
+		alphaBase: 0.2,
+	},
+} as const;
+
+function SonicRippleCanvas({ className }: { className?: string }) {
+	const canvasRef = useRef<HTMLCanvasElement>(null);
+	const containerRef = useRef<HTMLDivElement>(null);
+	const animRef = useRef<number>(0);
+
+	useEffect(() => {
+		const canvas = canvasRef.current;
+		const container = containerRef.current;
+		if (!canvas || !container) return;
+
+		const dpr = window.devicePixelRatio || 1;
+		const rect = container.getBoundingClientRect();
+		canvas.width = rect.width * dpr;
+		canvas.height = rect.height * dpr;
+		canvas.style.width = `${rect.width}px`;
+		canvas.style.height = `${rect.height}px`;
+
+		const ctx = canvas.getContext("2d")!;
+		ctx.scale(dpr, dpr);
+
+		const cx = rect.width / 2;
+		const cy = rect.height / 2;
+		const maxR = Math.max(rect.width, rect.height) * 0.8;
+
+		const rings: Array<{ r: number; birth: number; colorIdx: number }> = [];
+		let lastSpawn = 0;
+		const spawnInterval = 1100;
+		let colorCounter = 0;
+		const startTime = performance.now();
+
+		// Read theme once at mount, and listen for changes
+		let theme = isDarkMode() ? THEME_COLORS.dark : THEME_COLORS.light;
+
+		const observer = new MutationObserver(() => {
+			theme = isDarkMode() ? THEME_COLORS.dark : THEME_COLORS.light;
+		});
+		observer.observe(document.documentElement, {
+			attributes: true,
+			attributeFilter: ["class"],
+		});
+
+		const easeOut = (t: number) => 1 - (1 - t) * (1 - t) * (1 - t);
+
+		const animate = (t: number) => {
+			ctx.clearRect(0, 0, rect.width, rect.height);
+
+			// Global fade-in over first 1s
+			const elapsed = t - startTime;
+			const globalAlpha = Math.min(1, elapsed / 1000);
+
+			if (t - lastSpawn > spawnInterval) {
+				rings.push({ r: 0, birth: t, colorIdx: colorCounter });
+				colorCounter = (colorCounter + 1) % theme.rings.length;
+				lastSpawn = t;
+			}
+
+			for (let i = rings.length - 1; i >= 0; i--) {
+				const ring = rings[i];
+				const age = (t - ring.birth) / 1000;
+				const progress = Math.min(1, (age * 60) / maxR);
+
+				ring.r = easeOut(progress) * maxR;
+
+				if (ring.r > maxR) {
+					rings.splice(i, 1);
+					continue;
+				}
+
+				const life = 1 - ring.r / maxR;
+				const fadeIn = Math.min(1, age * 2.5);
+				const alpha =
+					life * life * theme.alphaBase * fadeIn * globalAlpha;
+
+				const [c1, c2] = theme.rings[ring.colorIdx % theme.rings.length];
+				const ry = Math.min(ring.r * 0.45, rect.height * 0.42);
+
+				// Outer glow ring
+				ctx.beginPath();
+				ctx.ellipse(cx, cy, ring.r, ry, 0, 0, Math.PI * 2);
+				ctx.strokeStyle = `rgba(${c1}, ${alpha * 0.4 * theme.glowMultiplier})`;
+				ctx.globalAlpha = 1;
+				ctx.lineWidth = (4 + 6 * life) * life;
+				ctx.stroke();
+
+				// Main ring with glow
+				ctx.beginPath();
+				ctx.ellipse(cx, cy, ring.r, ry, 0, 0, Math.PI * 2);
+				ctx.strokeStyle = `rgba(${c2}, ${alpha * 0.9})`;
+				ctx.lineWidth = 1.5 * life + 0.5;
+				ctx.shadowColor = `rgba(${c1}, ${alpha * 0.6 * theme.glowMultiplier})`;
+				ctx.shadowBlur = 12 * life * theme.glowMultiplier;
+				ctx.stroke();
+				ctx.shadowBlur = 0;
+
+				// Inner highlight ring
+				if (life > 0.3) {
+					ctx.beginPath();
+					ctx.ellipse(cx, cy, ring.r, ry, 0, 0, Math.PI * 2);
+					ctx.strokeStyle = `rgba(${theme.highlight}, ${alpha * 0.12 * life})`;
+					ctx.lineWidth = 0.5;
+					ctx.stroke();
+				}
+			}
+
+			// Fade edges
+			ctx.globalAlpha = 1;
+			ctx.globalCompositeOperation = "destination-out";
+			const fadeL = ctx.createLinearGradient(0, 0, 100, 0);
+			fadeL.addColorStop(0, "rgba(0,0,0,1)");
+			fadeL.addColorStop(1, "rgba(0,0,0,0)");
+			ctx.fillStyle = fadeL;
+			ctx.fillRect(0, 0, 100, rect.height);
+			const fadeR = ctx.createLinearGradient(
+				rect.width - 100,
+				0,
+				rect.width,
+				0,
+			);
+			fadeR.addColorStop(0, "rgba(0,0,0,0)");
+			fadeR.addColorStop(1, "rgba(0,0,0,1)");
+			ctx.fillStyle = fadeR;
+			ctx.fillRect(rect.width - 100, 0, 100, rect.height);
+			ctx.globalCompositeOperation = "source-over";
+
+			animRef.current = requestAnimationFrame(animate);
+		};
+
+		animRef.current = requestAnimationFrame(animate);
+		return () => {
+			cancelAnimationFrame(animRef.current);
+			observer.disconnect();
+		};
+	}, []);
+
 	return (
-		<div className="flex items-end gap-[3px] h-[14px]" aria-hidden="true">
-			{[0.6, 1, 0.4, 0.8, 0.5].map((scale, i) => (
-				<div
-					key={i}
-					className="w-[2px] rounded-full bg-current"
-					style={{
-						animation: `music-eq ${0.8 + i * 0.15}s ease-in-out infinite alternate`,
-						height: `${scale * 14}px`,
-					}}
-				/>
-			))}
+		<div ref={containerRef} className={className}>
+			<canvas ref={canvasRef} className="block h-full w-full" />
 		</div>
 	);
 }
@@ -47,14 +203,14 @@ export function MusicBanner() {
 	useEffect(() => {
 		try {
 			const wasDismissed = localStorage.getItem(BANNER_DISMISSED_KEY);
-			if (!wasDismissed) {
-				setDismissed(false);
-				requestAnimationFrame(() => setIsVisible(true));
-			}
-		} catch {
-			setDismissed(false);
-			requestAnimationFrame(() => setIsVisible(true));
-		}
+			if (wasDismissed) return;
+		} catch {}
+
+		setDismissed(false);
+
+		// Small delay so the page layout settles, then ease in
+		const timer = setTimeout(() => setIsVisible(true), 50);
+		return () => clearTimeout(timer);
 	}, []);
 
 	const handleDismiss = () => {
@@ -64,7 +220,7 @@ export function MusicBanner() {
 			try {
 				localStorage.setItem(BANNER_DISMISSED_KEY, "1");
 			} catch {}
-		}, 300);
+		}, 500);
 	};
 
 	if (dismissed) return null;
@@ -72,70 +228,53 @@ export function MusicBanner() {
 	return (
 		<div
 			ref={bannerRef}
-			className="relative z-[60] overflow-hidden transition-all duration-300 ease-out"
+			className="relative z-[60] h-[44px] overflow-hidden"
 			style={{
-				maxHeight: isVisible ? "60px" : "0px",
 				opacity: isVisible ? 1 : 0,
+				marginTop: isVisible ? 0 : -44,
+				transition:
+					"opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1), margin-top 0.7s cubic-bezier(0.22, 1, 0.36, 1)",
 			}}
 		>
-			{/* Dark background */}
-			<div className="absolute inset-0 bg-[#0a0a0a]" />
+			{/* Background matches the page — seamless integration */}
+			<div className="absolute inset-0 bg-background" />
 
-			{/* Gradient blur orb — marketing-website style */}
-			<div
-				className="pointer-events-none absolute -top-1/2 left-1/2 h-[200%] w-full max-w-[900px] -translate-x-1/2"
-				style={{
-					borderRadius: "50%",
-					background:
-						"linear-gradient(90deg, #E56C61 0%, #CBB3CB 40%, #C38DC2 60%, #C8A9CC 80%)",
-					filter: "blur(60px)",
-					opacity: 0.15,
-				}}
-			/>
+			{/* Subtle bottom separator that dissolves into the page */}
+			<div className="absolute inset-x-0 bottom-0 h-px bg-border/40" />
 
-			{/* Subtle animated shimmer */}
-			<div
-				className="pointer-events-none absolute inset-0"
-				style={{
-					background:
-						"linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.03) 50%, transparent 100%)",
-					animation: "banner-shimmer 3s ease-in-out infinite",
-				}}
-			/>
+			<SonicRippleCanvas className="pointer-events-none absolute inset-0" />
 
 			<Link
 				href="https://elevenmusic.link/ui"
 				target="_blank"
 				rel="noopener noreferrer"
-				className="group relative flex h-[40px] items-center justify-center gap-3 px-4 text-white/90 transition-colors hover:text-white"
+				className="group relative flex h-[44px] items-center justify-center gap-3 px-4 text-foreground/90 transition-colors hover:text-foreground"
 			>
-				<EqualizerBars />
 				<span className="hidden items-center gap-2.5 sm:flex">
-					<span className="text-[13px] font-medium tracking-wide text-white/60">
+					<span className="text-[13px] font-medium tracking-wide text-foreground/45">
 						Introducing
 					</span>
 					<ElevenMusicWordmark className="h-[11px] w-auto" />
 				</span>
 				<span className="flex items-center gap-2 sm:hidden">
-					<span className="text-[13px] font-medium tracking-wide text-white/60">
+					<span className="text-[13px] font-medium tracking-wide text-foreground/45">
 						Introducing
 					</span>
 					<ElevenMusicWordmark className="h-[10px] w-auto" />
 				</span>
-				<span className="flex items-center gap-1 text-[13px] font-medium text-white/50 transition-colors group-hover:text-white/80">
+				<span className="flex items-center gap-1 text-[13px] font-medium text-foreground/35 transition-colors group-hover:text-foreground/70">
 					<span className="hidden lg:inline">Try it now</span>
 					<ArrowRight className="size-3 transition-transform group-hover:translate-x-0.5" />
 				</span>
 			</Link>
 
-			{/* Close button */}
 			<button
 				onClick={(e) => {
 					e.preventDefault();
 					e.stopPropagation();
 					handleDismiss();
 				}}
-				className="absolute right-2 top-1/2 z-10 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-full text-white/30 transition-colors hover:text-white/60"
+				className="absolute right-2 top-1/2 z-10 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-full text-foreground/20 transition-colors hover:text-foreground/50"
 				aria-label="Dismiss banner"
 			>
 				<X className="size-3.5" />

@@ -221,25 +221,6 @@
   }
 }
 
-@keyframes music-eq {
-  0% {
-    transform: scaleY(0.3);
-  }
-  100% {
-    transform: scaleY(1);
-  }
-}
-
-@keyframes banner-shimmer {
-  0%,
-  100% {
-    transform: translateX(-100%);
-  }
-  50% {
-    transform: translateX(100%);
-  }
-}
-
 @keyframes fade-in {
   from {
     opacity: 0;
