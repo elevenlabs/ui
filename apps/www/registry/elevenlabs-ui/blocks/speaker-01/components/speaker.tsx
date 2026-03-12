@@ -899,7 +899,7 @@ function SpeakerControls({
                   {currentTrack.title}
                 </h3>
                 <Link
-                  href="https://elevenlabs.io/music"
+                  href="https://elevenmusic.link/ui"
                   className="text-muted-foreground truncate text-xs"
                 >
                   {currentTrack.artist}

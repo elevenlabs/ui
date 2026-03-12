@@ -581,7 +581,7 @@ function SpeakerControls({
           <p className="text-muted-foreground text-xs">
             Powered by{" "}
             <a
-              href="https://elevenlabs.io/music"
+              href="https://elevenmusic.link/ui"
               target="_blank"
               rel="noopener noreferrer"
               className="text-foreground hover:text-primary font-medium transition-colors"
