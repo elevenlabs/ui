@@ -15,7 +15,11 @@ export type VoiceButtonState =
   | "error"
 
 export interface VoiceButtonProps
-  extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "onError"> {
+  extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "onError" | "ref"> {
+  /**
+   * Ref to the button element
+   */
+  ref?: React.Ref<HTMLButtonElement>
   /**
    * Current state of the voice button
    * @default "idle"
@@ -85,28 +89,22 @@ export interface VoiceButtonProps
   disabled?: boolean
 }
 
-export const VoiceButton = React.forwardRef<
-  HTMLButtonElement,
-  VoiceButtonProps
->(
-  (
-    {
-      state = "idle",
-      onPress,
-      label,
-      trailing,
-      icon,
-      variant = "outline",
-      size = "default",
-      className,
-      waveformClassName,
-      feedbackDuration = 1500,
-      disabled,
-      onClick,
-      ...props
-    },
-    ref
-  ) => {
+export const VoiceButton = ({
+  state = "idle",
+  onPress,
+  label,
+  trailing,
+  icon,
+  variant = "outline",
+  size = "default",
+  className,
+  waveformClassName,
+  feedbackDuration = 1500,
+  disabled,
+  onClick,
+  ref,
+  ...props
+}: VoiceButtonProps) => {
     const [showFeedback, setShowFeedback] = React.useState(false)
 
     React.useEffect(() => {
@@ -232,8 +230,5 @@ export const VoiceButton = React.forwardRef<
           )}
         </div>
       </Button>
-    )
-  }
-)
-
-VoiceButton.displayName = "VoiceButton"
+  )
+}
