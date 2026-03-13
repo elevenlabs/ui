@@ -224,4 +224,15 @@ export const ui: Registry["items"] = [
       },
     ],
   },
+  {
+    name: "language-selector",
+    type: "registry:ui",
+    registryDependencies: ["button", "command", "popover"],
+    files: [
+      {
+        path: "ui/language-selector.tsx",
+        type: "registry:ui",
+      },
+    ],
+  },
 ]
