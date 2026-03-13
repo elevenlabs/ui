@@ -10,31 +10,26 @@ import {
   type Frame,
 } from "@/registry/elevenlabs-ui/ui/matrix"
 
+type Mode = "individual" | "focus" | "expand" | "unified" | "collapse" | "burst"
+
+const transitions: Record<Mode, { next: Mode; delay: number }> = {
+  individual: { next: "focus", delay: 4000 },
+  focus: { next: "expand", delay: 2000 },
+  expand: { next: "unified", delay: 2500 },
+  unified: { next: "collapse", delay: 4000 },
+  collapse: { next: "burst", delay: 2500 },
+  burst: { next: "individual", delay: 800 },
+}
+
 const Example = () => {
-  const [mode, setMode] = useState<
-    "individual" | "focus" | "expand" | "unified" | "collapse" | "burst"
-  >("individual")
+  const [mode, setMode] = useState<Mode>("individual")
   const [unifiedFrame, setUnifiedFrame] = useState(0)
   const [expandProgress, setExpandProgress] = useState(0)
   const [collapseProgress, setCollapseProgress] = useState(0)
 
   useEffect(() => {
-    let timeout: NodeJS.Timeout
-
-    if (mode === "individual") {
-      timeout = setTimeout(() => setMode("focus"), 4000)
-    } else if (mode === "focus") {
-      timeout = setTimeout(() => setMode("expand"), 2000)
-    } else if (mode === "expand") {
-      timeout = setTimeout(() => setMode("unified"), 2500)
-    } else if (mode === "unified") {
-      timeout = setTimeout(() => setMode("collapse"), 4000)
-    } else if (mode === "collapse") {
-      timeout = setTimeout(() => setMode("burst"), 2500)
-    } else if (mode === "burst") {
-      timeout = setTimeout(() => setMode("individual"), 800)
-    }
-
+    const { next, delay } = transitions[mode]
+    const timeout = setTimeout(() => setMode(next), delay)
     return () => clearTimeout(timeout)
   }, [mode])
 
