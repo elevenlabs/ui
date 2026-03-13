@@ -452,37 +452,24 @@ export function AudioPlayerButton<TData = unknown>({
 }: AudioPlayerButtonProps<TData>) {
   const player = useAudioPlayer<TData>()
 
-  if (!item) {
-    return (
-      <PlayButton
-        {...otherProps}
-        playing={player.isPlaying}
-        onPlayingChange={(shouldPlay) => {
-          if (shouldPlay) {
-            player.play()
-          } else {
-            player.pause()
-          }
-        }}
-        loading={player.isBuffering && player.isPlaying}
-      />
-    )
+  const isActive = item ? player.isItemActive(item.id) : true
+  const isPlaying = isActive && player.isPlaying
+  const isLoading = isActive && player.isBuffering && player.isPlaying
+
+  const handlePlayingChange = (shouldPlay: boolean) => {
+    if (shouldPlay) {
+      player.play(item)
+    } else {
+      player.pause()
+    }
   }
 
   return (
     <PlayButton
       {...otherProps}
-      playing={player.isItemActive(item.id) && player.isPlaying}
-      onPlayingChange={(shouldPlay) => {
-        if (shouldPlay) {
-          player.play(item)
-        } else {
-          player.pause()
-        }
-      }}
-      loading={
-        player.isItemActive(item.id) && player.isBuffering && player.isPlaying
-      }
+      playing={isPlaying}
+      onPlayingChange={handlePlayingChange}
+      loading={isLoading}
     />
   )
 }
