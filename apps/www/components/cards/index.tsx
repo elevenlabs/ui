@@ -22,9 +22,6 @@ export function CardsDemo() {
           <div className="pt-3 sm:pt-0 sm:pl-2 xl:pl-4">
             <CardsActivityGoal />
           </div>
-          <div className="pt-3 sm:col-span-2 xl:pt-4">
-            {/* <CardsExerciseMinutes /> */}
-          </div>
         </div>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
           <div className="flex flex-col gap-4">
