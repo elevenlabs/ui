@@ -113,9 +113,7 @@ const ChatAction = ({
 
 export default function Page() {
   return (
-    <ConversationProvider
-      onDebug={(debug) => console.log("Debug:", debug)}
-    >
+    <ConversationProvider onDebug={(debug) => console.log("Debug:", debug)}>
       <VoiceChat />
     </ConversationProvider>
   )
@@ -123,8 +121,13 @@ export default function Page() {
 
 export function VoiceChat() {
   const { status } = useConversationStatus()
-  const { startSession, endSession, sendUserMessage, getInputVolume, getOutputVolume } =
-    useConversationControls()
+  const {
+    startSession,
+    endSession,
+    sendUserMessage,
+    getInputVolume,
+    getOutputVolume,
+  } = useConversationControls()
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [textInput, setTextInput] = useState("")
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null)
@@ -334,10 +337,7 @@ export function VoiceChat() {
               ) : status === "connected" ? (
                 <p className="text-xs text-green-600">Connected</p>
               ) : isTransitioning ? (
-                <ShimmeringText
-                  text={status}
-                  className="text-xs capitalize"
-                />
+                <ShimmeringText text={status} className="text-xs capitalize" />
               ) : null}
             </div>
           </div>
