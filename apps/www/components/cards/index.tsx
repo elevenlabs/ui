@@ -1,11 +1,15 @@
+"use client"
+
+import { ConversationProvider } from "@elevenlabs/react"
+
 import { CardsActivityGoal } from "@/components/cards/activity-goal"
 import { CardsBarVisualizer } from "@/components/cards/bar-visualizer"
 import { CardsLiveRecording } from "@/components/cards/live-recording"
 import MusicPlayer01 from "@/registry/elevenlabs-ui/blocks/music-player-01/page"
 import MusicPlayer02 from "@/registry/elevenlabs-ui/blocks/music-player-02/page"
 import Speaker01 from "@/registry/elevenlabs-ui/blocks/speaker-01/page"
-import VoiceChat01 from "@/registry/elevenlabs-ui/blocks/voice-chat-01/page"
-import VoiceChat02 from "@/registry/elevenlabs-ui/blocks/voice-chat-02/page"
+import { VoiceChat as VoiceChat01 } from "@/registry/elevenlabs-ui/blocks/voice-chat-01/page"
+import { VoiceChat as VoiceChat02 } from "@/registry/elevenlabs-ui/blocks/voice-chat-02/page"
 import VoiceForm from "@/registry/elevenlabs-ui/blocks/voice-form-01/page"
 import ConversationDemo from "@/registry/elevenlabs-ui/examples/conversation-demo"
 import OrbDemo from "@/registry/elevenlabs-ui/examples/orb-demo"
@@ -15,6 +19,7 @@ import { ConversationBar } from "@/registry/elevenlabs-ui/ui/conversation-bar"
 
 export function CardsDemo() {
   return (
+    <ConversationProvider>
     <div className="md:grids-col-2 grid **:data-[slot=card]:shadow-none md:gap-4 lg:grid-cols-10 xl:grid-cols-11">
       <div className="grid gap-4 lg:col-span-4 xl:col-span-6">
         <div className="grid gap-1 sm:grid-cols-[auto_1fr] md:hidden">
@@ -70,5 +75,6 @@ export function CardsDemo() {
         </div>
       </div>
     </div>
+    </ConversationProvider>
   )
 }

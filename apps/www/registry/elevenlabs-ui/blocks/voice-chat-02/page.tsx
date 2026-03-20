@@ -1,7 +1,11 @@
 "use client"
 
 import { useCallback, useState } from "react"
-import { ConversationProvider, useConversation } from "@elevenlabs/react"
+import {
+  ConversationProvider,
+  useConversationControls,
+  useConversationStatus,
+} from "@elevenlabs/react"
 import { AnimatePresence, motion } from "framer-motion"
 import { Loader2Icon, PhoneIcon, PhoneOffIcon } from "lucide-react"
 
@@ -17,84 +21,69 @@ const DEFAULT_AGENT = {
   description: "Tap to start voice chat",
 }
 
-type AgentState =
-  | "disconnected"
-  | "connecting"
-  | "connected"
-  | "disconnecting"
-  | null
-
 export default function Page() {
   return (
-    <ConversationProvider>
+    <ConversationProvider
+      onConnect={() => console.log("Connected")}
+      onDisconnect={() => console.log("Disconnected")}
+      onMessage={(message) => console.log("Message:", message)}
+      onError={(error) => console.error("Error:", error)}
+    >
       <VoiceChat />
     </ConversationProvider>
   )
 }
 
-function VoiceChat() {
-  const [agentState, setAgentState] = useState<AgentState>("disconnected")
+export function VoiceChat() {
+  const { status } = useConversationStatus()
+  const { startSession, endSession, getInputVolume, getOutputVolume } =
+    useConversationControls()
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
-
-  const conversation = useConversation({
-    onConnect: () => console.log("Connected"),
-    onDisconnect: () => console.log("Disconnected"),
-    onMessage: (message) => console.log("Message:", message),
-    onError: (error) => {
-      console.error("Error:", error)
-      setAgentState("disconnected")
-    },
-  })
 
   const startConversation = useCallback(async () => {
     try {
       setErrorMessage(null)
       await navigator.mediaDevices.getUserMedia({ audio: true })
-      await conversation.startSession({
+      startSession({
         agentId: DEFAULT_AGENT.agentId,
         connectionType: "webrtc",
-        onStatusChange: (status) => setAgentState(status.status),
       })
     } catch (error) {
       console.error("Error starting conversation:", error)
-      setAgentState("disconnected")
       if (error instanceof DOMException && error.name === "NotAllowedError") {
         setErrorMessage("Please enable microphone permissions in your browser.")
       }
     }
-  }, [conversation])
+  }, [startSession])
 
   const handleCall = useCallback(() => {
-    if (agentState === "disconnected" || agentState === null) {
-      setAgentState("connecting")
+    if (status === "disconnected" || status === "error") {
       startConversation()
-    } else if (agentState === "connected") {
-      conversation.endSession()
-      setAgentState("disconnected")
+    } else if (status === "connected") {
+      endSession()
     }
-  }, [agentState, conversation, startConversation])
+  }, [status, endSession, startConversation])
 
-  const isCallActive = agentState === "connected"
-  const isTransitioning =
-    agentState === "connecting" || agentState === "disconnecting"
+  const isCallActive = status === "connected"
+  const isTransitioning = status === "connecting"
 
-  const getInputVolume = useCallback(() => {
+  const scaledInputVolume = useCallback(() => {
     try {
-      const rawValue = conversation.getInputVolume?.() ?? 0
+      const rawValue = getInputVolume() ?? 0
       return Math.min(1.0, Math.pow(rawValue, 0.5) * 2.5)
     } catch {
       return 0
     }
-  }, [conversation])
+  }, [getInputVolume])
 
-  const getOutputVolume = useCallback(() => {
+  const scaledOutputVolume = useCallback(() => {
     try {
-      const rawValue = conversation.getOutputVolume?.() ?? 0
+      const rawValue = getOutputVolume() ?? 0
       return Math.min(1.0, Math.pow(rawValue, 0.5) * 2.5)
     } catch {
       return 0
     }
-  }, [conversation])
+  }, [getOutputVolume])
 
   return (
     <Card className="flex h-[400px] w-full flex-col items-center justify-center overflow-hidden p-6">
@@ -105,8 +94,8 @@ function VoiceChat() {
               <Orb
                 className="h-full w-full"
                 volumeMode="manual"
-                getInputVolume={getInputVolume}
-                getOutputVolume={getOutputVolume}
+                getInputVolume={scaledInputVolume}
+                getOutputVolume={scaledOutputVolume}
               />
             </div>
           </div>
@@ -125,7 +114,7 @@ function VoiceChat() {
               >
                 {errorMessage}
               </motion.p>
-            ) : agentState === "disconnected" || agentState === null ? (
+            ) : status === "disconnected" || status === "error" ? (
               <motion.p
                 key="disconnected"
                 initial={{ opacity: 0, y: -10 }}
@@ -146,13 +135,13 @@ function VoiceChat() {
                 <div
                   className={cn(
                     "h-2 w-2 rounded-full transition-all duration-300",
-                    agentState === "connected" && "bg-green-500",
+                    status === "connected" && "bg-green-500",
                     isTransitioning && "bg-primary/60 animate-pulse"
                   )}
                 />
                 <span className="text-sm capitalize">
                   {isTransitioning ? (
-                    <ShimmeringText text={agentState} />
+                    <ShimmeringText text={status} />
                   ) : (
                     <span className="text-green-600">Connected</span>
                   )}
