@@ -2,7 +2,6 @@
 
 import { useCallback, useState } from "react"
 import {
-  ConversationProvider,
   useConversationControls,
   useConversationStatus,
 } from "@elevenlabs/react"
@@ -22,19 +21,6 @@ const DEFAULT_AGENT = {
 }
 
 export default function Page() {
-  return (
-    <ConversationProvider
-      onConnect={() => console.log("Connected")}
-      onDisconnect={() => console.log("Disconnected")}
-      onMessage={(message) => console.log("Message:", message)}
-      onError={(error) => console.error("Error:", error)}
-    >
-      <VoiceChat />
-    </ConversationProvider>
-  )
-}
-
-export function VoiceChat() {
   const { status } = useConversationStatus()
   const { startSession, endSession, getInputVolume, getOutputVolume } =
     useConversationControls()
