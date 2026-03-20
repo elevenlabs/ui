@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { ConversationProvider, useConversation } from "@elevenlabs/react"
+import { useConversation } from "@elevenlabs/react"
 import { CheckIcon, CopyIcon } from "lucide-react"
 
 import { cn } from "@/registry/elevenlabs-ui/lib/utils"
@@ -32,18 +32,6 @@ interface ChatMessage {
 }
 
 export default function Page() {
-  return (
-    <ConversationProvider
-      onConnect={() => console.log("Connected")}
-      onDisconnect={() => console.log("Disconnected")}
-      onError={(error) => console.error("Conversation error:", error)}
-    >
-      <VoiceChat />
-    </ConversationProvider>
-  )
-}
-
-export function VoiceChat() {
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null)
 
