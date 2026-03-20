@@ -97,21 +97,32 @@ function BlockViewerProvider({
   const resizablePanelRef = React.useRef<ImperativePanelHandle>(null)
   const [iframeKey, setIframeKey] = React.useState(0)
 
+  const value = React.useMemo(
+    () => ({
+      item,
+      view,
+      setView,
+      resizablePanelRef,
+      activeFile,
+      setActiveFile,
+      tree,
+      highlightedFiles,
+      iframeKey,
+      setIframeKey,
+    }),
+    [
+      item,
+      view,
+      resizablePanelRef,
+      activeFile,
+      tree,
+      highlightedFiles,
+      iframeKey,
+    ]
+  )
+
   return (
-    <BlockViewerContext.Provider
-      value={{
-        item,
-        view,
-        setView,
-        resizablePanelRef,
-        activeFile,
-        setActiveFile,
-        tree,
-        highlightedFiles,
-        iframeKey,
-        setIframeKey,
-      }}
-    >
+    <BlockViewerContext.Provider value={value}>
       <div
         id={item.name}
         data-view={view}
