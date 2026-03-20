@@ -1,7 +1,7 @@
 "use client"
 
 import { useCallback, useState } from "react"
-import { useConversation } from "@elevenlabs/react"
+import { ConversationProvider, useConversation } from "@elevenlabs/react"
 import { AnimatePresence, motion } from "framer-motion"
 import { Loader2Icon, PhoneIcon, PhoneOffIcon } from "lucide-react"
 
@@ -25,6 +25,14 @@ type AgentState =
   | null
 
 export default function Page() {
+  return (
+    <ConversationProvider>
+      <VoiceChat />
+    </ConversationProvider>
+  )
+}
+
+function VoiceChat() {
   const [agentState, setAgentState] = useState<AgentState>("disconnected")
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
@@ -71,13 +79,21 @@ export default function Page() {
     agentState === "connecting" || agentState === "disconnecting"
 
   const getInputVolume = useCallback(() => {
-    const rawValue = conversation.getInputVolume?.() ?? 0
-    return Math.min(1.0, Math.pow(rawValue, 0.5) * 2.5)
+    try {
+      const rawValue = conversation.getInputVolume?.() ?? 0
+      return Math.min(1.0, Math.pow(rawValue, 0.5) * 2.5)
+    } catch {
+      return 0
+    }
   }, [conversation])
 
   const getOutputVolume = useCallback(() => {
-    const rawValue = conversation.getOutputVolume?.() ?? 0
-    return Math.min(1.0, Math.pow(rawValue, 0.5) * 2.5)
+    try {
+      const rawValue = conversation.getOutputVolume?.() ?? 0
+      return Math.min(1.0, Math.pow(rawValue, 0.5) * 2.5)
+    } catch {
+      return 0
+    }
   }, [conversation])
 
   return (

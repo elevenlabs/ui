@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { useConversation } from "@elevenlabs/react"
+import { ConversationProvider, useConversation } from "@elevenlabs/react"
 import {
   ArrowUpIcon,
   ChevronDown,
@@ -68,6 +68,17 @@ export interface ConversationBarProps {
 }
 
 export const ConversationBar = React.forwardRef<
+  HTMLDivElement,
+  ConversationBarProps
+>((props, ref) => {
+  return (
+    <ConversationProvider>
+      <ConversationBarInner {...props} ref={ref} />
+    </ConversationProvider>
+  )
+})
+
+const ConversationBarInner = React.forwardRef<
   HTMLDivElement,
   ConversationBarProps
 >(
@@ -349,3 +360,4 @@ export const ConversationBar = React.forwardRef<
 )
 
 ConversationBar.displayName = "ConversationBar"
+ConversationBarInner.displayName = "ConversationBarInner"
