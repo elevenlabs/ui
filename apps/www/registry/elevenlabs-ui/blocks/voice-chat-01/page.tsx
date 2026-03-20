@@ -2,7 +2,12 @@
 
 import { useCallback, useEffect, useRef, useState } from "react"
 import type { ComponentProps } from "react"
-import { ConversationProvider, useConversation } from "@elevenlabs/react"
+import {
+  ConversationProvider,
+  useConversation,
+  useConversationControls,
+  useConversationStatus,
+} from "@elevenlabs/react"
 import {
   AudioLinesIcon,
   CheckIcon,
@@ -108,32 +113,33 @@ const ChatAction = ({
 
 export default function Page() {
   return (
-    <ConversationProvider>
+    <ConversationProvider
+      onDebug={(debug) => console.log("Debug:", debug)}
+    >
       <VoiceChat />
     </ConversationProvider>
   )
 }
 
-function VoiceChat() {
+export function VoiceChat() {
+  const { status } = useConversationStatus()
+  const { startSession, endSession, sendUserMessage, getInputVolume, getOutputVolume } =
+    useConversationControls()
   const [messages, setMessages] = useState<ChatMessage[]>([])
-  const [agentState, setAgentState] = useState<
-    "disconnected" | "connecting" | "connected" | "disconnecting" | null
-  >("disconnected")
   const [textInput, setTextInput] = useState("")
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const mediaStreamRef = useRef<MediaStream | null>(null)
   const isTextOnlyModeRef = useRef<boolean>(true)
 
-  const conversation = useConversation({
+  // Keep useConversation for callbacks that need access to local state
+  useConversation({
     onConnect: () => {
-      // Only clear messages for voice mode
       if (!isTextOnlyModeRef.current) {
         setMessages([])
       }
     },
     onDisconnect: () => {
-      // Only clear messages for voice mode
       if (!isTextOnlyModeRef.current) {
         setMessages([])
       }
@@ -149,10 +155,6 @@ function VoiceChat() {
     },
     onError: (error) => {
       console.error("Error:", error)
-      setAgentState("disconnected")
-    },
-    onDebug: (debug) => {
-      console.log("Debug:", debug)
     },
   })
 
@@ -188,7 +190,7 @@ function VoiceChat() {
           await getMicStream()
         }
 
-        await conversation.startSession({
+        startSession({
           agentId: DEFAULT_AGENT.agentId,
           connectionType: textOnly ? "websocket" : "webrtc",
           overrides: {
@@ -199,35 +201,31 @@ function VoiceChat() {
               firstMessage: textOnly ? "" : undefined,
             },
           },
-          onStatusChange: (status) => setAgentState(status.status),
         })
       } catch (error) {
         console.error(error)
-        setAgentState("disconnected")
         setMessages([])
       }
     },
-    [conversation, getMicStream]
+    [startSession, getMicStream]
   )
 
   const handleCall = useCallback(async () => {
-    if (agentState === "disconnected" || agentState === null) {
-      setAgentState("connecting")
+    if (status === "disconnected" || status === "error") {
       try {
         await startConversation(false)
       } catch {
-        setAgentState("disconnected")
+        // getMicStream error already handled
       }
-    } else if (agentState === "connected") {
-      conversation.endSession()
-      setAgentState("disconnected")
+    } else if (status === "connected") {
+      endSession()
 
       if (mediaStreamRef.current) {
         mediaStreamRef.current.getTracks().forEach((t) => t.stop())
         mediaStreamRef.current = null
       }
     }
-  }, [agentState, conversation, startConversation])
+  }, [status, endSession, startConversation])
 
   const handleTextInputChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -241,24 +239,21 @@ function VoiceChat() {
 
     const messageToSend = textInput
 
-    if (agentState === "disconnected" || agentState === null) {
+    if (status === "disconnected" || status === "error") {
       const userMessage: ChatMessage = {
         role: "user",
         content: messageToSend,
       }
       setTextInput("")
-      setAgentState("connecting")
 
       try {
         await startConversation(true, true)
-        // Add message once converstation started
         setMessages([userMessage])
-        // Send message after connection is established
-        conversation.sendUserMessage(messageToSend)
+        sendUserMessage(messageToSend)
       } catch (error) {
         console.error("Failed to start conversation:", error)
       }
-    } else if (agentState === "connected") {
+    } else if (status === "connected") {
       const newMessage: ChatMessage = {
         role: "user",
         content: messageToSend,
@@ -266,9 +261,9 @@ function VoiceChat() {
       setMessages((prev) => [...prev, newMessage])
       setTextInput("")
 
-      conversation.sendUserMessage(messageToSend)
+      sendUserMessage(messageToSend)
     }
-  }, [textInput, agentState, conversation, startConversation])
+  }, [textInput, status, startConversation, sendUserMessage])
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -288,27 +283,26 @@ function VoiceChat() {
     }
   }, [])
 
-  const isCallActive = agentState === "connected"
-  const isTransitioning =
-    agentState === "connecting" || agentState === "disconnecting"
+  const isCallActive = status === "connected"
+  const isTransitioning = status === "connecting"
 
-  const getInputVolume = useCallback(() => {
+  const scaledInputVolume = useCallback(() => {
     try {
-      const rawValue = conversation.getInputVolume?.() ?? 0
+      const rawValue = getInputVolume() ?? 0
       return Math.min(1.0, Math.pow(rawValue, 0.5) * 2.5)
     } catch {
       return 0
     }
-  }, [conversation])
+  }, [getInputVolume])
 
-  const getOutputVolume = useCallback(() => {
+  const scaledOutputVolume = useCallback(() => {
     try {
-      const rawValue = conversation.getOutputVolume?.() ?? 0
+      const rawValue = getOutputVolume() ?? 0
       return Math.min(1.0, Math.pow(rawValue, 0.5) * 2.5)
     } catch {
       return 0
     }
-  }, [conversation])
+  }, [getOutputVolume])
 
   return (
     <Card
@@ -322,8 +316,8 @@ function VoiceChat() {
             <Orb
               className="h-full w-full"
               volumeMode="manual"
-              getInputVolume={getInputVolume}
-              getOutputVolume={getOutputVolume}
+              getInputVolume={scaledInputVolume}
+              getOutputVolume={scaledOutputVolume}
             />
           </div>
           <div className="flex flex-col gap-0.5">
@@ -333,15 +327,15 @@ function VoiceChat() {
             <div className="flex items-center gap-2">
               {errorMessage ? (
                 <p className="text-destructive text-xs">{errorMessage}</p>
-              ) : agentState === "disconnected" || agentState === null ? (
+              ) : status === "disconnected" || status === "error" ? (
                 <p className="text-muted-foreground text-xs">
                   Tap to start voice chat
                 </p>
-              ) : agentState === "connected" ? (
+              ) : status === "connected" ? (
                 <p className="text-xs text-green-600">Connected</p>
               ) : isTransitioning ? (
                 <ShimmeringText
-                  text={agentState}
+                  text={status}
                   className="text-xs capitalize"
                 />
               ) : null}
@@ -351,7 +345,7 @@ function VoiceChat() {
         <div
           className={cn(
             "flex h-2 w-2 rounded-full transition-all duration-300",
-            agentState === "connected" &&
+            status === "connected" &&
               "bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]",
             isTransitioning && "animate-pulse bg-white/40"
           )}
@@ -364,18 +358,18 @@ function VoiceChat() {
               <ConversationEmptyState
                 icon={<Orb className="size-12" />}
                 title={
-                  agentState === "connecting" ? (
+                  status === "connecting" ? (
                     <ShimmeringText text="Starting conversation" />
-                  ) : agentState === "connected" ? (
+                  ) : status === "connected" ? (
                     <ShimmeringText text="Start talking or type" />
                   ) : (
                     "Start a conversation"
                   )
                 }
                 description={
-                  agentState === "connecting"
+                  status === "connecting"
                     ? "Connecting..."
-                    : agentState === "connected"
+                    : status === "connected"
                       ? "Ready to chat"
                       : "Type a message or tap the voice button"
                 }
