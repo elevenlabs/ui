@@ -586,7 +586,7 @@ function SpeakerControls({
               rel="noopener noreferrer"
               className="text-foreground hover:text-primary font-medium transition-colors"
             >
-              ElevenLabs Music
+              ElevenMusic
             </a>
           </p>
         </div>
