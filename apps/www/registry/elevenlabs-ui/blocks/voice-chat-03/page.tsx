@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useConversation } from "@elevenlabs/react"
 import { CheckIcon, CopyIcon } from "lucide-react"
 
 import { cn } from "@/registry/elevenlabs-ui/lib/utils"
@@ -33,6 +34,20 @@ interface ChatMessage {
 export default function Page() {
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null)
+
+  useConversation({
+    onConnect: () => setMessages([]),
+    onDisconnect: () => setMessages([]),
+    onMessage: (message) => {
+      if (message.message) {
+        const newMessage: ChatMessage = {
+          role: message.source === "user" ? "user" : "assistant",
+          content: message.message,
+        }
+        setMessages((prev) => [...prev, newMessage])
+      }
+    },
+  })
 
   return (
     <div className="relative mx-auto h-[600px] w-full">
@@ -112,8 +127,6 @@ export default function Page() {
             <ConversationBar
               className="w-full max-w-2xl"
               agentId={DEFAULT_AGENT_ID}
-              onConnect={() => setMessages([])}
-              onDisconnect={() => setMessages([])}
               onSendMessage={(message) => {
                 const userMessage: ChatMessage = {
                   role: "user",
@@ -121,14 +134,6 @@ export default function Page() {
                 }
                 setMessages((prev) => [...prev, userMessage])
               }}
-              onMessage={(message) => {
-                const newMessage: ChatMessage = {
-                  role: message.source === "user" ? "user" : "assistant",
-                  content: message.message,
-                }
-                setMessages((prev) => [...prev, newMessage])
-              }}
-              onError={(error) => console.error("Conversation error:", error)}
             />
           </div>
         </CardContent>
