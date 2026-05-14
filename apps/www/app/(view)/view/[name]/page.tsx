@@ -8,6 +8,8 @@ import { siteConfig } from "@/lib/config"
 import { getRegistryComponent, getRegistryItem } from "@/lib/registry"
 import { absoluteUrl, cn } from "@/lib/utils"
 
+import { RegistryViewProvider } from "./registry-view-provider"
+
 export const revalidate = false
 export const dynamic = "force-static"
 export const dynamicParams = false
@@ -95,9 +97,11 @@ export default async function BlockPage({
 
   return (
     <>
-      <div className={cn("bg-background", item.meta?.container)}>
-        <Component />
-      </div>
+      <RegistryViewProvider>
+        <div className={cn("bg-background", item.meta?.container)}>
+          <Component />
+        </div>
+      </RegistryViewProvider>
     </>
   )
 }
