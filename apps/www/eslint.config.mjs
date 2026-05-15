@@ -3,7 +3,7 @@ import nextTypescript from "eslint-config-next/typescript"
 
 const eslintConfig = [
   {
-    ignores: [".source/", "scripts/"],
+    ignores: [".source/"],
   },
   ...nextCoreWebVitals,
   ...nextTypescript,

@@ -152,7 +152,7 @@ async function cleanupGeneratedPaths() {
       // Build a mapping of source paths to target paths for this block
       const pathMappings = new Map<string, string>()
 
-      json.files.forEach((file: any) => {
+      json.files.forEach((file: string | { path?: string; target?: string }) => {
         if (typeof file === "object" && file.path && file.target) {
           // Map the source registry path to the target path
           const sourcePath = file.path.replace(/^registry\/elevenlabs-ui\//, "")
@@ -160,7 +160,7 @@ async function cleanupGeneratedPaths() {
         }
       })
 
-      json.files = json.files.map((file: any) => {
+      json.files = json.files.map((file: string | { path?: string; target?: string; type?: string }) => {
         if (typeof file === "object" && file.path) {
           // Remove registry/elevenlabs-ui/ prefix
           let cleanPath = file.path.replace(/^registry\/elevenlabs-ui\//, "")
@@ -246,7 +246,7 @@ async function buildAllJson() {
   // Aggregate all dependencies and registryDependencies
   const allDependencies = new Set<string>()
   const allRegistryDependencies = new Set<string>()
-  const allFiles: any[] = []
+  const allFiles: Array<{ path: string; type?: string; target: string; content: string }> = []
 
   // Build path mappings for import rewriting
   const pathMappings = new Map<string, string>()
