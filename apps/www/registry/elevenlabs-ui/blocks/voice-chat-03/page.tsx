@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { useConversation } from "@elevenlabs/react"
+import { ConversationProvider, useConversation } from "@elevenlabs/react"
 import { CheckIcon, CopyIcon } from "lucide-react"
 
 import { cn } from "@/registry/elevenlabs-ui/lib/utils"
@@ -32,6 +32,14 @@ interface ChatMessage {
 }
 
 export default function Page() {
+  return (
+    <ConversationProvider>
+      <PageContent />
+    </ConversationProvider>
+  )
+}
+
+function PageContent() {
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null)
 
