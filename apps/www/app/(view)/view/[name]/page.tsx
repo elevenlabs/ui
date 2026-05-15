@@ -7,7 +7,6 @@ import { z } from "zod"
 import { siteConfig } from "@/lib/config"
 import { getRegistryComponent, getRegistryItem } from "@/lib/registry"
 import { absoluteUrl, cn } from "@/lib/utils"
-import { RegistryPreviewProvider } from "@/components/registry-preview-provider"
 
 export const revalidate = false
 export const dynamic = "force-static"
@@ -96,11 +95,9 @@ export default async function BlockPage({
 
   return (
     <>
-      <RegistryPreviewProvider>
-        <div className={cn("bg-background", item.meta?.container)}>
-          <Component />
-        </div>
-      </RegistryPreviewProvider>
+      <div className={cn("bg-background", item.meta?.container)}>
+        <Component />
+      </div>
     </>
   )
 }

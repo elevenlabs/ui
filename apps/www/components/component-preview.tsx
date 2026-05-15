@@ -2,7 +2,6 @@ import Image from "next/image"
 
 import { ComponentPreviewTabs } from "@/components/component-preview-tabs"
 import { ComponentSource } from "@/components/component-source"
-import { RegistryPreviewProvider } from "@/components/registry-preview-provider"
 import { Index } from "@/registry/__index__"
 
 export function ComponentPreview({
@@ -64,11 +63,7 @@ export function ComponentPreview({
       className={className}
       align={align}
       hideCode={hideCode}
-      component={
-        <RegistryPreviewProvider>
-          <Component />
-        </RegistryPreviewProvider>
-      }
+      component={<Component />}
       source={<ComponentSource name={name} collapsible={false} />}
       marginOff={marginOff}
       {...props}
