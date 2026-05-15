@@ -318,7 +318,7 @@ export const Index: Record<string, any> = {
     name: "speech-input",
     description: "",
     type: "registry:ui",
-    registryDependencies: ["https://ui.elevenlabs.io/r/use-scribe.json"],
+    registryDependencies: ["button","skeleton","https://ui.elevenlabs.io/r/use-scribe.json"],
     files: [{
       path: "registry/elevenlabs-ui/ui/speech-input.tsx",
       type: "registry:ui",
@@ -924,7 +924,7 @@ export const Index: Record<string, any> = {
     name: "speech-input-demo",
     description: "",
     type: "registry:example",
-    registryDependencies: ["https://ui.elevenlabs.io/r/speech-input.json"],
+    registryDependencies: ["https://ui.elevenlabs.io/r/speech-input.json","input","textarea"],
     files: [{
       path: "registry/elevenlabs-ui/examples/speech-input-demo.tsx",
       type: "registry:example",

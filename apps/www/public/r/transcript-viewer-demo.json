@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "transcript-viewer-demo",
-  "type": "registry:example",
   "registryDependencies": [
     "https://ui.elevenlabs.io/r/transcript-viewer.json",
     "https://ui.elevenlabs.io/r/scrub-bar.json"
@@ -12,5 +11,6 @@
       "content": "\"use client\"\n\nimport { useEffect, useState } from \"react\"\nimport { PauseIcon, PlayIcon } from \"lucide-react\"\n\nimport {\n  TranscriptViewerAudio,\n  TranscriptViewerContainer,\n  TranscriptViewerPlayPauseButton,\n  TranscriptViewerScrubBar,\n  TranscriptViewerWords,\n  type CharacterAlignmentResponseModel,\n} from \"@/components/ui/transcript-viewer\"\n\nimport { Skeleton } from \"../ui/skeleton\"\n\nconst TranscriptViewerDemo = () => {\n  const audioSrc = \"/sounds/transcript-viewer/transcript-viewer-audio.mp3\"\n  const [alignment, setAlignment] = useState<\n    CharacterAlignmentResponseModel | undefined\n  >(undefined)\n\n  useEffect(() => {\n    fetch(\"/sounds/transcript-viewer/transcript-viewer-alignment.json\")\n      .then((res) => res.json())\n      .then((data) => setAlignment(data))\n  }, [])\n\n  return (\n    <div className=\"flex w-full flex-col gap-4\">\n      <TranscriptViewerContainer\n        key={audioSrc}\n        className=\"bg-card w-full rounded-xl border p-4\"\n        audioSrc={audioSrc}\n        audioType=\"audio/mpeg\"\n        alignment={\n          alignment ?? {\n            characters: [],\n            characterStartTimesSeconds: [],\n            characterEndTimesSeconds: [],\n          }\n        }\n      >\n        <TranscriptViewerAudio className=\"sr-only\" />\n        {alignment ? (\n          <>\n            <TranscriptViewerWords />\n            <div className=\"flex items-center gap-3\">\n              <TranscriptViewerScrubBar />\n            </div>\n          </>\n        ) : (\n          <div className=\"flex w-full flex-col gap-3\">\n            <Skeleton className=\"h-5 w-full\" />\n            <Skeleton className=\"mb-4 h-5 w-1/2\" />\n            <Skeleton className=\"h-2 w-full\" />\n            <div className=\"-mt-1 flex items-center justify-between\">\n              <Skeleton className=\"h-2 w-6\" />\n              <Skeleton className=\"h-2 w-6\" />\n            </div>\n          </div>\n        )}\n        <TranscriptViewerPlayPauseButton\n          className=\"w-full cursor-pointer\"\n          size=\"default\"\n          disabled={!alignment}\n        >\n          {({ isPlaying }) => (\n            <>\n              {isPlaying ? (\n                <>\n                  <PauseIcon className=\"size-4\" /> Pause\n                </>\n              ) : (\n                <>\n                  <PlayIcon className=\"size-4\" /> Play\n                </>\n              )}\n            </>\n          )}\n        </TranscriptViewerPlayPauseButton>\n      </TranscriptViewerContainer>\n    </div>\n  )\n}\nexport default TranscriptViewerDemo\n",
       "type": "registry:example"
     }
-  ]
+  ],
+  "type": "registry:example"
 }

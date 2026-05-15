@@ -275,6 +275,8 @@
         "lucide-react"
       ],
       "registryDependencies": [
+        "button",
+        "skeleton",
         "https://ui.elevenlabs.io/r/use-scribe.json"
       ],
       "files": [
@@ -694,7 +696,7 @@
       "name": "use-scribe",
       "type": "registry:hook",
       "dependencies": [
-        "@elevenlabs/react"
+        "@elevenlabs/client"
       ],
       "files": [
         {
@@ -930,7 +932,9 @@
       "name": "speech-input-demo",
       "type": "registry:example",
       "registryDependencies": [
-        "https://ui.elevenlabs.io/r/speech-input.json"
+        "https://ui.elevenlabs.io/r/speech-input.json",
+        "input",
+        "textarea"
       ],
       "files": [
         {

@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "music-player-01",
-  "type": "registry:block",
   "description": "Music player with playlist",
   "registryDependencies": [
     "https://ui.elevenlabs.io/r/audio-player.json",
@@ -23,5 +22,6 @@
   },
   "categories": [
     "audio"
-  ]
+  ],
+  "type": "registry:block"
 }

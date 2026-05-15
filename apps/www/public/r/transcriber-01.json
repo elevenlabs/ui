@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "transcriber-01",
-  "type": "registry:block",
   "description": "Transcriber",
   "dependencies": [
     "@elevenlabs/elevenlabs-js",
@@ -35,5 +34,6 @@
   },
   "categories": [
     "audio"
-  ]
+  ],
+  "type": "registry:block"
 }

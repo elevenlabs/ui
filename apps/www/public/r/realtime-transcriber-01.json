@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "realtime-transcriber-01",
-  "type": "registry:block",
   "description": "Scribe V2 Realtime Transcriber",
   "dependencies": [
     "@elevenlabs/react",
@@ -40,5 +39,6 @@
   },
   "categories": [
     "audio"
-  ]
+  ],
+  "type": "registry:block"
 }

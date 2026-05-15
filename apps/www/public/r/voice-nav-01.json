@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "voice-nav-01",
-  "type": "registry:block",
   "description": "Voice-nav site navigation",
   "dependencies": [
     "@elevenlabs/elevenlabs-js",
@@ -34,5 +33,6 @@
   },
   "categories": [
     "audio"
-  ]
+  ],
+  "type": "registry:block"
 }

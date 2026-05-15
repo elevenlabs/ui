@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "voice-form-01",
-  "type": "registry:block",
   "description": "Voice-fill form",
   "dependencies": [
     "@elevenlabs/elevenlabs-js",
@@ -43,5 +42,6 @@
   },
   "categories": [
     "audio"
-  ]
+  ],
+  "type": "registry:block"
 }

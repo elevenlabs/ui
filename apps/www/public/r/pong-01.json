@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "pong-01",
-  "type": "registry:block",
   "description": "Retro Pong game with Matrix display",
   "dependencies": [
     "@upstash/redis"
@@ -55,5 +54,6 @@
   },
   "categories": [
     "audio"
-  ]
+  ],
+  "type": "registry:block"
 }
