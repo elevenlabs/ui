@@ -114,12 +114,12 @@ const ChatAction = ({
 export default function Page() {
   return (
     <ConversationProvider>
-      <PageContent />
+      <VoiceChat01 />
     </ConversationProvider>
   )
 }
 
-export function PageContent() {
+export function VoiceChat01() {
   const { status } = useConversationStatus()
   const {
     startSession,

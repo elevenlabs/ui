@@ -24,12 +24,12 @@ const DEFAULT_AGENT = {
 export default function Page() {
   return (
     <ConversationProvider>
-      <PageContent />
+      <VoiceChat02 />
     </ConversationProvider>
   )
 }
 
-export function PageContent() {
+export function VoiceChat02() {
   const { status } = useConversationStatus()
   const { startSession, endSession, getInputVolume, getOutputVolume } =
     useConversationControls()

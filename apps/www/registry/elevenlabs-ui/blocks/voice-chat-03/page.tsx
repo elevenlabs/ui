@@ -34,12 +34,12 @@ interface ChatMessage {
 export default function Page() {
   return (
     <ConversationProvider>
-      <PageContent />
+      <VoiceChat03 />
     </ConversationProvider>
   )
 }
 
-export function PageContent() {
+export function VoiceChat03() {
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null)
 
