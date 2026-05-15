@@ -39,7 +39,7 @@ export default function Page() {
   )
 }
 
-function PageContent() {
+export function PageContent() {
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null)
 

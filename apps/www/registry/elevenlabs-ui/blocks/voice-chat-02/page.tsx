@@ -29,7 +29,7 @@ export default function Page() {
   )
 }
 
-function PageContent() {
+export function PageContent() {
   const { status } = useConversationStatus()
   const { startSession, endSession, getInputVolume, getOutputVolume } =
     useConversationControls()
