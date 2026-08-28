@@ -5,7 +5,7 @@ import { useState } from "react"
 import { Button } from "@/registry/elevenlabs-ui/ui/button"
 import { AgentState, Orb } from "@/registry/elevenlabs-ui/ui/orb"
 
-let ORBS: [string, string][] = [
+const ORBS: [string, string][] = [
   ["#CADCFC", "#A0B9D1"],
   ["#F6E7D8", "#E0CFC2"],
   ["#E5E7EB", "#9CA3AF"],
@@ -14,7 +14,7 @@ let ORBS: [string, string][] = [
 export default function OrbDemo({ small = false }: { small?: boolean }) {
   const [agent, setAgent] = useState<AgentState>(null)
 
-  ORBS = small ? [ORBS[0]] : ORBS
+  const orbs = small ? [ORBS[0]] : ORBS
 
   return (
     <div className="bg-card w-full rounded-lg border p-6">
@@ -27,7 +27,7 @@ export default function OrbDemo({ small = false }: { small?: boolean }) {
 
       <div className="space-y-4">
         <div className="flex justify-center gap-8">
-          {ORBS.map((colors, index) => (
+          {orbs.map((colors, index) => (
             <div
               key={index}
               className={`relative ${index === 1 ? "block md:block" : "hidden md:block"}`}
