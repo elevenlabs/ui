@@ -331,7 +331,7 @@ export default function RealtimeTranscriber01() {
 
   const scribeConfig = useMemo(
     () => ({
-      modelId: "scribe_realtime_v2" as const,
+      modelId: "scribe_v2_realtime" as const,
       onPartialTranscript,
       onFinalTranscript,
       onError,
