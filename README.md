@@ -61,6 +61,10 @@ npx shadcn@latest add https://ui.elevenlabs.io/r/orb.json
 
 All available components can be found [here](https://ui.elevenlabs.io/docs/components) or explore a list of example components [here](https://ui.elevenlabs.io/blocks).
 
+## Building with AI agents
+
+If you're using an AI coding agent (Cursor, Claude Code, etc.) to build features with ElevenLabs UI — or to contribute to this repo — read [`AGENTS.md`](./AGENTS.md). It documents the component inventory, install commands, import conventions, design system, and the patterns to follow so generated code uses our components and matches the design.
+
 ## Contributing
 
 If you'd like to contribute to ElevenLabs UI, please follow these steps:
