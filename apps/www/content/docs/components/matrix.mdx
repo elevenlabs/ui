@@ -103,6 +103,7 @@ The main matrix display component.
 | size       | `number`                               | Cell size in pixels. Default: 10                               |
 | gap        | `number`                               | Gap between cells in pixels. Default: 2                        |
 | palette    | `{on: string, off: string}`            | CSS colors for on/off states. Defaults to theme colors         |
+| colors     | `(string \| null)[][]`                 | CSS color per cell. Lit cells use it instead of `palette.on`   |
 | brightness | `number`                               | Global brightness multiplier (0-1). Default: 1                 |
 | ariaLabel  | `string`                               | ARIA label for accessibility                                   |
 | onFrame    | `(index: number) => void`              | Callback when frame changes during animation                   |
@@ -118,6 +119,8 @@ type Frame = number[][] // [row][col] brightness 0..1
 ```
 
 A frame is a 2D array where each value represents the brightness of a cell (0 = off, 1 = full brightness).
+
+`colors` uses that same `[row][col]` layout. A lit cell paints with its own CSS color. `null`, an empty string, or a missing entry keeps `palette.on`. Unlit cells keep `palette.off`.
 
 Example:
 
@@ -267,6 +270,74 @@ function AudioMeter({ frequencyData }: { frequencyData: number[] }) {
       size={8}
       gap={1}
       ariaLabel="Audio frequency meter"
+    />
+  )
+}
+```
+
+### Per-dot colors
+
+```tsx showLineNumbers
+function ScoreTicker() {
+  const pattern: Frame = [
+    [1, 1, 1, 0, 1, 0, 1, 1, 1],
+    [1, 0, 0, 0, 1, 0, 0, 0, 1],
+    [1, 1, 1, 0, 1, 0, 1, 1, 1],
+    [0, 0, 1, 0, 1, 0, 1, 0, 0],
+    [1, 1, 1, 0, 1, 0, 1, 1, 1],
+  ]
+  const home = "#ef4444"
+  const mark = "#eab308"
+  const away = "#3b82f6"
+  const colors = [
+    [home, home, home, null, mark, null, away, away, away],
+    [home, null, null, null, mark, null, null, null, away],
+    [home, home, home, null, mark, null, away, away, away],
+    [null, null, home, null, mark, null, away, null, null],
+    [home, home, home, null, mark, null, away, away, away],
+  ]
+
+  return (
+    <Matrix
+      rows={5}
+      cols={9}
+      pattern={pattern}
+      colors={colors}
+      size={14}
+      gap={3}
+      palette={{
+        on: "currentColor",
+        off: "hsl(240 4% 16%)",
+      }}
+      ariaLabel="Score ticker"
+    />
+  )
+}
+```
+
+A level meter uses the same grid. Each entry is the color of that dot, and `levels` still controls which dots are lit:
+
+```tsx showLineNumbers
+function ColoredMeter({ levels }: { levels: number[] }) {
+  const rowColors = [
+    "#ef4444",
+    "#f97316",
+    "#eab308",
+    "#84cc16",
+    "#22c55e",
+    "#22c55e",
+    "#16a34a",
+  ]
+  const colors = rowColors.map((color) => Array(levels.length).fill(color))
+
+  return (
+    <Matrix
+      rows={7}
+      cols={levels.length}
+      mode="vu"
+      levels={levels}
+      colors={colors}
+      ariaLabel="Colored level meter"
     />
   )
 }
