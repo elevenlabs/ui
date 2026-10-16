@@ -6,6 +6,7 @@ import { useEffect, useMemo, useRef, useState } from "react"
 import { cn } from "@/lib/utils"
 
 export type Frame = number[][]
+export type DotColors = (string | null | undefined)[][]
 type MatrixMode = "default" | "vu"
 
 interface CellPosition {
@@ -27,6 +28,7 @@ interface MatrixProps extends React.HTMLAttributes<HTMLDivElement> {
     on: string
     off: string
   }
+  colors?: DotColors
   brightness?: number
   ariaLabel?: string
   onFrame?: (index: number) => void
@@ -36,6 +38,49 @@ interface MatrixProps extends React.HTMLAttributes<HTMLDivElement> {
 
 function clamp(value: number): number {
   return Math.max(0, Math.min(1, value))
+}
+
+function readDotColor(
+  colors: DotColors | undefined,
+  row: number,
+  col: number
+): string | undefined {
+  const color = colors?.[row]?.[col]
+  if (typeof color !== "string") return undefined
+  const trimmed = color.trim()
+  return trimmed.length > 0 ? trimmed : undefined
+}
+
+function uniqueDotColors(
+  colors: DotColors | undefined,
+  rows: number,
+  cols: number
+): string[] {
+  if (!colors) return []
+
+  const seen = new Set<string>()
+  const result: string[] = []
+
+  for (let row = 0; row < rows; row++) {
+    for (let col = 0; col < cols; col++) {
+      const color = readDotColor(colors, row, col)
+      if (!color || seen.has(color)) continue
+      seen.add(color)
+      result.push(color)
+    }
+  }
+
+  return result
+}
+
+function MatrixPixelGradient({ id, color }: { id: string; color: string }) {
+  return (
+    <radialGradient id={id} cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stopColor={color} stopOpacity="1" />
+      <stop offset="70%" stopColor={color} stopOpacity="0.85" />
+      <stop offset="100%" stopColor={color} stopOpacity="0.6" />
+    </radialGradient>
+  )
 }
 
 function ensureFrameSize(frame: Frame, rows: number, cols: number): Frame {
@@ -432,6 +477,7 @@ export const Matrix = React.forwardRef<HTMLDivElement, MatrixProps>(
         on: "currentColor",
         off: "var(--muted-foreground)",
       },
+      colors,
       brightness = 1,
       ariaLabel,
       onFrame,
@@ -489,6 +535,14 @@ export const Matrix = React.forwardRef<HTMLDivElement, MatrixProps>(
     }, [rows, cols, size, gap])
 
     const isAnimating = !pattern && frames && frames.length > 0
+    const uid = `m${React.useId().replace(/[^a-zA-Z0-9]/g, "")}`
+    const onGradientId = `${uid}-on`
+    const offGradientId = `${uid}-off`
+    const glowFilterId = `${uid}-glow`
+    const dotColors = useMemo(
+      () => uniqueDotColors(colors, rows, cols),
+      [colors, rows, cols]
+    )
 
     return (
       <div
@@ -516,21 +570,9 @@ export const Matrix = React.forwardRef<HTMLDivElement, MatrixProps>(
           style={{ overflow: "visible" }}
         >
           <defs>
-            <radialGradient id="matrix-pixel-on" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stopColor="var(--matrix-on)" stopOpacity="1" />
-              <stop
-                offset="70%"
-                stopColor="var(--matrix-on)"
-                stopOpacity="0.85"
-              />
-              <stop
-                offset="100%"
-                stopColor="var(--matrix-on)"
-                stopOpacity="0.6"
-              />
-            </radialGradient>
+            <MatrixPixelGradient id={onGradientId} color="var(--matrix-on)" />
 
-            <radialGradient id="matrix-pixel-off" cx="50%" cy="50%" r="50%">
+            <radialGradient id={offGradientId} cx="50%" cy="50%" r="50%">
               <stop
                 offset="0%"
                 stopColor="var(--muted-foreground)"
@@ -543,8 +585,16 @@ export const Matrix = React.forwardRef<HTMLDivElement, MatrixProps>(
               />
             </radialGradient>
 
+            {dotColors.map((color, index) => (
+              <MatrixPixelGradient
+                key={color}
+                id={`${uid}-dot-${index}`}
+                color={color}
+              />
+            ))}
+
             <filter
-              id="matrix-glow"
+              id={glowFilterId}
               x="-50%"
               y="-50%"
               width="200%"
@@ -562,9 +612,6 @@ export const Matrix = React.forwardRef<HTMLDivElement, MatrixProps>(
                 transform-origin: center;
                 transform-box: fill-box;
               }
-              .matrix-pixel-active {
-                filter: url(#matrix-glow);
-              }
             `}
           </style>
 
@@ -576,9 +623,14 @@ export const Matrix = React.forwardRef<HTMLDivElement, MatrixProps>(
               const opacity = clamp(brightness * value)
               const isActive = opacity > 0.5
               const isOn = opacity > 0.05
-              const fill = isOn
-                ? "url(#matrix-pixel-on)"
-                : "url(#matrix-pixel-off)"
+              const dotColor = isOn
+                ? readDotColor(colors, rowIndex, colIndex)
+                : undefined
+              const dotIndex = dotColor ? dotColors.indexOf(dotColor) : -1
+              const fill =
+                dotIndex >= 0
+                  ? `url(#${uid}-dot-${dotIndex})`
+                  : `url(#${isOn ? onGradientId : offGradientId})`
 
               const scale = isActive ? 1.1 : 1
               const radius = (size / 2) * 0.9
@@ -588,7 +640,6 @@ export const Matrix = React.forwardRef<HTMLDivElement, MatrixProps>(
                   key={`${rowIndex}-${colIndex}`}
                   className={cn(
                     "matrix-pixel",
-                    isActive && "matrix-pixel-active",
                     !isOn && "opacity-20 dark:opacity-[0.1]"
                   )}
                   cx={pos.x + size / 2}
@@ -598,6 +649,7 @@ export const Matrix = React.forwardRef<HTMLDivElement, MatrixProps>(
                   opacity={isOn ? opacity : 0.1}
                   style={{
                     transform: `scale(${scale})`,
+                    filter: isActive ? `url(#${glowFilterId})` : undefined,
                   }}
                 />
               )
