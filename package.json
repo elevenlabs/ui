@@ -29,6 +29,11 @@
     "validate:registries": "pnpm validate:registries"
   },
   "packageManager": "pnpm@9.0.6",
+  "pnpm": {
+    "overrides": {
+      "sharp": "^0.35.5"
+    }
+  },
   "dependencies": {
     "@babel/core": "^7.22.1",
     "@changesets/changelog-github": "^0.4.8",
