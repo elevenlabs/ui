@@ -368,9 +368,7 @@ export const AudioPlayerDuration = ({
       {...otherProps}
       className={cn("text-muted-foreground text-sm tabular-nums", className)}
     >
-      {player.duration !== null &&
-      player.duration !== undefined &&
-      !Number.isNaN(player.duration)
+      {player.duration !== undefined && Number.isFinite(player.duration)
         ? formatTime(player.duration)
         : "--:--"}
     </span>
