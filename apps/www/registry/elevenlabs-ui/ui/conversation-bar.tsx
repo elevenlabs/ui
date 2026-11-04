@@ -215,7 +215,7 @@ export const ConversationBar = React.forwardRef<
                   variant="ghost"
                   size="icon"
                   onClick={() => setKeyboardOpen((v) => !v)}
-                  aria-label="Type a message"
+                  aria-label="Keyboard input"
                   aria-pressed={keyboardOpen}
                   className="relative"
                   disabled={!isConnected}
