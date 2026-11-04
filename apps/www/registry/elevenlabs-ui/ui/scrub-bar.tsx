@@ -168,6 +168,10 @@ function ScrubBarTrack({
         case "End":
           time = duration
           break
+        case " ":
+          // Not a slider key, but keep it from scrolling the page.
+          event.preventDefault()
+          return
       }
 
       if (time == null) return
