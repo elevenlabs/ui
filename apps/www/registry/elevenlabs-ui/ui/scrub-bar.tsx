@@ -141,7 +141,23 @@ function ScrubBarTrack({
   const handleKeyDown = useCallback(
     (event: React.KeyboardEvent<HTMLDivElement>) => {
       onKeyDown?.(event)
-      if (event.defaultPrevented || !duration) return
+      if (
+        event.defaultPrevented ||
+        event.target !== event.currentTarget ||
+        event.altKey ||
+        event.ctrlKey ||
+        event.metaKey
+      ) {
+        return
+      }
+
+      // Space isn't a slider key, but keep it from scrolling the page.
+      if (event.key === " ") {
+        event.preventDefault()
+        return
+      }
+
+      if (!duration) return
 
       const step = 5
       const bigStep = Math.max(duration / 10, step)
@@ -168,10 +184,6 @@ function ScrubBarTrack({
         case "End":
           time = duration
           break
-        case " ":
-          // Not a slider key, but keep it from scrolling the page.
-          event.preventDefault()
-          return
       }
 
       if (time == null) return
