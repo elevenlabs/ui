@@ -85,7 +85,12 @@ ScrubBarContainer.displayName = "ScrubBarContainer"
 
 type ScrubBarTrackProps = HTMLAttributes<HTMLDivElement>
 
-function ScrubBarTrack({ className, children, ...props }: ScrubBarTrackProps) {
+function ScrubBarTrack({
+  className,
+  children,
+  onKeyDown,
+  ...props
+}: ScrubBarTrackProps) {
   const trackRef = useRef<HTMLDivElement | null>(null)
   const { duration, onScrub, onScrubStart, onScrubEnd, value } =
     useScrubBarContext()
@@ -133,20 +138,80 @@ function ScrubBarTrack({ className, children, ...props }: ScrubBarTrackProps) {
 
   const clampedValue = Math.min(Math.max(value, 0), duration || 0)
 
+  const handleKeyDown = useCallback(
+    (event: React.KeyboardEvent<HTMLDivElement>) => {
+      onKeyDown?.(event)
+      if (
+        event.defaultPrevented ||
+        event.target !== event.currentTarget ||
+        event.altKey ||
+        event.ctrlKey ||
+        event.metaKey
+      ) {
+        return
+      }
+
+      // Space isn't a slider key, but keep it from scrolling the page.
+      if (event.key === " ") {
+        event.preventDefault()
+        return
+      }
+
+      if (!duration) return
+
+      const step = 5
+      const bigStep = Math.max(duration / 10, step)
+      let time: number | null = null
+
+      switch (event.key) {
+        case "ArrowRight":
+        case "ArrowUp":
+          time = clampedValue + step
+          break
+        case "ArrowLeft":
+        case "ArrowDown":
+          time = clampedValue - step
+          break
+        case "PageUp":
+          time = clampedValue + bigStep
+          break
+        case "PageDown":
+          time = clampedValue - bigStep
+          break
+        case "Home":
+          time = 0
+          break
+        case "End":
+          time = duration
+          break
+      }
+
+      if (time == null) return
+      event.preventDefault()
+      onScrub?.(Math.min(Math.max(time, 0), duration))
+    },
+    [clampedValue, duration, onKeyDown, onScrub]
+  )
+
   return (
     <div
       ref={trackRef}
       data-slot="scrub-bar-track"
       className={cn(
-        "bg-secondary relative h-2 w-full grow cursor-pointer touch-none rounded-full transition-none select-none",
+        "bg-secondary focus-visible:ring-ring/50 relative h-2 w-full grow cursor-pointer touch-none rounded-full transition-none outline-none select-none focus-visible:ring-[3px]",
         className
       )}
       onPointerDown={handlePointerDown}
       role="slider"
+      tabIndex={duration ? 0 : -1}
+      aria-label="Seek"
       aria-valuemin={0}
       aria-valuemax={duration || 0}
       aria-valuenow={clampedValue}
+      aria-valuetext={`${formatTimestamp(clampedValue)} of ${formatTimestamp(duration)}`}
+      aria-disabled={duration ? undefined : true}
       {...props}
+      onKeyDown={handleKeyDown}
     >
       {children}
     </div>
@@ -162,6 +227,7 @@ function ScrubBarProgress({ className, ...props }: ScrubBarProgressProps) {
   return (
     <Progress
       data-slot="scrub-bar-progress"
+      aria-hidden="true"
       value={progress}
       className={cn("absolute h-full [&>div]:transition-none", className)}
       {...props}
