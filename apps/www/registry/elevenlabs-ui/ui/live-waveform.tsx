@@ -250,6 +250,8 @@ export const LiveWaveform = ({
       return
     }
 
+    let cancelled = false
+
     const setupMicrophone = async () => {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
@@ -266,6 +268,10 @@ export const LiveWaveform = ({
                 autoGainControl: true,
               },
         })
+        if (cancelled) {
+          stream.getTracks().forEach((track) => track.stop())
+          return
+        }
         streamRef.current = stream
         onStreamReady?.(stream)
 
@@ -287,13 +293,14 @@ export const LiveWaveform = ({
         // Clear history when starting
         historyRef.current = []
       } catch (error) {
-        onError?.(error as Error)
+        if (!cancelled) onError?.(error as Error)
       }
     }
 
     setupMicrophone()
 
     return () => {
+      cancelled = true
       if (streamRef.current) {
         streamRef.current.getTracks().forEach((track) => track.stop())
         streamRef.current = null
