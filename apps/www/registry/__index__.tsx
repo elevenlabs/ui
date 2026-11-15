@@ -282,7 +282,7 @@ export const Index: Record<string, any> = {
     name: "transcript-viewer",
     description: "",
     type: "registry:ui",
-    registryDependencies: ["button","https://ui.elevenlabs.io/r/scrub-bar.json"],
+    registryDependencies: ["button","https://ui.elevenlabs.io/r/scrub-bar.json","https://ui.elevenlabs.io/r/use-transcript-viewer.json"],
     files: [{
       path: "registry/elevenlabs-ui/ui/transcript-viewer.tsx",
       type: "registry:ui",

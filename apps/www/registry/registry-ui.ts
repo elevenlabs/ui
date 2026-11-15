@@ -188,6 +188,7 @@ export const ui: Registry["items"] = [
     registryDependencies: [
       "button",
       "https://ui.elevenlabs.io/r/scrub-bar.json",
+      "https://ui.elevenlabs.io/r/use-transcript-viewer.json",
     ],
     devDependencies: ["@elevenlabs/elevenlabs-js"],
     files: [
