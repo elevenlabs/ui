@@ -618,11 +618,17 @@ export const MicrophoneWaveform = ({
       return
     }
 
+    let cancelled = false
+
     const setupMicrophone = async () => {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
           audio: true,
         })
+        if (cancelled) {
+          stream.getTracks().forEach((track) => track.stop())
+          return
+        }
         streamRef.current = stream
 
         const audioContext = new (window.AudioContext ||
@@ -670,13 +676,14 @@ export const MicrophoneWaveform = ({
 
         updateData()
       } catch (error) {
-        onError?.(error as Error)
+        if (!cancelled) onError?.(error as Error)
       }
     }
 
     setupMicrophone()
 
     return () => {
+      cancelled = true
       if (streamRef.current) {
         streamRef.current.getTracks().forEach((track) => track.stop())
       }
@@ -839,11 +846,17 @@ export const LiveMicrophoneWaveform = ({
     audioBufferRef.current = null
     setPlaybackPosition(null)
 
+    let cancelled = false
+
     const setupMicrophone = async () => {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
           audio: true,
         })
+        if (cancelled) {
+          stream.getTracks().forEach((track) => track.stop())
+          return
+        }
         streamRef.current = stream
 
         const audioContext = new (window.AudioContext ||
@@ -872,13 +885,14 @@ export const LiveMicrophoneWaveform = ({
           mediaRecorder.start(100)
         }
       } catch (error) {
-        onError?.(error as Error)
+        if (!cancelled) onError?.(error as Error)
       }
     }
 
     setupMicrophone()
 
     return () => {
+      cancelled = true
       if (
         mediaRecorderRef.current &&
         mediaRecorderRef.current.state !== "inactive"
@@ -1428,11 +1442,17 @@ export const RecordingWaveform = ({
     setRecordedData([])
     setViewPosition(1)
 
+    let cancelled = false
+
     const setupMicrophone = async () => {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
           audio: true,
         })
+        if (cancelled) {
+          stream.getTracks().forEach((track) => track.stop())
+          return
+        }
         streamRef.current = stream
 
         const audioContext = new (window.AudioContext ||
@@ -1448,13 +1468,14 @@ export const RecordingWaveform = ({
         audioContextRef.current = audioContext
         analyserRef.current = analyser
       } catch (error) {
-        onError?.(error as Error)
+        if (!cancelled) onError?.(error as Error)
       }
     }
 
     setupMicrophone()
 
     return () => {
+      cancelled = true
       if (streamRef.current) {
         streamRef.current.getTracks().forEach((track) => track.stop())
       }
