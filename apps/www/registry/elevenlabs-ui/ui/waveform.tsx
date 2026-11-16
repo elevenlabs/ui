@@ -527,6 +527,11 @@ export const MicrophoneWaveform = ({
   const processingAnimationRef = useRef<number | null>(null)
   const lastActiveDataRef = useRef<number[]>([])
   const transitionProgressRef = useRef(0)
+  const onErrorRef = useRef(onError)
+
+  useEffect(() => {
+    onErrorRef.current = onError
+  }, [onError])
 
   useEffect(() => {
     if (processing && !active) {
@@ -618,11 +623,17 @@ export const MicrophoneWaveform = ({
       return
     }
 
+    let cancelled = false
+
     const setupMicrophone = async () => {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
           audio: true,
         })
+        if (cancelled) {
+          stream.getTracks().forEach((track) => track.stop())
+          return
+        }
         streamRef.current = stream
 
         const audioContext = new (window.AudioContext ||
@@ -670,13 +681,14 @@ export const MicrophoneWaveform = ({
 
         updateData()
       } catch (error) {
-        onError?.(error as Error)
+        if (!cancelled) onErrorRef.current?.(error as Error)
       }
     }
 
     setupMicrophone()
 
     return () => {
+      cancelled = true
       if (streamRef.current) {
         streamRef.current.getTracks().forEach((track) => track.stop())
       }
@@ -690,7 +702,7 @@ export const MicrophoneWaveform = ({
         cancelAnimationFrame(animationIdRef.current)
       }
     }
-  }, [active, fftSize, smoothingTimeConstant, sensitivity, onError])
+  }, [active, fftSize, smoothingTimeConstant, sensitivity])
 
   return <Waveform data={data} {...props} />
 }
@@ -786,7 +798,15 @@ export const LiveMicrophoneWaveform = ({
   const dragOffset = externalDragOffset ?? internalDragOffset
   const setDragOffset = externalSetDragOffset ?? setInternalDragOffset
 
+  const onErrorRef = useRef(onError)
+  const setDragOffsetRef = useRef(setDragOffset)
+
   const heightStyle = typeof height === "number" ? `${height}px` : height
+
+  useEffect(() => {
+    onErrorRef.current = onError
+    setDragOffsetRef.current = setDragOffset
+  }, [onError, setDragOffset])
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -833,17 +853,23 @@ export const LiveMicrophoneWaveform = ({
       return
     }
 
-    setDragOffset?.(0)
+    setDragOffsetRef.current?.(0)
     historyRef.current = []
     audioChunksRef.current = []
     audioBufferRef.current = null
     setPlaybackPosition(null)
+
+    let cancelled = false
 
     const setupMicrophone = async () => {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
           audio: true,
         })
+        if (cancelled) {
+          stream.getTracks().forEach((track) => track.stop())
+          return
+        }
         streamRef.current = stream
 
         const audioContext = new (window.AudioContext ||
@@ -872,13 +898,14 @@ export const LiveMicrophoneWaveform = ({
           mediaRecorder.start(100)
         }
       } catch (error) {
-        onError?.(error as Error)
+        if (!cancelled) onErrorRef.current?.(error as Error)
       }
     }
 
     setupMicrophone()
 
     return () => {
+      cancelled = true
       if (
         mediaRecorderRef.current &&
         mediaRecorderRef.current.state !== "inactive"
@@ -895,15 +922,7 @@ export const LiveMicrophoneWaveform = ({
         scrubSourceRef.current.stop()
       }
     }
-  }, [
-    active,
-    fftSize,
-    smoothingTimeConstant,
-    onError,
-    setDragOffset,
-    enableAudioPlayback,
-    historyRef,
-  ])
+  }, [active, fftSize, smoothingTimeConstant, enableAudioPlayback, historyRef])
 
   const processAudioBlob = async (blob: Blob) => {
     try {
@@ -1376,8 +1395,15 @@ export const RecordingWaveform = ({
   const streamRef = useRef<MediaStream | null>(null)
   const animationRef = useRef<number>(0)
   const lastUpdateRef = useRef<number>(0)
+  const onErrorRef = useRef(onError)
+  const onRecordingCompleteRef = useRef(onRecordingComplete)
 
   const heightStyle = typeof height === "number" ? `${height}px` : height
+
+  useEffect(() => {
+    onErrorRef.current = onError
+    onRecordingCompleteRef.current = onRecordingComplete
+  }, [onError, onRecordingComplete])
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -1418,7 +1444,7 @@ export const RecordingWaveform = ({
       if (recordingDataRef.current.length > 0) {
         setRecordedData([...recordingDataRef.current])
         setIsRecordingComplete(true)
-        onRecordingComplete?.(recordingDataRef.current)
+        onRecordingCompleteRef.current?.(recordingDataRef.current)
       }
       return
     }
@@ -1428,11 +1454,17 @@ export const RecordingWaveform = ({
     setRecordedData([])
     setViewPosition(1)
 
+    let cancelled = false
+
     const setupMicrophone = async () => {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
           audio: true,
         })
+        if (cancelled) {
+          stream.getTracks().forEach((track) => track.stop())
+          return
+        }
         streamRef.current = stream
 
         const audioContext = new (window.AudioContext ||
@@ -1448,13 +1480,14 @@ export const RecordingWaveform = ({
         audioContextRef.current = audioContext
         analyserRef.current = analyser
       } catch (error) {
-        onError?.(error as Error)
+        if (!cancelled) onErrorRef.current?.(error as Error)
       }
     }
 
     setupMicrophone()
 
     return () => {
+      cancelled = true
       if (streamRef.current) {
         streamRef.current.getTracks().forEach((track) => track.stop())
       }
@@ -1465,7 +1498,7 @@ export const RecordingWaveform = ({
         audioContextRef.current.close()
       }
     }
-  }, [recording, fftSize, smoothingTimeConstant, onError, onRecordingComplete])
+  }, [recording, fftSize, smoothingTimeConstant])
 
   useEffect(() => {
     const canvas = canvasRef.current
