@@ -176,8 +176,9 @@ function Scene({
       u.uOpacity.value = Math.min(1, u.uOpacity.value + delta * 2)
     }
 
-    let targetIn = 0
-    let targetOut = 0.3
+    let targetIn
+    let targetOut
+
     if (modeRef.current === "manual") {
       targetIn = clamp01(
         manualInput ?? inputVolumeRef?.current ?? getInputVolume?.() ?? 0
