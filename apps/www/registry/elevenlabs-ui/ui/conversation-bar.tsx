@@ -204,6 +204,7 @@ export const ConversationBar = React.forwardRef<
                   variant="ghost"
                   size="icon"
                   onClick={toggleMute}
+                  aria-label="Mute microphone"
                   aria-pressed={isMuted}
                   className={cn(isMuted ? "bg-foreground/5" : "")}
                   disabled={!isConnected}
@@ -214,6 +215,7 @@ export const ConversationBar = React.forwardRef<
                   variant="ghost"
                   size="icon"
                   onClick={() => setKeyboardOpen((v) => !v)}
+                  aria-label="Keyboard input"
                   aria-pressed={keyboardOpen}
                   className="relative"
                   disabled={!isConnected}
@@ -236,7 +238,16 @@ export const ConversationBar = React.forwardRef<
                   />
                 </Button>
                 <Separator orientation="vertical" className="mx-1 -my-2.5" />
-                <Button variant="ghost" size="icon" onClick={handleStartOrEnd}>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={handleStartOrEnd}
+                  aria-label={
+                    isConnected || status === "connecting"
+                      ? "End conversation"
+                      : "Start conversation"
+                  }
+                >
                   {isConnected || status === "connecting" ? (
                     <XIcon className="h-5 w-5" />
                   ) : (
@@ -267,6 +278,7 @@ export const ConversationBar = React.forwardRef<
                 variant="ghost"
                 onClick={handleSendText}
                 disabled={!textInput.trim() || !isConnected}
+                aria-label="Send message"
                 className="absolute right-3 bottom-3 h-8 w-8"
               >
                 <ArrowUpIcon className="h-4 w-4" />
