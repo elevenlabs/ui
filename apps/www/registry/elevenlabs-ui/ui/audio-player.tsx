@@ -287,6 +287,31 @@ export const AudioPlayerProgress = ({
   const time = useAudioPlayerTime()
   const wasPlayingRef = useRef(false)
 
+  const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
+    wasPlayingRef.current = player.isPlaying
+    player.pause()
+    otherProps.onPointerDown?.(event)
+  }
+
+  const handlePointerUp = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (wasPlayingRef.current) {
+      player.play()
+    }
+    otherProps.onPointerUp?.(event)
+  }
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === " ") {
+      event.preventDefault()
+      if (player.isPlaying) {
+        player.pause()
+      } else {
+        player.play()
+      }
+    }
+    otherProps.onKeyDown?.(event)
+  }
+
   return (
     <SliderPrimitive.Root
       {...otherProps}
@@ -298,32 +323,13 @@ export const AudioPlayerProgress = ({
       min={0}
       max={player.duration ?? 0}
       step={otherProps.step || 0.25}
-      onPointerDown={(e) => {
-        wasPlayingRef.current = player.isPlaying
-        player.pause()
-        otherProps.onPointerDown?.(e)
-      }}
-      onPointerUp={(e) => {
-        if (wasPlayingRef.current) {
-          player.play()
-        }
-        otherProps.onPointerUp?.(e)
-      }}
+      onPointerDown={handlePointerDown}
+      onPointerUp={handlePointerUp}
+      onKeyDown={handleKeyDown}
       className={cn(
         "group/player relative flex h-4 touch-none items-center select-none data-[disabled]:opacity-50 data-[orientation=vertical]:h-full data-[orientation=vertical]:min-h-44 data-[orientation=vertical]:w-auto data-[orientation=vertical]:flex-col",
         otherProps.className
       )}
-      onKeyDown={(e) => {
-        if (e.key === " ") {
-          e.preventDefault()
-          if (!player.isPlaying) {
-            player.play()
-          } else {
-            player.pause()
-          }
-        }
-        otherProps.onKeyDown?.(e)
-      }}
       disabled={
         player.duration === undefined ||
         !Number.isFinite(player.duration) ||
