@@ -61,16 +61,33 @@ export function Orb({
     output: 0,
     savedAt: null,
   })
+  const renderersRef = useRef(new Set<THREE.WebGLRenderer>())
+
+  // Free the context of a canvas that was put away as soon as it's gone from
+  // the page. React Three Fiber only does it 500ms after unmount, and during
+  // fast scrolling those leftovers count toward the browser's limit.
+  useEffect(() => {
+    const renderers = renderersRef.current
+    releaseDetachedRenderers(renderers)
+    return () => releaseDetachedRenderers(renderers)
+  }, [isNearViewport])
 
   return (
     <div ref={containerRef} className={className ?? "relative h-full w-full"}>
       {isNearViewport && (
         <Canvas
           resize={{ debounce: resizeDebounce }}
-          gl={{
-            alpha: true,
-            antialias: true,
-            premultipliedAlpha: true,
+          gl={(defaults) => {
+            const renderer = new THREE.WebGLRenderer({
+              ...defaults,
+              alpha: true,
+              antialias: true,
+              premultipliedAlpha: true,
+            })
+            renderersRef.current.add(renderer)
+            // The canvas may already be gone if the orb was scrolled past.
+            setTimeout(() => releaseDetachedRenderers(renderersRef.current))
+            return renderer
           }}
         >
           <Scene
@@ -93,7 +110,7 @@ export function Orb({
   )
 }
 
-// True while the element is on screen or within 200px of it. Off screen the
+// True while the element is on screen or within 100px of it. Off screen the
 // orb's canvas is removed: it stops drawing and frees its WebGL context
 // (browsers allow only ~16 per page and drop the oldest beyond that).
 function useIsNearViewport(ref: React.RefObject<HTMLElement | null>) {
@@ -105,14 +122,35 @@ function useIsNearViewport(ref: React.RefObject<HTMLElement | null>) {
       setIsNear(true)
       return
     }
+    // Inside a scrolling box (e.g. VoicePicker's list) the margin only applies
+    // when that box is the observer's root, not the viewport.
     const observer = new IntersectionObserver(
       ([entry]) => setIsNear(entry.isIntersecting),
-      { rootMargin: "200px" }
+      { root: getScrollParent(element), rootMargin: "100px" }
     )
     observer.observe(element)
     return () => observer.disconnect()
   }, [ref])
   return isNear
+}
+
+// Only canvases actually removed from the page are released, so a mounted
+// orb is never affected (e.g. by Strict Mode's simulated unmount).
+function releaseDetachedRenderers(renderers: Set<THREE.WebGLRenderer>) {
+  for (const renderer of renderers) {
+    if (renderer.domElement.isConnected) continue
+    renderer.forceContextLoss()
+    renderers.delete(renderer)
+  }
+}
+
+// Nearest ancestor that scrolls, or null for the viewport.
+function getScrollParent(element: HTMLElement): HTMLElement | null {
+  for (let node = element.parentElement; node; node = node.parentElement) {
+    const { overflowX, overflowY } = getComputedStyle(node)
+    if (/(auto|scroll|overlay)/.test(overflowX + overflowY)) return node
+  }
+  return null
 }
 
 // Advance the remembered clocks by the time the orb was away.
@@ -292,6 +330,8 @@ function Scene({
   useEffect(() => {
     const canvas = gl.domElement
     const onContextLost = (event: Event) => {
+      // An orb that was put away released its context on purpose.
+      if (!canvas.isConnected) return
       event.preventDefault()
       setTimeout(() => {
         gl.forceContextRestore()
