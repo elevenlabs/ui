@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useMemo, useRef } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { useTexture } from "@react-three/drei"
 import { Canvas, useFrame, useThree } from "@react-three/fiber"
 import * as THREE from "three"
@@ -23,6 +23,17 @@ type OrbProps = {
   className?: string
 }
 
+// What an orb remembers while its canvas is removed, so it can come back
+// exactly where it would have been if it had kept animating.
+type OrbMemory = {
+  time: number
+  animation: number
+  animSpeed: number
+  input: number
+  output: number
+  savedAt: number | null
+}
+
 export function Orb({
   colors = ["#CADCFC", "#A0B9D1"],
   colorsRef,
@@ -38,38 +49,88 @@ export function Orb({
   getOutputVolume,
   className,
 }: OrbProps) {
+  const containerRef = useRef<HTMLDivElement>(null)
+  const isNearViewport = useIsNearViewport(containerRef)
+  // Pick the random look once, so an orb that comes back looks the same.
+  const [fallbackSeed] = useState(() => Math.floor(Math.random() * 2 ** 32))
+  const memoryRef = useRef<OrbMemory>({
+    time: 0,
+    animation: 0.1,
+    animSpeed: 0.1,
+    input: 0,
+    output: 0,
+    savedAt: null,
+  })
+
   return (
-    <div className={className ?? "relative h-full w-full"}>
-      <Canvas
-        resize={{ debounce: resizeDebounce }}
-        gl={{
-          alpha: true,
-          antialias: true,
-          premultipliedAlpha: true,
-        }}
-      >
-        <Scene
-          colors={colors}
-          colorsRef={colorsRef}
-          seed={seed}
-          agentState={agentState}
-          volumeMode={volumeMode}
-          manualInput={manualInput}
-          manualOutput={manualOutput}
-          inputVolumeRef={inputVolumeRef}
-          outputVolumeRef={outputVolumeRef}
-          getInputVolume={getInputVolume}
-          getOutputVolume={getOutputVolume}
-        />
-      </Canvas>
+    <div ref={containerRef} className={className ?? "relative h-full w-full"}>
+      {isNearViewport && (
+        <Canvas
+          resize={{ debounce: resizeDebounce }}
+          gl={{
+            alpha: true,
+            antialias: true,
+            premultipliedAlpha: true,
+          }}
+        >
+          <Scene
+            colors={colors}
+            colorsRef={colorsRef}
+            seed={seed ?? fallbackSeed}
+            memoryRef={memoryRef}
+            agentState={agentState}
+            volumeMode={volumeMode}
+            manualInput={manualInput}
+            manualOutput={manualOutput}
+            inputVolumeRef={inputVolumeRef}
+            outputVolumeRef={outputVolumeRef}
+            getInputVolume={getInputVolume}
+            getOutputVolume={getOutputVolume}
+          />
+        </Canvas>
+      )}
     </div>
   )
+}
+
+// True while the element is on screen or within 200px of it. Off screen the
+// orb's canvas is removed: it stops drawing and frees its WebGL context
+// (browsers allow only ~16 per page and drop the oldest beyond that).
+function useIsNearViewport(ref: React.RefObject<HTMLElement | null>) {
+  const [isNear, setIsNear] = useState(false)
+  useEffect(() => {
+    const element = ref.current
+    if (!element) return
+    if (typeof IntersectionObserver === "undefined") {
+      setIsNear(true)
+      return
+    }
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsNear(entry.isIntersecting),
+      { rootMargin: "200px" }
+    )
+    observer.observe(element)
+    return () => observer.disconnect()
+  }, [ref])
+  return isNear
+}
+
+// Advance the remembered clocks by the time the orb was away.
+function fastForward(memory: OrbMemory): OrbMemory {
+  if (memory.savedAt === null) return memory
+  const elapsed = (performance.now() - memory.savedAt) / 1000
+  return {
+    ...memory,
+    time: memory.time + elapsed * 0.5,
+    animation: memory.animation + elapsed * memory.animSpeed,
+  }
 }
 
 function Scene({
   colors,
   colorsRef,
   seed,
+  memoryRef,
   agentState,
   volumeMode,
   manualInput,
@@ -82,6 +143,7 @@ function Scene({
   colors: [string, string]
   colorsRef?: React.RefObject<[string, string]>
   seed?: number
+  memoryRef: React.RefObject<OrbMemory>
   agentState: AgentState
   volumeMode: "auto" | "manual"
   manualInput?: number
@@ -97,7 +159,9 @@ function Scene({
   const initialColorsRef = useRef<[string, string]>(colors)
   const targetColor1Ref = useRef(new THREE.Color(colors[0]))
   const targetColor2Ref = useRef(new THREE.Color(colors[1]))
-  const animSpeedRef = useRef(0.1)
+  // Where this orb starts: fresh, or fast-forwarded if it was put away.
+  const [start] = useState(() => fastForward(memoryRef.current))
+  const animSpeedRef = useRef(start.animSpeed)
   const perlinNoiseTexture = useTexture(
     "https://storage.googleapis.com/eleven-public-cdn/images/perlin-noise.png"
   )
@@ -106,8 +170,8 @@ function Scene({
   const modeRef = useRef<"auto" | "manual">(volumeMode)
   const manualInRef = useRef<number>(manualInput ?? 0)
   const manualOutRef = useRef<number>(manualOutput ?? 0)
-  const curInRef = useRef(0)
-  const curOutRef = useRef(0)
+  const curInRef = useRef(start.input)
+  const curOutRef = useRef(start.output)
 
   useEffect(() => {
     agentRef.current = agentState
@@ -215,6 +279,14 @@ function Scene({
     u.uOutputVolume.value = curOutRef.current
     u.uColor1.value.lerp(targetColor1Ref.current, 0.08)
     u.uColor2.value.lerp(targetColor2Ref.current, 0.08)
+
+    const memory = memoryRef.current
+    memory.time = u.uTime.value
+    memory.animation = u.uAnimation.value
+    memory.animSpeed = animSpeedRef.current
+    memory.input = curInRef.current
+    memory.output = curOutRef.current
+    memory.savedAt = performance.now()
   })
 
   useEffect(() => {
@@ -241,14 +313,15 @@ function Scene({
       uColor2: new THREE.Uniform(new THREE.Color(initialColorsRef.current[1])),
       uOffsets: { value: offsets },
       uPerlinTexture: new THREE.Uniform(perlinNoiseTexture),
-      uTime: new THREE.Uniform(0),
-      uAnimation: new THREE.Uniform(0.1),
+      uTime: new THREE.Uniform(start.time),
+      uAnimation: new THREE.Uniform(start.animation),
       uInverted: new THREE.Uniform(isDark ? 1 : 0),
-      uInputVolume: new THREE.Uniform(0),
-      uOutputVolume: new THREE.Uniform(0),
-      uOpacity: new THREE.Uniform(0),
+      uInputVolume: new THREE.Uniform(start.input),
+      uOutputVolume: new THREE.Uniform(start.output),
+      // Fade in only the first time, not when coming back.
+      uOpacity: new THREE.Uniform(start.savedAt === null ? 0 : 1),
     }
-  }, [perlinNoiseTexture, offsets])
+  }, [perlinNoiseTexture, offsets, start])
 
   return (
     <mesh ref={circleRef}>
