@@ -123,13 +123,36 @@ function useIsNearViewport(ref: React.RefObject<HTMLElement | null>) {
       return
     }
     // Inside a scrolling box (e.g. VoicePicker's list) the margin only applies
-    // when that box is the observer's root, not the viewport.
-    const observer = new IntersectionObserver(
-      ([entry]) => setIsNear(entry.isIntersecting),
-      { root: getScrollParent(element), rootMargin: "100px" }
-    )
-    observer.observe(element)
-    return () => observer.disconnect()
+    // when that box is the observer's root, so watch the orb within the box
+    // and, separately, the box within the viewport.
+    const scrollParent = getScrollParent(element)
+    let nearInParent = false
+    let parentNearViewport = scrollParent === null
+    const update = () => setIsNear(nearInParent && parentNearViewport)
+    const watch = (
+      target: Element,
+      root: HTMLElement | null,
+      onChange: (near: boolean) => void
+    ) => {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          onChange(entries[entries.length - 1].isIntersecting)
+          update()
+        },
+        { root, rootMargin: "100px" }
+      )
+      observer.observe(target)
+      return observer
+    }
+    const observers = [
+      watch(element, scrollParent, (near) => (nearInParent = near)),
+    ]
+    if (scrollParent) {
+      observers.push(
+        watch(scrollParent, null, (near) => (parentNearViewport = near))
+      )
+    }
+    return () => observers.forEach((observer) => observer.disconnect())
   }, [ref])
   return isNear
 }
@@ -144,11 +167,19 @@ function releaseDetachedRenderers(renderers: Set<THREE.WebGLRenderer>) {
   }
 }
 
-// Nearest ancestor that scrolls, or null for the viewport.
+// Nearest ancestor that actually scrolls, or null for the viewport. Checking
+// the content size matters: `overflow-x: hidden` alone makes the browser
+// compute `overflow-y: auto` on wrappers that never scroll.
 function getScrollParent(element: HTMLElement): HTMLElement | null {
+  const scrollable = /(auto|scroll|overlay)/
   for (let node = element.parentElement; node; node = node.parentElement) {
     const { overflowX, overflowY } = getComputedStyle(node)
-    if (/(auto|scroll|overlay)/.test(overflowX + overflowY)) return node
+    if (
+      (scrollable.test(overflowY) && node.scrollHeight > node.clientHeight) ||
+      (scrollable.test(overflowX) && node.scrollWidth > node.clientWidth)
+    ) {
+      return node
+    }
   }
   return null
 }
