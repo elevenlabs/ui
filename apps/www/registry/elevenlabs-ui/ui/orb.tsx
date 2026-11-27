@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useMemo, useRef } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { useTexture } from "@react-three/drei"
 import { Canvas, useFrame, useThree } from "@react-three/fiber"
 import * as THREE from "three"
@@ -23,6 +23,17 @@ type OrbProps = {
   className?: string
 }
 
+// What an orb remembers while its canvas is removed, so it can come back
+// exactly where it would have been if it had kept animating.
+type OrbMemory = {
+  time: number
+  animation: number
+  animSpeed: number
+  input: number
+  output: number
+  savedAt: number | null
+}
+
 export function Orb({
   colors = ["#CADCFC", "#A0B9D1"],
   colorsRef,
@@ -38,38 +49,157 @@ export function Orb({
   getOutputVolume,
   className,
 }: OrbProps) {
+  const containerRef = useRef<HTMLDivElement>(null)
+  const isNearViewport = useIsNearViewport(containerRef)
+  // Pick the random look once, so an orb that comes back looks the same.
+  const [fallbackSeed] = useState(() => Math.floor(Math.random() * 2 ** 32))
+  const memoryRef = useRef<OrbMemory>({
+    time: 0,
+    animation: 0.1,
+    animSpeed: 0.1,
+    input: 0,
+    output: 0,
+    savedAt: null,
+  })
+  const renderersRef = useRef(new Set<THREE.WebGLRenderer>())
+
+  // Free the context of a canvas that was put away as soon as it's gone from
+  // the page. React Three Fiber only does it 500ms after unmount, and during
+  // fast scrolling those leftovers count toward the browser's limit.
+  useEffect(() => {
+    const renderers = renderersRef.current
+    releaseDetachedRenderers(renderers)
+    return () => releaseDetachedRenderers(renderers)
+  }, [isNearViewport])
+
   return (
-    <div className={className ?? "relative h-full w-full"}>
-      <Canvas
-        resize={{ debounce: resizeDebounce }}
-        gl={{
-          alpha: true,
-          antialias: true,
-          premultipliedAlpha: true,
-        }}
-      >
-        <Scene
-          colors={colors}
-          colorsRef={colorsRef}
-          seed={seed}
-          agentState={agentState}
-          volumeMode={volumeMode}
-          manualInput={manualInput}
-          manualOutput={manualOutput}
-          inputVolumeRef={inputVolumeRef}
-          outputVolumeRef={outputVolumeRef}
-          getInputVolume={getInputVolume}
-          getOutputVolume={getOutputVolume}
-        />
-      </Canvas>
+    <div ref={containerRef} className={className ?? "relative h-full w-full"}>
+      {isNearViewport && (
+        <Canvas
+          resize={{ debounce: resizeDebounce }}
+          gl={(defaults) => {
+            const renderer = new THREE.WebGLRenderer({
+              ...defaults,
+              alpha: true,
+              antialias: true,
+              premultipliedAlpha: true,
+            })
+            renderersRef.current.add(renderer)
+            // The canvas may already be gone if the orb was scrolled past.
+            setTimeout(() => releaseDetachedRenderers(renderersRef.current))
+            return renderer
+          }}
+        >
+          <Scene
+            colors={colors}
+            colorsRef={colorsRef}
+            seed={seed ?? fallbackSeed}
+            memoryRef={memoryRef}
+            agentState={agentState}
+            volumeMode={volumeMode}
+            manualInput={manualInput}
+            manualOutput={manualOutput}
+            inputVolumeRef={inputVolumeRef}
+            outputVolumeRef={outputVolumeRef}
+            getInputVolume={getInputVolume}
+            getOutputVolume={getOutputVolume}
+          />
+        </Canvas>
+      )}
     </div>
   )
+}
+
+// True while the element is on screen or within 100px of it. Off screen the
+// orb's canvas is removed: it stops drawing and frees its WebGL context
+// (browsers allow only ~16 per page and drop the oldest beyond that).
+function useIsNearViewport(ref: React.RefObject<HTMLElement | null>) {
+  const [isNear, setIsNear] = useState(false)
+  useEffect(() => {
+    const element = ref.current
+    if (!element) return
+    if (typeof IntersectionObserver === "undefined") {
+      setIsNear(true)
+      return
+    }
+    // Inside a scrolling box (e.g. VoicePicker's list) the margin only applies
+    // when that box is the observer's root, so watch the orb within the box
+    // and, separately, the box within the viewport.
+    const scrollParent = getScrollParent(element)
+    let nearInParent = false
+    let parentNearViewport = scrollParent === null
+    const update = () => setIsNear(nearInParent && parentNearViewport)
+    const watch = (
+      target: Element,
+      root: HTMLElement | null,
+      onChange: (near: boolean) => void
+    ) => {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          onChange(entries[entries.length - 1].isIntersecting)
+          update()
+        },
+        { root, rootMargin: "100px" }
+      )
+      observer.observe(target)
+      return observer
+    }
+    const observers = [
+      watch(element, scrollParent, (near) => (nearInParent = near)),
+    ]
+    if (scrollParent) {
+      observers.push(
+        watch(scrollParent, null, (near) => (parentNearViewport = near))
+      )
+    }
+    return () => observers.forEach((observer) => observer.disconnect())
+  }, [ref])
+  return isNear
+}
+
+// Only canvases actually removed from the page are released, so a mounted
+// orb is never affected (e.g. by Strict Mode's simulated unmount).
+function releaseDetachedRenderers(renderers: Set<THREE.WebGLRenderer>) {
+  for (const renderer of renderers) {
+    if (renderer.domElement.isConnected) continue
+    renderer.forceContextLoss()
+    renderers.delete(renderer)
+  }
+}
+
+// Nearest ancestor that actually scrolls, or null for the viewport. Checking
+// the content size matters: `overflow-x: hidden` alone makes the browser
+// compute `overflow-y: auto` on wrappers that never scroll.
+function getScrollParent(element: HTMLElement): HTMLElement | null {
+  const scrollable = /(auto|scroll|overlay)/
+  for (let node = element.parentElement; node; node = node.parentElement) {
+    const { overflowX, overflowY } = getComputedStyle(node)
+    if (
+      (scrollable.test(overflowY) && node.scrollHeight > node.clientHeight) ||
+      (scrollable.test(overflowX) && node.scrollWidth > node.clientWidth)
+    ) {
+      return node
+    }
+  }
+  return null
+}
+
+// Advance the remembered clocks by the time the orb was away.
+function fastForward(memory: OrbMemory): OrbMemory {
+  if (memory.savedAt === null) return memory
+  const elapsed = (performance.now() - memory.savedAt) / 1000
+  return {
+    ...memory,
+    time: memory.time + elapsed * 0.5,
+    animation: memory.animation + elapsed * memory.animSpeed,
+  }
 }
 
 function Scene({
   colors,
   colorsRef,
   seed,
+  memoryRef,
   agentState,
   volumeMode,
   manualInput,
@@ -82,6 +212,7 @@ function Scene({
   colors: [string, string]
   colorsRef?: React.RefObject<[string, string]>
   seed?: number
+  memoryRef: React.RefObject<OrbMemory>
   agentState: AgentState
   volumeMode: "auto" | "manual"
   manualInput?: number
@@ -97,7 +228,9 @@ function Scene({
   const initialColorsRef = useRef<[string, string]>(colors)
   const targetColor1Ref = useRef(new THREE.Color(colors[0]))
   const targetColor2Ref = useRef(new THREE.Color(colors[1]))
-  const animSpeedRef = useRef(0.1)
+  // Where this orb starts: fresh, or fast-forwarded if it was put away.
+  const [start] = useState(() => fastForward(memoryRef.current))
+  const animSpeedRef = useRef(start.animSpeed)
   const perlinNoiseTexture = useTexture(
     "https://storage.googleapis.com/eleven-public-cdn/images/perlin-noise.png"
   )
@@ -106,8 +239,8 @@ function Scene({
   const modeRef = useRef<"auto" | "manual">(volumeMode)
   const manualInRef = useRef<number>(manualInput ?? 0)
   const manualOutRef = useRef<number>(manualOutput ?? 0)
-  const curInRef = useRef(0)
-  const curOutRef = useRef(0)
+  const curInRef = useRef(start.input)
+  const curOutRef = useRef(start.output)
 
   useEffect(() => {
     agentRef.current = agentState
@@ -215,11 +348,21 @@ function Scene({
     u.uOutputVolume.value = curOutRef.current
     u.uColor1.value.lerp(targetColor1Ref.current, 0.08)
     u.uColor2.value.lerp(targetColor2Ref.current, 0.08)
+
+    const memory = memoryRef.current
+    memory.time = u.uTime.value
+    memory.animation = u.uAnimation.value
+    memory.animSpeed = animSpeedRef.current
+    memory.input = curInRef.current
+    memory.output = curOutRef.current
+    memory.savedAt = performance.now()
   })
 
   useEffect(() => {
     const canvas = gl.domElement
     const onContextLost = (event: Event) => {
+      // An orb that was put away released its context on purpose.
+      if (!canvas.isConnected) return
       event.preventDefault()
       setTimeout(() => {
         gl.forceContextRestore()
@@ -241,14 +384,15 @@ function Scene({
       uColor2: new THREE.Uniform(new THREE.Color(initialColorsRef.current[1])),
       uOffsets: { value: offsets },
       uPerlinTexture: new THREE.Uniform(perlinNoiseTexture),
-      uTime: new THREE.Uniform(0),
-      uAnimation: new THREE.Uniform(0.1),
+      uTime: new THREE.Uniform(start.time),
+      uAnimation: new THREE.Uniform(start.animation),
       uInverted: new THREE.Uniform(isDark ? 1 : 0),
-      uInputVolume: new THREE.Uniform(0),
-      uOutputVolume: new THREE.Uniform(0),
-      uOpacity: new THREE.Uniform(0),
+      uInputVolume: new THREE.Uniform(start.input),
+      uOutputVolume: new THREE.Uniform(start.output),
+      // Fade in only the first time, not when coming back.
+      uOpacity: new THREE.Uniform(start.savedAt === null ? 0 : 1),
     }
-  }, [perlinNoiseTexture, offsets])
+  }, [perlinNoiseTexture, offsets, start])
 
   return (
     <mesh ref={circleRef}>
